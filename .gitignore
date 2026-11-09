@@ -3,6 +3,8 @@ node_modules/
 android/
 ios/
 dist/
+# 构建时由 index.html 等动态生成，不入库
+www/
 
 # Android 签名与安装包（密钥绝不要提交）
 *.apk
