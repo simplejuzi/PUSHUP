@@ -36,14 +36,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: 准备 Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: 确认 SDK 组件
+      # runner 自带 Android SDK；setup-android@v3 会卡在交互式许可确认，故直接用自带的
+      - name: 确认 Android SDK 组件
         run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" >/dev/null
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMGR="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMGR" ]; then SDKMGR="$(command -v sdkmanager || true)"; fi
+          if [ ! -x "$SDKMGR" ]; then
+            SDKMGR=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -1)
+          fi
+          if [ ! -x "$SDKMGR" ]; then echo "找不到 sdkmanager"; exit 1; fi
+          echo "sdkmanager: $SDKMGR"
+          yes | "$SDKMGR" --licenses >/dev/null 2>&1 || true
+          "$SDKMGR" --install "platforms;android-34" "build-tools;34.0.0" >/dev/null
           echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "platforms: $(ls "$ANDROID_HOME/platforms" | tr '\n' ' ')"
+          echo "build-tools: $(ls "$ANDROID_HOME/build-tools" | tr '\n' ' ')"
 
       # Capacitor 需要一个只含网页资源的 webDir，避免把 docs/预览图等打进 APK
       - name: 生成本地网页资源 www/
