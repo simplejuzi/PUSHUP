@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUSHUP · 项目交接包</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAFAF8; --card:#fff; --ink:#1C1D21; --sub:#6B7078; --sub2:#9A9FA8;
+  --line:#EAE8E4; --soft:#F4F3F0; --accent:#FF6A3D; --accent-soft:#FFF0EA; --accent-mid:#FFC4AC;
+  --blue:#4C7DF0; --blue-soft:#EDF2FF; --green:#1F9D6B; --green-soft:#E8F7F0;
+}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 80px}
+.hero{padding:56px 0 30px;display:flex;align-items:center;gap:18px}
+.ic{width:66px;height:66px;border-radius:19px;background:linear-gradient(135deg,#FF9654,#FF562C);color:#fff;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:800;box-shadow:0 10px 26px rgba(255,106,61,.28);flex:none;position:relative}
+.ic::before{content:"";position:absolute;top:8px;left:0;right:0;height:12px;background:linear-gradient(90deg,transparent,#fff,transparent);opacity:.85;clip-path:polygon(42% 100%,50% 0,58% 100%)}
+.hero h1{font-size:27px;font-weight:800;letter-spacing:-.6px}
+.hero p{font-size:13.5px;color:var(--sub);margin-top:5px}
+.pill{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:5px 11px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 26px;margin-bottom:16px;box-shadow:0 2px 14px rgba(28,29,33,.028)}
+.card h2{font-size:16px;font-weight:780;letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.card h2 .n{width:23px;height:23px;border-radius:8px;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.card p{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+strong{color:var(--ink);font-weight:700}
+.link{display:block;background:var(--soft);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--accent);font-weight:650;word-break:break-all;text-decoration:none;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.g{background:var(--soft);border-radius:14px;padding:16px}
+.g .t{font-size:13px;font-weight:750;display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.g .d{font-size:12px;color:var(--sub);line-height:1.6}
+.g .d b{color:var(--ink)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.rows{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.row{display:flex;align-items:flex-start;gap:11px;background:var(--soft);border-radius:12px;padding:12px 14px}
+.row .b{width:20px;height:20px;border-radius:7px;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.ok{background:var(--green)}.no{background:var(--accent)}
+.row .tx{font-size:12.8px;line-height:1.6}
+.row .tx b{font-weight:750}
+.row .tx span{color:var(--sub)}
+.tree{background:#1C1D21;color:#D9DBDF;border-radius:14px;padding:16px 18px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.8px;line-height:1.85;overflow-x:auto;white-space:pre}
+.tree .c{color:#FF9A75}.tree .k{color:#8FB8FF}.tree .m{color:#7A7F88}
+.warn{background:#FFF7ED;border:1px solid #FFE0C2;border-radius:14px;padding:15px 17px;font-size:13px;color:#7A4A22;line-height:1.7}
+.warn b{color:#5C3413}
+.files{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.file{font-size:11.5px;font-weight:650;background:var(--blue-soft);color:var(--blue);border-radius:9px;padding:7px 11px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.file.hot{background:var(--accent-soft);color:var(--accent)}
+.foot{text-align:center;font-size:11.5px;color:var(--sub2);padding:26px 0 0;line-height:1.9}
+.foot a{color:var(--accent);text-decoration:none}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.hero{padding:36px 0 22px}.hero h1{font-size:22px}.card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="ic">P</div>
+    <div>
+      <span class="pill">项目交接包 · 2026-11-09</span>
+      <h1>PUSHUP · 俯卧撑训练记录</h1>
+      <p>把这个任务从云端完整搬到你自己的电脑上，接着做 / 接着用</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">1</span>先拿走文件</h2>
+    <p>下载 <strong>PUSHUP-项目交接包.zip</strong>，解压到任意文件夹（比如 <code>D:\PUSHUP</code> 或 <code>~/PUSHUP</code>）。里面 <strong>源码、6 个历史版本、41 张预览图、4 份文档</strong>全齐了。</p>
+    <p>线上版不用搬，一直在线，地址不变：</p>
+    <a class="link" href="https://a921090d771d09e84.app.workbuddy.host/?sharecode=4IMFZU5IGF" target="_blank">https://a921090d771d09e84.app.workbuddy.host/?sharecode=4IMFZU5IGF</a>
+    <p style="font-size:12px;margin-top:9px;color:var(--sub2)">⚠️ <code>?sharecode=</code> 是访问凭据，分享时别删</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">2</span>你想怎么「转移」？</h2>
+    <div class="grid">
+      <div class="g">
+        <div class="t"><span class="dot" style="background:var(--accent)"></span>让本地 AI 接着做</div>
+        <div class="d">把 <b>交接文档-给AI.md</b> 发给本地 WorkBuddy / CodeBuddy / Cursor，再附上 <b>给本地AI的提示词.md</b> 里那段开场白。它不用你重讲需求就能接手。</div>
+      </div>
+      <div class="g">
+        <div class="t"><span class="dot" style="background:var(--blue)"></span>在电脑上打开用</div>
+        <div class="d"><code>cd app</code> 后跑 <b>python3 -m http.server 8080</b>，浏览器开 <b>localhost:8080</b>。详细见 本地运行与打包.md 第 1 节。</div>
+      </div>
+      <div class="g">
+        <div class="t"><span class="dot" style="background:var(--green)"></span>完成剩下两件事</div>
+        <div class="d"><b>传 GitHub</b> 和 <b>打 APK</b> 的命令都写在 本地运行与打包.md 第 2、3 节，本地网络正常就能跑。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3</span>当前状态：哪些做完了</h2>
+    <div class="rows">
+      <div class="row"><span class="b ok">✓</span><div class="tx"><b>App 已上线</b> <span>· PWA 正式版 v1.0，5 个 Tab、53 个动作库、离线可用，手机可「添加到主屏幕」</span></div></div>
+      <div class="row"><span class="b ok">✓</span><div class="tx"><b>Logo 就用默认橙色 P 标</b> <span>· 你已确认，全套图标在 app/icons/</span></div></div>
+      <div class="row"><span class="b ok">✓</span><div class="tx"><b>「更换 Logo」功能已整个关掉</b> <span>· 正式版不允许用户自己换图；离线缓存升 v2；线上已重新发布；运行时 0 报错</span></div></div>
+      <div class="row"><span class="b no">!</span><div class="tx"><b>上传 GitHub 未完成</b> <span>· 云端 GitHub 连接器未授权、github.com 网络不通。本地照文档第 2 节推一下即可</span></div></div>
+      <div class="row"><span class="b no">!</span><div class="tx"><b>打包 APK 未完成</b> <span>· 云端缺 Android SDK、maven.google.com 不通，SDK 下载已停。本地装 Android Studio 后按第 3 节做</span></div></div>
+    </div>
+    <p style="font-size:12px;margin-top:12px;color:var(--sub2)">这两件是卡在云端环境，<strong style="color:var(--sub)">不是代码问题</strong>。交接文档里写清了原因和本地做法。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">!</span>最容易踩的坑：数据不会自动跟走</h2>
+    <div class="warn">
+      App 数据<b>只存在打开它的那个浏览器 / 手机本地</b>，不上传、不同步。交接包里的源码打开后，是<b>预置了最初 19 条历史记录</b>的干净一份。<br>
+      如果你在线上版里又录过新数据：线上「我的 → <b>导出备份 JSON</b>」下载 → 本地「我的 → <b>导入数据</b>」粘贴进去。反过来也一样。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">4</span>包里有什么</h2>
+    <div class="tree"><span class="c">PUSHUP-项目交接包/</span>
+├── <span class="k">开始这里.html</span>          <span class="m">← 你正在看的这页</span>
+├── <span class="k">README-先看这里.md</span>       <span class="m">← 3 分钟看懂怎么转移</span>
+├── <span class="k">交接文档-给AI.md</span>         <span class="m">← ★ 完整任务上下文，给本地 AI 读</span>
+├── <span class="k">给本地AI的提示词.md</span>       <span class="m">← ★ 直接复制粘贴的开场白</span>
+├── <span class="k">本地运行与打包.md</span>         <span class="m">← 起服务 / 传 GitHub / 打 APK 命令</span>
+├── <span class="c">app/</span>                     <span class="m">← ★ 正式版源码，可直接部署</span>
+│   ├── index.html             <span class="m">整个 App 都在这一个文件</span>
+│   ├── manifest.webmanifest
+│   ├── sw.js
+│   └── icons/                 <span class="m">7 个图标 + SVG 源文件</span>
+├── <span class="c">原型历史/</span>              <span class="m">← v0.1 ~ v0.6，6 个可点原型</span>
+└── <span class="c">预览图/</span>                <span class="m">← 41 张各版本页面截图</span></div>
+    <div class="files">
+      <span class="file hot">交接文档-给AI.md</span><span class="file hot">给本地AI的提示词.md</span>
+      <span class="file">README-先看这里.md</span><span class="file">本地运行与打包.md</span>
+      <span class="file">app/index.html</span><span class="file">app/manifest.webmanifest</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">5</span>项目身份（换 AI 也不会搞错）</h2>
+    <p><strong>App 名</strong> PUSHUP（俯卧撑训练记录） · <strong>版本</strong> v1.0 正式版 · <strong>技术</strong> 单文件 PWA、纯前端 + localStorage、无后端无账号、离线可用</p>
+    <p><strong>作者</strong> 再多吃一口饭 · <strong>酷安</strong> <a href="https://www.coolapk.com/u/2456761" target="_blank" style="color:var(--accent)">https://www.coolapk.com/u/2456761</a> · <strong>数据年份</strong> 按 2026 年处理</p>
+    <p style="font-size:12px;color:var(--sub2)">用户说过「数据页面很好，暂时不动」「页面简洁好看」「以俯卧撑为主」——这几条约束仍然有效，交接文档里都标了。</p>
+  </div>
+
+  <div class="foot">
+    PUSHUP · 为每天多一点坚持而做<br>
+    数据不会上传，换设备请用导出 / 导入　·　<a href="https://a921090d771d09e84.app.workbuddy.host/?sharecode=4IMFZU5IGF" target="_blank">打开线上版</a>
+  </div>
+
+</div>
+</body>
+</html>

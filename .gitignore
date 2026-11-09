@@ -1,0 +1,21 @@
+# Capacitor / Node 构建产物
+node_modules/
+android/
+ios/
+dist/
+
+# Android 签名与安装包（密钥绝不要提交）
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 本地临时文件
+*.log
+*.tmp

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>俯卧撑日记 · 界面原型 v0.3</title>
+<style>
+:root{
+  --bg:#F3F3F0; --surface:#FAFAF8; --card:#FFFFFF; --soft:#F5F5F2;
+  --ink:#17181C; --sub:#8B9099; --sub2:#AFB3BB; --line:#EDEDE9;
+  --accent:#FF6A3D; --accent-soft:#FFF0E9; --accent-mid:#FFA27F;
+  --green:#1F9D6B; --green-soft:#EAF7F0; --blue:#4C7DF0;
+  --purple:#8B5CF6; --amber:#F59E0B; --blue-soft:#EAF1FF;
+  --dark-card:#1C1D21; --dark-inner:#2A2B30; --dark-txt:#FFFFFF;
+  --tabbar:rgba(250,250,248,.93); --phone-border:#E4E4DF;
+  --radius:22px; --shadow:0 4px 18px rgba(23,24,28,.035);
+}
+body.dark{
+  --bg:#0F1012; --surface:#15171A; --card:#1D2024; --soft:#23272C;
+  --ink:#F1F2F4; --sub:#9BA1AA; --sub2:#6E747D; --line:#2C3036;
+  --accent-soft:#3A2318; --accent-mid:#7A422C;
+  --green:#4FD39A; --green-soft:#173227; --blue:#7FA6FF; --blue-soft:#1E2A42;
+  --dark-card:#252A30; --dark-inner:#30363E; --dark-txt:#F1F2F4;
+  --tabbar:rgba(21,23,26,.93); --phone-border:#2C3036;
+  --shadow:0 4px 18px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .2s}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 16px 26px;gap:16px}
+.hint{font-size:12.5px;color:#989CA4;text-align:center;line-height:1.7}
+.hint b{color:#5C6068;font-weight:600}
+body.dark .hint{color:#6E747D}body.dark .hint b{color:#9BA1AA}
+.phone{width:390px;height:844px;flex:none;background:var(--surface);border-radius:44px;border:1px solid var(--phone-border);box-shadow:0 30px 80px rgba(23,24,28,.13),0 2px 8px rgba(23,24,28,.04);overflow:hidden;position:relative;display:flex;flex-direction:column}
+body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.status{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:650;position:relative;z-index:3}
+.island{position:absolute;left:50%;top:9px;transform:translateX(-50%);width:92px;height:25px;border-radius:16px;background:#08090B}
+.status .icons{display:flex;gap:5px;align-items:center;color:var(--ink)}
+.status .icons svg{display:block}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 20px 118px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.page{display:none;animation:fade .22s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12.5px;color:var(--sub);font-weight:550;letter-spacing:.3px}
+h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;font-weight:750}
+.head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent-soft);color:var(--accent);font-size:11.5px;font-weight:700;padding:7px 11px;border-radius:999px;white-space:nowrap;margin-top:4px}
+.badge.ok{background:var(--green-soft);color:var(--green)}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:14px}
+.card-label{font-size:12px;color:var(--sub);font-weight:600;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
+.card-label .en{font-size:10px;color:var(--sub2);letter-spacing:1.2px;font-weight:600}
+.sec-title{font-size:15px;font-weight:720;margin:22px 2px 10px;letter-spacing:-.2px}
+.sec-title span{font-size:12px;color:var(--sub);font-weight:500;margin-left:6px}
+.muted{font-size:11.5px;color:var(--sub2);line-height:1.6}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow)}
+.datebar .d{font-size:13.5px;font-weight:700;text-align:center}
+.datebar .d small{display:block;font-size:11px;color:var(--sub);font-weight:500;margin-top:2px}
+.navbtn{width:30px;height:30px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:16px;border:0;cursor:pointer;flex:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px 15px}
+.mini .card-label{font-size:11.5px}
+.mini-row{display:flex;align-items:baseline;gap:4px;margin-top:8px}
+.mini-row input{width:80px;border:0;outline:0;background:transparent;font-size:27px;font-weight:750;letter-spacing:-1px;padding:0;font-family:inherit;color:var(--ink);appearance:textfield;-moz-appearance:textfield}
+.mini-row input::-webkit-outer-spin-button,.mini-row input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.mini-row input::placeholder{color:var(--sub2);font-weight:600}
+.mini-row .u{font-size:12px;color:var(--sub);font-weight:600}
+.trend{font-size:11px;font-weight:700;margin-top:8px;color:var(--green);display:flex;align-items:center;gap:4px}
+.trend.flat{color:var(--sub2)}
+.note-input{width:100%;margin-top:10px;border:0;outline:0;background:var(--soft);border-radius:12px;padding:12px 13px;font-size:13px;font-family:inherit;color:var(--ink);resize:none}
+.note-input::placeholder{color:var(--sub2)}
+.save{width:100%;margin-top:16px;border:0;border-radius:18px;padding:17px;background:var(--accent);color:#fff;font-size:15px;font-weight:720;letter-spacing:.3px;cursor:pointer;box-shadow:0 8px 20px rgba(255,106,61,.28);font-family:inherit}
+.save:active{transform:translateY(1px)}
+.privacy{text-align:center;font-size:11px;color:var(--sub2);margin-top:14px}
+
+/* 记录页：多项目 + 步进按钮 */
+.trow{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-top:10px}
+.trow .th{display:flex;align-items:center;gap:8px}
+.trow .cdot{width:8px;height:8px;border-radius:50%;flex:none}
+.trow .tn{font-size:13.5px;font-weight:720}
+.trow .te{font-size:10px;color:var(--sub2);margin-left:auto;font-weight:500}
+.trow .tx{border:0;background:none;color:var(--sub2);font-size:17px;cursor:pointer;line-height:1;padding:0 2px}
+.trow .tv{display:flex;align-items:baseline;gap:5px;margin-top:8px}
+.trow .tv input{width:96px;border:0;outline:0;background:transparent;font-size:36px;font-weight:770;letter-spacing:-1.5px;padding:0;font-family:inherit;color:var(--ink);appearance:textfield;-moz-appearance:textfield}
+.trow .tv input::-webkit-outer-spin-button,.trow .tv input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.trow .tv input::placeholder{color:var(--sub2)}
+.trow .tv .u{font-size:13px;color:var(--sub);font-weight:600}
+.steps{display:flex;gap:7px;margin-top:10px}
+.steps button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 0;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
+.steps button.plus{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-mid)}
+.steps button:active{transform:scale(.96)}
+.trow .qchips{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;align-items:center}
+.qchip{border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:11px;font-weight:650;padding:5px 10px;border-radius:9px;cursor:pointer}
+.qchip:active{background:var(--accent-soft);color:var(--accent)}
+.qchips .ql{font-size:10.5px;color:var(--sub2);margin-right:2px}
+.addbox{border:1.5px dashed var(--line);border-radius:16px;margin-top:10px;padding:14px;background:var(--surface)}
+.addbox .at{font-size:12.5px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:6px}
+.addbox .achips{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.achip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:11.5px;font-weight:650;color:var(--ink);cursor:pointer}
+.achip:active{background:var(--accent-soft);color:var(--accent)}
+.achip.more{background:var(--ink);color:var(--surface);border-color:var(--ink);flex-basis:100%;text-align:center;margin-top:3px}
+.today-sum{display:flex;justify-content:space-between;font-size:11px;color:var(--sub2);border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+
+/* 历史页 */
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-top:20px}
+.monthbar .m{font-size:20px;font-weight:750;letter-spacing:-.4px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);margin-top:18px;text-align:center;font-size:11px;color:var(--sub2);font-weight:600}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.cell{height:48px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;position:relative}
+.cell.empty{cursor:default}
+.cell .dn{font-size:12px;color:var(--sub);font-weight:600}
+.cell .cv{font-size:9.5px;font-weight:750;color:var(--accent);line-height:1}
+.cell.has{background:var(--accent-soft)}
+.cell.has .dn{color:var(--accent)}
+.cell.today .dn::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--accent)}
+.cell.sel{background:var(--accent);box-shadow:0 5px 12px rgba(255,106,61,.3)}
+.cell.sel .dn,.cell.sel .cv{color:#fff}
+.cell.future .dn{color:var(--sub2);opacity:.55}
+.sumbar{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 0;margin-top:16px}
+.sumbar .it{flex:1;text-align:center;border-right:1px solid var(--line)}
+.sumbar .it:last-child{border-right:0}
+.sumbar .v{font-size:17px;font-weight:760;letter-spacing:-.4px}
+.sumbar .k{font-size:10.5px;color:var(--sub);margin-top:3px}
+.detail{background:var(--dark-card);color:var(--dark-txt);border-radius:20px;padding:16px 18px;margin-top:12px}
+.detail .dh{font-size:12px;color:#9BA0A8;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between}
+.detail .dg{display:flex;gap:8px;flex-wrap:wrap}
+.detail .di{flex:1;min-width:88px;background:var(--dark-inner);border-radius:13px;padding:11px 10px}
+.detail .di .k{font-size:10.5px;color:#9BA0A8}
+.detail .di .v{font-size:19px;font-weight:730;margin-top:4px;letter-spacing:-.4px}
+.detail .di .v small{font-size:11px;color:#9BA0A8;font-weight:500;margin-left:2px}
+.detail .edit{background:var(--accent);border:0;color:#fff;font-size:11.5px;font-weight:700;border-radius:9px;padding:6px 11px;cursor:pointer;font-family:inherit}
+.row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-top:8px;cursor:pointer;box-shadow:var(--shadow)}
+.row .dt{width:52px;flex:none}
+.row .dt .dd{font-size:14px;font-weight:730;letter-spacing:-.3px}
+.row .dt .dw{font-size:10.5px;color:var(--sub2);margin-top:2px}
+.row .pv{font-size:19px;font-weight:760;letter-spacing:-.5px;color:var(--accent);min-width:52px}
+.row .pv small{font-size:10.5px;color:var(--sub);font-weight:500;margin-left:2px}
+.row .tags{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.tag{font-size:10.5px;color:var(--sub);background:var(--soft);border-radius:7px;padding:4px 7px;white-space:nowrap}
+.row .arrow{color:var(--sub2);font-size:15px}
+
+/* 数据页（本轮不动，仅网格线适配主题） */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);padding:16px}
+.kpi .k{font-size:11px;color:var(--sub);font-weight:600}
+.kpi .v{font-size:27px;font-weight:770;letter-spacing:-1px;margin-top:7px;line-height:1}
+.kpi .v small{font-size:12px;color:var(--sub);font-weight:550;letter-spacing:0;margin-left:3px}
+.kpi .s{font-size:10.5px;color:var(--sub2);margin-top:7px}
+.kpi.hl{background:var(--accent);border-color:var(--accent)}
+.kpi.hl .k,.kpi.hl .s{color:rgba(255,255,255,.8)}
+.kpi.hl .v,.kpi.hl .v small{color:#fff}
+.chart-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px 14px;margin-top:12px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;padding:0 2px}
+.chart-head .t{font-size:14px;font-weight:720}
+.chart-head .x{font-size:11px;color:var(--sub)}
+.chart-head .x b{color:var(--accent);font-size:13px}
+svg.chart{display:block;width:100%;overflow:visible}
+.gridline{stroke:var(--line)}.gridline.dash{stroke:var(--soft)}
+.axis{display:flex;justify-content:space-between;font-size:10px;color:var(--sub2);margin-top:8px;padding:0 2px}
+.arm-cmp{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
+.arm-cmp .a{text-align:center;flex:1}
+.arm-cmp .a .n{font-size:30px;font-weight:770;letter-spacing:-1px}
+.arm-cmp .a .n small{font-size:12px;color:var(--sub);font-weight:500}
+.arm-cmp .a .l{font-size:10.5px;color:var(--sub2);margin-top:3px}
+.arm-cmp .mid{flex:none;color:var(--accent);font-size:12px;font-weight:700;background:var(--accent-soft);padding:7px 10px;border-radius:999px}
+
+/* 动作库 */
+.lib-sub{font-size:12px;color:var(--sub);margin-top:7px}
+.searchbox{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:11px 13px;margin-top:16px;box-shadow:var(--shadow)}
+.searchbox svg{flex:none;stroke:var(--sub2);fill:none;stroke-width:2;stroke-linecap:round}
+.searchbox input{border:0;outline:0;background:transparent;flex:1;font-size:13px;font-family:inherit;color:var(--ink)}
+.searchbox input::placeholder{color:var(--sub2)}
+.filters{display:flex;gap:7px;overflow-x:auto;margin-top:12px;padding-bottom:3px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.fchip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:11.5px;font-weight:650;padding:7px 12px;border-radius:11px;cursor:pointer;white-space:nowrap}
+.fchip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.legend{display:flex;gap:9px;align-items:center;font-size:10.5px;color:var(--sub2);margin-top:12px;flex-wrap:wrap}
+.legend .ub{font-size:10px;font-weight:750;padding:3px 7px;border-radius:6px}
+.ub.rep{background:var(--accent-soft);color:var(--accent)}
+.ub.sec{background:var(--blue-soft);color:var(--blue)}
+.grp-title{display:flex;align-items:center;gap:7px;margin:20px 2px 8px;font-size:13px;font-weight:730}
+.grp-title .gdot{width:9px;height:9px;border-radius:3px}
+.grp-title .gn{font-size:10.5px;color:var(--sub2);font-weight:600;margin-left:auto}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:13px 14px;margin-top:8px;position:relative;overflow:hidden}
+.ex .bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.ex .l1{display:flex;align-items:flex-start;gap:8px}
+.ex .names{flex:1;min-width:0}
+.ex .cn{font-size:14px;font-weight:720;line-height:1.3}
+.ex .en{font-size:10px;color:var(--sub2);margin-top:2px;font-weight:500}
+.ex .unit{flex:none;font-size:10.5px;font-weight:750;border-radius:8px;padding:5px 8px;margin-top:1px}
+.unit.rep{background:var(--accent-soft);color:var(--accent)}
+.unit.sec{background:var(--blue-soft);color:var(--blue)}
+.ex .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.lvtag{font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px}
+.lvtag.b{background:var(--green-soft);color:var(--green)}
+.lvtag.i{background:#FFF4E8;color:#E08A25}
+.lvtag.a{background:#FDECEC;color:#D9534F}
+body.dark .lvtag.i{background:#3A2C18;color:#F0B968}
+body.dark .lvtag.a{background:#3A2020;color:#F08A86}
+body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .toast{background:#30363E;color:var(--ink);border-color:#3A4048}
+.mtag{font-size:10px;color:var(--sub);background:var(--soft);border-radius:6px;padding:3px 7px}
+.gtag{font-size:10px;color:var(--blue);background:var(--blue-soft);border-radius:6px;padding:3px 7px}
+.gtag.none{color:var(--sub);background:var(--soft)}
+.ex .tip{font-size:11px;color:var(--sub);line-height:1.55;margin-top:9px}
+.ex .bot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);margin-top:10px;padding-top:9px}
+.ex .sug{font-size:10.5px;color:var(--sub2)}
+.tgl{width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;flex:none;transition:.18s}
+.tgl::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:.18s}
+.tgl.on{background:var(--accent)}
+.tgl.on::after{left:18px}
+.tgl-l{font-size:10.5px;color:var(--sub2);margin-right:7px}
+.lib-foot{position:absolute;left:0;right:0;bottom:82px;background:var(--tabbar);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;z-index:4}
+.lib-foot .cnt{font-size:12px;color:var(--sub)}
+.lib-foot .cnt b{color:var(--accent);font-size:15px}
+.lib-foot button{border:0;background:var(--ink);color:var(--surface);font-size:12px;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer;font-family:inherit}
+
+/* 我的页 */
+.stat3{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 0;margin-top:16px}
+.stat3 .it{flex:1;text-align:center;border-right:1px solid var(--line)}
+.stat3 .it:last-child{border-right:0}
+.stat3 .v{font-size:20px;font-weight:770;letter-spacing:-.5px}
+.stat3 .k{font-size:10.5px;color:var(--sub);margin-top:4px}
+.settings{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.sitem{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid var(--line);font-size:13.5px;font-weight:600;cursor:pointer}
+.sitem:last-child{border-bottom:0}
+.sitem .r{font-size:11px;color:var(--sub2);font-weight:500;display:flex;align-items:center;gap:6px}
+.sitem .ar{color:var(--sub2);font-size:14px}
+.theme-seg{display:flex;gap:8px;margin-top:12px}
+.theme-seg button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px 0;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
+.theme-seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.theme-seg .sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.theme-seg .sw.l{background:#FAFAF8}.theme-seg .sw.d{background:#1C1D21}
+.about{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-top:12px;text-align:center}
+.app-ic{width:56px;height:56px;border-radius:17px;background:var(--accent);color:#fff;font-size:26px;font-weight:780;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 18px rgba(255,106,61,.28)}
+.app-nm{font-size:18px;font-weight:760;letter-spacing:-.3px}
+.app-vr{font-size:11px;color:var(--sub2);margin-top:4px}
+.app-ds{font-size:12px;color:var(--sub);line-height:1.8;text-align:left;margin:16px 0 4px}
+.about-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:12px 2px;font-size:12.5px}
+.about-row .k{color:var(--sub2)}
+.about-row .v{font-weight:700}
+.about-row a{color:var(--accent);text-decoration:none;font-weight:700}
+.foot-note2{text-align:center;font-size:11px;color:var(--sub2);margin-top:18px;line-height:1.7}
+
+/* Tab bar (5) */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:82px;background:var(--tabbar);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;padding:9px 4px 22px;z-index:5}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub2);cursor:pointer;font-size:10px;font-weight:650;background:none;border:0;font-family:inherit}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--accent)}
+.toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:11px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:88%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* 导入弹层 */
+.modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
+.modal.on{display:flex}
+.sheet{width:100%;background:var(--surface);border-radius:26px 26px 0 0;padding:22px 20px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+.sh-t{font-size:17px;font-weight:750}
+.sh-s{font-size:11.5px;color:var(--sub);line-height:1.7;margin-top:7px}
+.sheet textarea{width:100%;margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:13px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;outline:0}
+.sheet textarea::placeholder{color:var(--sub2)}
+.sh-btns{display:flex;gap:10px;margin-top:14px}
+.sh-btns button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:13px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.sh-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+@media (max-width:520px){.stage{padding:0;display:block}.hint{display:none}.phone{width:100%;height:100vh;height:100dvh;border-radius:0;border:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="hint">界面原型 <b>v0.3</b> · 新增「我的」页、±10/±1 步进按钮、深色模式、导入导出；臀桥改为分钟计数；数据页未改动</div>
+  <div class="phone">
+    <div class="status">
+      <span>15:27</span><span class="island"></span>
+      <span class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M1 9h2v2H1zM5 6.5h2V11H5zM9 4h2v7H9zM13 1h2v10h-2z" fill="currentColor"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M1 4.5C4.7 1.2 11.3 1.2 15 4.5M3.6 7c2.4-2.2 6.4-2.2 8.8 0M6.3 9.4c1-1 2.4-1 3.4 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="8" cy="11" r="1" fill="currentColor"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="1" y="1.5" width="19" height="9" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="2.8" y="3.2" width="14" height="5.6" rx="1.2" fill="currentColor"/><path d="M21.5 4.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </span>
+    </div>
+
+    <div class="screen" id="screen">
+
+      <!-- ===== 记录 ===== -->
+      <div class="page on" id="page-record">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow" id="recEyebrow">11月9日 星期一</div><h1 class="title">今天练了吗？</h1></div>
+          <div class="badge"><span class="dot"></span><span id="streakText">连续 14 天</span></div>
+        </div>
+        <div class="datebar">
+          <button class="navbtn" onclick="shiftDate(-1)">‹</button>
+          <div class="d" id="dateLabel">今天 · 11月9日<small>已有记录，可直接修改</small></div>
+          <button class="navbtn" onclick="shiftDate(1)">›</button>
+        </div>
+        <div class="card" style="padding:16px 15px">
+          <div class="card-label"><span>今日训练</span><span class="en" id="todayCount">1 个项目</span></div>
+          <div id="todayRows"></div>
+          <div class="addbox">
+            <div class="at">＋ 添加动作</div>
+            <div class="achips" id="quickAdd"></div>
+          </div>
+          <div class="today-sum"><span id="todaySum">已填 1 项 · 40 次</span><span>选填指标在下方 ↓</span></div>
+        </div>
+        <div class="two">
+          <div class="mini">
+            <div class="card-label">体重 <span style="color:var(--sub2)">选填</span></div>
+            <div class="mini-row"><input id="weightInput" type="number" step="0.05" inputmode="decimal" value="55.40"><span class="u">kg</span></div>
+            <div class="trend" id="weightTrend">↗ 较首次 +1.65</div>
+          </div>
+          <div class="mini">
+            <div class="card-label">臂围 <span style="color:var(--sub2)">选填</span></div>
+            <div class="mini-row"><input id="armInput" type="number" step="0.5" inputmode="decimal" value="29"><span class="u">cm</span></div>
+            <div class="trend" id="armTrend">↗ 较首次 +1.0</div>
+          </div>
+        </div>
+        <div class="card" style="padding:14px 16px">
+          <div class="card-label">备注 <span style="color:var(--sub2)">选填</span></div>
+          <textarea class="note-input" id="noteInput" rows="1" placeholder="状态、感受、分组方式…"></textarea>
+        </div>
+        <button class="save" id="saveBtn" onclick="saveRecord()">更新今日记录</button>
+        <div class="privacy">数据仅保存在本机 · 无需登录 · 可随时导出</div>
+      </div>
+
+      <!-- ===== 历史 ===== -->
+      <div class="page" id="page-history">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">HISTORY</div><h1 class="title">训练日历</h1></div>
+          <div class="badge" id="countBadge">19 条记录</div>
+        </div>
+        <div class="monthbar">
+          <div class="m" id="monthLabel">2026年 11月</div>
+          <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" onclick="shiftMonth(1)">›</button></div>
+        </div>
+        <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="cal" id="calendar"></div>
+        <div class="sumbar" id="monthSummary"></div>
+        <div class="detail" id="dayDetail"></div>
+        <div class="sec-title">本月记录<span>点击可编辑 / 补录</span></div>
+        <div class="list" id="recordList"></div>
+        <div style="height:10px"></div>
+      </div>
+
+      <!-- ===== 数据（本轮未改动） ===== -->
+      <div class="page" id="page-stats">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">INSIGHTS</div><h1 class="title">你的进步</h1></div>
+          <div class="badge ok">↗ 体重 +1.65kg</div>
+        </div>
+        <div class="kpis" id="kpis"></div>
+        <div class="chart-card">
+          <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x">峰值 <b>200</b> 个</span></div>
+          <div id="barChart"></div><div class="axis"><span>10/7</span><span>10/24</span><span>11/9</span></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><span class="t">体重变化</span><span class="x">12 次测量 · <b>+1.65 kg</b></span></div>
+          <div id="lineChart"></div><div class="axis"><span>10/24 · 53.75</span><span>11/08 · 55.40</span></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><span class="t">臂围</span><span class="x">2 次测量</span></div>
+          <div class="arm-cmp">
+            <div class="a"><div class="n">28<small>cm</small></div><div class="l">10月28日</div></div>
+            <div class="mid">↗ +1.0 cm</div>
+            <div class="a"><div class="n">29<small>cm</small></div><div class="l">11月8日</div></div>
+          </div>
+        </div>
+        <div class="muted" style="margin:14px 4px 0">正式版会为每个动作单独出趋势图；当前图表以俯卧撑为主项。</div>
+        <div style="height:10px"></div>
+      </div>
+
+      <!-- ===== 动作库 ===== -->
+      <div class="page" id="page-library">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
+          <div class="badge">徒手 · 无器械为主</div>
+        </div>
+        <div class="lib-sub" id="libSub">53 个动作 · 已设为常用 5 项</div>
+        <div class="searchbox">
+          <svg width="15" height="15" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
+          <input id="libSearch" type="search" placeholder="搜动作名 / 英文名 / 肌群" oninput="renderLibrary()">
+        </div>
+        <div class="filters" id="catFilters"></div>
+        <div class="filters" id="lvFilters"></div>
+        <div class="legend"><span class="ub rep">次</span> 按次数 <span class="ub sec">秒 / 分钟</span> 按时间 <span>· 开关 = 加入我的常用</span></div>
+        <div id="libList"></div>
+        <div style="height:70px"></div>
+      </div>
+
+      <!-- ===== 我的 ===== -->
+      <div class="page" id="page-profile">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
+          <div class="badge">v0.3</div>
+        </div>
+        <div class="stat3" id="profileStats"></div>
+
+        <div class="sec-title">数据管理<span>本地保存 · 不上传</span></div>
+        <div class="settings">
+          <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openImport()">导入数据<span class="r">支持备份文件 / 文本粘贴 <span class="ar">›</span></span></div>
+        </div>
+
+        <div class="sec-title">外观</div>
+        <div class="theme-seg">
+          <button id="themeLight" class="on" onclick="setTheme('light')"><span class="sw l"></span>浅色</button>
+          <button id="themeDark" onclick="setTheme('dark')"><span class="sw d"></span>深色</button>
+        </div>
+
+        <div class="sec-title">关于</div>
+        <div class="about">
+          <div class="app-ic">俯</div>
+          <div class="app-nm">俯卧撑日记</div>
+          <div class="app-vr">v0.3 · 界面原型</div>
+          <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。53 个动作按五大动作模式整理，可自由设为常用。数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
+          <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
+          <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
+          <div class="about-row"><span class="k">数据</span><span class="v">仅本机 · 离线可用</span></div>
+        </div>
+        <div class="foot-note2">俯卧撑日记 · 为每天多一点坚持而做<br>数据不会上传，换设备请用导出 / 导入</div>
+        <div style="height:10px"></div>
+      </div>
+
+    </div>
+
+    <div class="lib-foot" id="libFoot" style="display:none">
+      <div class="cnt">已设为常用 <b id="favCount">5</b> 项</div>
+      <button onclick="switchTab('record');toast('常用动作已同步到记录页')">完成</button>
+    </div>
+
+    <div class="tabbar">
+      <button class="tab on" id="tab-record" onclick="switchTab('record')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>记录</button>
+      <button class="tab" id="tab-history" onclick="switchTab('history')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>历史</button>
+      <button class="tab" id="tab-stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
+      <button class="tab" id="tab-library" onclick="switchTab('library')"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>动作</button>
+      <button class="tab" id="tab-profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
+    </div>
+
+    <div class="modal" id="importModal">
+      <div class="sheet">
+        <div class="sh-t">导入数据</div>
+        <div class="sh-s">粘贴导出的 JSON 备份，或直接粘贴你原来那种文本：<br>11.08 俯卧撑200 体重55.40 臂围29</div>
+        <textarea id="importText" rows="6" placeholder="在这里粘贴…"></textarea>
+        <div class="sh-btns"><button onclick="closeImport()">取消</button><button class="primary" onclick="doImport()">导入</button></div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+/* ============ 动作库（53 项 · 徒手/自重） ============ */
+const CATS=[
+  {k:"push",n:"上肢推",c:"#FF6A3D"},{k:"pull",n:"上肢拉",c:"#4C7DF0"},
+  {k:"legs",n:"下肢臀腿",c:"#1F9D6B"},{k:"core",n:"核心稳定",c:"#8B5CF6"},
+  {k:"full",n:"全身心肺",c:"#F59E0B"}
+];
+const EX=[
+{id:"wall-pushup",n:"靠墙俯卧撑",en:"Wall Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"墙面",s:"3组 × 15 次",t:"站立推墙，全程身体成一条直线",q:[15,20,30]},
+{id:"incline-pushup",n:"上斜俯卧撑",en:"Incline Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"椅子",s:"3组 × 12 次",t:"手撑高处，支撑面越低难度越高",q:[10,15,20]},
+{id:"knee-pushup",n:"跪姿俯卧撑",en:"Knee Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"无",s:"3组 × 10 次",t:"膝盖到头保持直线，髋部不要弯折",q:[10,15,20],fav:true},
+{id:"negative-pushup",n:"离心俯卧撑",en:"Negative Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 三头",g:"无",s:"3组 × 5 次",t:"用 4–5 秒缓慢下降，膝盖撑回",q:[5,8,10]},
+{id:"pushup",n:"标准俯卧撑",en:"Push-up",c:"push",lv:"进阶",u:"次",m:"胸 / 肩 / 三头 / 核心",g:"无",s:"3组 × 15–20 次",t:"肘部约 45°，身体成直线不塌腰",q:[100,110,150,200],fav:true},
+{id:"wide-pushup",n:"宽距俯卧撑",en:"Wide Push-up",c:"push",lv:"进阶",u:"次",m:"胸肌外侧",g:"无",s:"3组 × 10–15 次",t:"双手 1.5–2 倍肩宽，更侧重胸肌",q:[10,15,20]},
+{id:"close-pushup",n:"窄距俯卧撑",en:"Close-grip Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌",g:"无",s:"3组 × 10–12 次",t:"双手窄于肩，手肘贴着肋骨走",q:[10,15,20]},
+{id:"diamond-pushup",n:"钻石俯卧撑",en:"Diamond Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 胸肌内侧",g:"无",s:"3组 × 8–12 次",t:"拇指食指围成菱形，手腕不适就停",q:[10,15,20],fav:true},
+{id:"decline-pushup",n:"下斜俯卧撑",en:"Decline Push-up",c:"push",lv:"进阶",u:"次",m:"上胸 / 肩前束",g:"椅子",s:"3组 × 10–12 次",t:"双脚垫高，负荷移向上胸和肩",q:[10,15,20]},
+{id:"pike-pushup",n:"折体俯卧撑",en:"Pike Push-up",c:"push",lv:"高阶",u:"次",m:"肩 / 三头",g:"无",s:"3组 × 6–8 次",t:"髋部高抬成倒 V，头向地面下降",q:[6,8,12]},
+{id:"spiderman-pushup",n:"蜘蛛俯卧撑",en:"Spiderman Push-up",c:"push",lv:"高阶",u:"次",m:"胸肩 / 腹斜肌",g:"无",s:"3组 × 8–10 次",t:"下降时一侧膝盖靠向同侧手肘",q:[8,10,12]},
+{id:"archer-pushup",n:"弓箭手俯卧撑",en:"Archer Push-up",c:"push",lv:"高阶",u:"次",m:"单侧胸肩 / 三头",g:"无",s:"3组 × 5–8 次/侧",t:"一臂伸直，另一臂承担主要推撑",q:[5,8,10]},
+{id:"clap-pushup",n:"击掌俯卧撑",en:"Clap Push-up",c:"push",lv:"高阶",u:"次",m:"爆发力 / 胸肩",g:"无",s:"3组 × 3–6 次",t:"爆发推起击掌，小组数、不做到力竭",q:[3,5,8]},
+{id:"bench-dip",n:"凳上臂屈伸",en:"Bench Dip",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 下胸",g:"椅子",s:"3组 × 10–15 次",t:"背对稳固椅子，肩下沉、肘屈到 90°",q:[10,15,20]},
+{id:"superman",n:"俯卧超人",en:"Superman",c:"pull",lv:"入门",u:"次",m:"竖脊肌 / 臀 / 后肩",g:"无",s:"3组 × 12 次",t:"四肢同时离地，顶端停顿 2 秒",q:[10,12,15]},
+{id:"superman-hold",n:"超人保持",en:"Superman Hold",c:"pull",lv:"入门",u:"秒",m:"竖脊肌 / 后链",g:"无",s:"3组 × 20–30 秒",t:"保持俯卧伸展，正常呼吸不憋气",q:[20,30,45]},
+{id:"doorframe-row",n:"门框划船",en:"Doorframe Row",c:"pull",lv:"入门",u:"次",m:"背阔肌 / 二头",g:"门框",s:"3组 × 15 次",t:"抓稳门框后仰，胸口拉向门框",q:[10,15,20]},
+{id:"inverted-row",n:"反向划船",en:"Inverted Row",c:"pull",lv:"进阶",u:"次",m:"上背 / 二头",g:"桌子",s:"3组 × 10–12 次",t:"身体绷直，用背部把胸口拉向桌沿",q:[10,12,15]},
+{id:"pullup",n:"引体向上",en:"Pull-up",c:"pull",lv:"高阶",u:"次",m:"背阔肌 / 二头 / 握力",g:"单杠",s:"3组 × 5–8 次",t:"正握，背部发力、缓慢下放不借力",q:[5,8,10]},
+{id:"chinup",n:"反手引体",en:"Chin-up",c:"pull",lv:"高阶",u:"次",m:"二头 / 背阔肌",g:"单杠",s:"3组 × 5–8 次",t:"反握略窄于肩，通常比正握更易上手",q:[5,8,10]},
+{id:"squat",n:"自重深蹲",en:"Bodyweight Squat",c:"legs",lv:"入门",u:"次",m:"股四头 / 臀 / 核心",g:"无",s:"3组 × 15–20 次",t:"向后坐、膝盖朝脚尖方向不内扣",q:[15,20,30]},
+{id:"glute-bridge",n:"臀桥",en:"Glute Bridge",c:"legs",lv:"入门",u:"分钟",m:"臀大肌 / 腘绳肌",g:"无",s:"3组 × 1 分钟",t:"脚跟发力顶髋，肩髋膝成直线静态保持",q:[0.5,1,2,3],fav:true},
+{id:"single-leg-bridge",n:"单腿臀桥",en:"Single-leg Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀大肌 / 骨盆稳定",g:"无",s:"3组 × 8–10 次/侧",t:"一腿伸直悬空，骨盆保持不倾斜",q:[8,10,12]},
+{id:"marching-bridge",n:"行进臀桥",en:"Marching Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀 / 核心抗旋",g:"无",s:"3组 × 10 次",t:"顶峰交替抬脚，髋部始终不下沉",q:[10,12,16]},
+{id:"bridge-hold",n:"臀桥保持",en:"Glute Bridge Hold",c:"legs",lv:"入门",u:"分钟",m:"臀大肌 / 后链",g:"无",s:"3组 × 1 分钟",t:"顶髋静止保持，夹紧臀部不塌腰",q:[0.5,1,2]},
+{id:"reverse-lunge",n:"反向弓步",en:"Reverse Lunge",c:"legs",lv:"入门",u:"次",m:"臀 / 股四头 / 平衡",g:"无",s:"3组 × 10–12 次/侧",t:"向后跨步，双膝成 90°，前脚跟蹬回",q:[10,12,15]},
+{id:"side-lunge",n:"侧弓步",en:"Side Lunge",c:"legs",lv:"入门",u:"次",m:"大腿内侧 / 臀",g:"无",s:"3组 × 10 次/侧",t:"向侧面大步下蹲，胸口保持抬起",q:[10,12,15]},
+{id:"bulgarian-squat",n:"保加利亚分腿蹲",en:"Bulgarian Split Squat",c:"legs",lv:"进阶",u:"次",m:"臀 / 股四头 / 平衡",g:"椅子",s:"3组 × 8–10 次/侧",t:"后脚垫高，重心压在前腿",q:[8,10,12]},
+{id:"wall-sit",n:"靠墙静蹲",en:"Wall Sit",c:"legs",lv:"入门",u:"秒",m:"股四头 / 耐力",g:"墙面",s:"3组 × 30–60 秒",t:"背贴墙、大腿平行地面，膝不超脚尖",q:[30,45,60]},
+{id:"jump-squat",n:"深蹲跳",en:"Jump Squat",c:"legs",lv:"高阶",u:"次",m:"爆发力 / 臀腿",g:"无",s:"3组 × 8–12 次",t:"落地缓冲再下蹲，膝盖不要内扣",q:[8,10,15]},
+{id:"calf-raise",n:"站姿提踵",en:"Calf Raise",c:"legs",lv:"入门",u:"次",m:"小腿三头肌",g:"无",s:"3组 × 15–20 次",t:"顶端停 1 秒，缓慢下落",q:[15,20,30]},
+{id:"lateral-leg-raise",n:"侧卧抬腿",en:"Lateral Leg Raise",c:"legs",lv:"入门",u:"次",m:"臀中肌 / 髋外侧",g:"无",s:"3组 × 15 次/侧",t:"侧躺腿伸直上抬约 45°，慢落",q:[12,15,20]},
+{id:"plank",n:"平板支撑",en:"Forearm Plank",c:"core",lv:"入门",u:"秒",m:"腹横肌 / 核心 / 肩",g:"无",s:"3组 × 30–60 秒",t:"肘在肩正下方，收腹夹臀不塌腰",q:[30,60,90],fav:true},
+{id:"knee-plank",n:"跪姿平板",en:"Knee Plank",c:"core",lv:"入门",u:"秒",m:"核心（退阶）",g:"无",s:"3组 × 20–30 秒",t:"膝盖着地缩短力臂，髋部不弯折",q:[20,30,45]},
+{id:"high-plank",n:"直臂平板",en:"High Plank",c:"core",lv:"入门",u:"秒",m:"核心 / 肩 / 三头",g:"无",s:"3组 × 30–60 秒",t:"手掌撑地，肩在腕正上方",q:[30,45,60]},
+{id:"side-plank",n:"侧平板支撑",en:"Side Plank",c:"core",lv:"进阶",u:"秒",m:"腹斜肌 / 侧链",g:"无",s:"3组 × 30–60 秒/侧",t:"身体成一条直线，髋部主动上顶",q:[30,45,60]},
+{id:"plank-tap",n:"平板触肩",en:"Plank Shoulder Taps",c:"core",lv:"进阶",u:"次",m:"核心抗旋转",g:"无",s:"3组 × 20 次",t:"交替触摸对侧肩，髋部尽量不动",q:[16,20,30]},
+{id:"plank-jack",n:"平板开合",en:"Plank Jacks",c:"core",lv:"进阶",u:"次",m:"核心 / 心肺",g:"无",s:"3组 × 20 次",t:"平板姿势双脚开合跳，核心收紧",q:[16,20,30]},
+{id:"reverse-plank",n:"反向平板",en:"Reverse Plank",c:"core",lv:"进阶",u:"秒",m:"后链 / 肩后侧",g:"无",s:"3组 × 20–30 秒",t:"仰面撑起，髋部推高不塌陷",q:[20,30,45]},
+{id:"dead-bug",n:"死虫式",en:"Dead Bug",c:"core",lv:"入门",u:"次",m:"深层核心 / 腰椎稳定",g:"无",s:"3组 × 8–10 次/侧",t:"对侧手脚缓慢伸展，腰背始终贴地",q:[8,10,12]},
+{id:"bird-dog",n:"鸟狗式",en:"Bird Dog",c:"core",lv:"入门",u:"次",m:"核心 / 多裂肌 / 臀",g:"无",s:"3组 × 8–10 次/侧",t:"四点跪姿伸对侧手脚，骨盆不晃",q:[8,10,12]},
+{id:"crunch",n:"卷腹",en:"Crunch",c:"core",lv:"入门",u:"次",m:"腹直肌上部",g:"无",s:"3组 × 15 次",t:"肩胛微离地即可，别用脖子发力",q:[15,20,30]},
+{id:"bicycle-crunch",n:"自行车卷腹",en:"Bicycle Crunch",c:"core",lv:"入门",u:"次",m:"腹斜肌 / 腹直肌",g:"无",s:"3组 × 20 次",t:"肘碰对侧膝，控制速度不甩头",q:[20,30,40]},
+{id:"lying-leg-raise",n:"仰卧举腿",en:"Lying Leg Raise",c:"core",lv:"入门",u:"次",m:"下腹 / 髋屈肌",g:"无",s:"3组 × 12–15 次",t:"腰背贴地，双腿缓慢下放不触地",q:[12,15,20]},
+{id:"russian-twist",n:"俄罗斯转体",en:"Russian Twist",c:"core",lv:"入门",u:"次",m:"腹斜肌",g:"无",s:"3组 × 20 次",t:"坐姿后倾，转体时保持脊柱挺直",q:[20,30,40]},
+{id:"hollow-hold",n:"空心支撑",en:"Hollow Body Hold",c:"core",lv:"高阶",u:"秒",m:"全核心 / 体操基础",g:"无",s:"3组 × 20–30 秒",t:"下背压紧地面，四肢离地保持",q:[20,30,45]},
+{id:"mountain-climber",n:"登山者",en:"Mountain Climber",c:"full",lv:"入门",u:"次",m:"核心 / 肩 / 心肺",g:"无",s:"3组 × 20 次",t:"平板姿势交替提膝，髋部保持稳定",q:[20,30,40]},
+{id:"jumping-jacks",n:"开合跳",en:"Jumping Jacks",c:"full",lv:"入门",u:"次",m:"全身热身 / 心肺",g:"无",s:"3组 × 30 次",t:"轻量落地，常用作热身",q:[30,50,100]},
+{id:"high-knees",n:"高抬腿",en:"High Knees",c:"full",lv:"入门",u:"秒",m:"心肺 / 髋屈肌",g:"无",s:"3组 × 30 秒",t:"原地跑，膝盖抬到髋部高度",q:[30,45,60]},
+{id:"burpee",n:"波比跳",en:"Burpee",c:"full",lv:"进阶",u:"次",m:"全身 / 心肺",g:"无",s:"3组 × 8–15 次",t:"下蹲→平板→俯卧撑→收腿跳起",q:[8,10,15]},
+{id:"step-burpee",n:"简化波比",en:"Step-back Burpee",c:"full",lv:"入门",u:"次",m:"全身 / 心肺（退阶）",g:"无",s:"3组 × 10 次",t:"用走步代替跳跃，去掉俯卧撑",q:[10,15,20]},
+{id:"bear-crawl",n:"熊爬",en:"Bear Crawl",c:"full",lv:"入门",u:"秒",m:"全身协调 / 肩髋",g:"无",s:"3组 × 30 秒",t:"膝离地几厘米，对侧手脚交替前行",q:[20,30,45]},
+{id:"skater-hops",n:"滑冰跳",en:"Skater Hops",c:"full",lv:"入门",u:"次",m:"臀腿 / 侧向爆发",g:"无",s:"3组 × 20 次",t:"左右横向跳跃，落地轻、单脚稳定",q:[16,20,30]}
+];
+const exById=id=>EX.find(x=>x.id===id);
+const catOf=k=>CATS.find(c=>c.k===k);
+const lvCls={"入门":"b","进阶":"i","高阶":"a"};
+const isTime=u=>u==="秒"||u==="分钟";
+
+/* ============ 记录数据 ============ */
+const SEED=[
+  {d:"2026-10-07",p:110},{d:"2026-10-08",p:110},{d:"2026-10-09",p:60},
+  {d:"2026-10-24",p:100,w:53.75},{d:"2026-10-25",p:100,w:54.20},
+  {d:"2026-10-27",p:100,w:54.75},{d:"2026-10-28",p:50,w:54.45,a:28},
+  {d:"2026-10-29",p:120,w:55.0},{d:"2026-10-30",p:150,w:55.4},
+  {d:"2026-10-31",p:200,w:55.2},
+  {d:"2026-11-01",p:135,w:55.25},{d:"2026-11-02",p:100},
+  {d:"2026-11-03",p:110},{d:"2026-11-04",p:100,w:54.85},
+  {d:"2026-11-05",p:110,w:55.25},{d:"2026-11-06",p:110},
+  {d:"2026-11-07",p:160,w:55.45},{d:"2026-11-08",p:200,w:55.40,a:29},
+  {d:"2026-11-09",p:40}
+];
+const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03";
+let DATA,FAVS,THEME;
+try{DATA=JSON.parse(localStorage.getItem(KEY))||SEED.map(x=>({...x}));}catch(e){DATA=SEED.map(x=>({...x}));}
+try{FAVS=JSON.parse(localStorage.getItem(FKEY))||EX.filter(x=>x.fav).map(x=>x.id);}catch(e){FAVS=EX.filter(x=>x.fav).map(x=>x.id);}
+try{THEME=localStorage.getItem(TKEY)||"light";}catch(e){THEME="light";}
+const TODAY="2026-11-09";
+const WD=["周日","周一","周二","周三","周四","周五","周六"];
+const byDate=d=>DATA.find(r=>r.d===d);
+const parseD=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);};
+const fmtMD=s=>{const x=parseD(s);return (x.getMonth()+1)+"月"+x.getDate()+"日";};
+const fmtSlash=s=>{const x=parseD(s);return (x.getMonth()+1)+"/"+x.getDate();};
+const wdOf=s=>WD[parseD(s).getDay()];
+let curDate=TODAY,curMonth=[2026,11],selDate=TODAY;
+let todayRows=[{id:"pushup",v:40}];
+let fCat="all",fLv="all";
+
+/* ============ 通用 ============ */
+function saveAll(){
+  try{localStorage.setItem(KEY,JSON.stringify(DATA));localStorage.setItem(FKEY,JSON.stringify(FAVS));localStorage.setItem(TKEY,THEME);}catch(e){}
+}
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);}
+function switchTab(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  document.getElementById("page-"+name).classList.add("on");
+  document.getElementById("tab-"+name).classList.add("on");
+  document.getElementById("libFoot").style.display=name==="library"?"flex":"none";
+  document.getElementById("screen").scrollTop=0;
+  if(name==="history")renderHistory();
+  if(name==="stats")renderStats();
+  if(name==="library")renderLibrary();
+  if(name==="record")renderToday();
+  if(name==="profile")renderProfile();
+}
+function renderAll(){fillRecord();renderStats();renderHistory();renderLibrary();renderProfile();}
+
+/* ============ 记录页 ============ */
+function firstOf(key){return [...DATA].filter(x=>x[key]!=null).sort((a,b)=>a.d.localeCompare(b.d))[0];}
+function lastBefore(key,date){return [...DATA].filter(x=>x.d<date&&x[key]!=null).sort((a,b)=>b.d.localeCompare(a.d))[0];}
+function metricTrend(id,val,key,unit,digits){
+  const t=document.getElementById(id),first=firstOf(key);
+  if(val!=null&&first){const diff=val-first[key];
+    if(Math.abs(diff)<0.001){t.className="trend flat";t.textContent="与首次持平";}
+    else{t.className="trend";t.textContent=(diff>0?"↗ 较首次 +":"↘ 较首次 ")+diff.toFixed(digits)+" "+unit;}
+  }else{const last=lastBefore(key,curDate);t.className="trend flat";t.textContent=last?("今天没测 · 上次 "+last[key].toFixed(digits)+" "+unit):"选填 · 今天没测";}
+}
+function shiftDate(delta){
+  const x=parseD(curDate);x.setDate(x.getDate()+delta);
+  curDate=x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  fillRecord();
+}
+function fillRecord(){
+  const r=byDate(curDate),isToday=curDate===TODAY;
+  document.getElementById("recEyebrow").textContent=fmtMD(curDate)+" "+wdOf(curDate);
+  document.getElementById("dateLabel").innerHTML=(isToday?"今天":"补录")+" · "+fmtMD(curDate)+"<small>"+(r?"已有记录，可直接修改":"还没有记录，填完保存即可")+"</small>";
+  if(r)todayRows=(r.items&&r.items.length)?r.items.map(i=>({id:i.id,v:i.v})):[{id:"pushup",v:r.p}];
+  else todayRows=FAVS.slice(0,3).map(id=>({id:id,v:null}));
+  const wEl=document.getElementById("weightInput"),aEl=document.getElementById("armInput");
+  wEl.placeholder="—";aEl.placeholder="—";
+  wEl.value=(r&&r.w!=null)?r.w.toFixed(2):"";aEl.value=(r&&r.a!=null)?r.a:"";
+  document.getElementById("noteInput").value=(r&&r.note)?r.note:"";
+  document.getElementById("saveBtn").textContent=r?(isToday?"更新今日记录":"更新这条记录"):"保存记录";
+  metricTrend("weightTrend",(r&&r.w!=null)?r.w:null,"w","kg",2);
+  metricTrend("armTrend",(r&&r.a!=null)?r.a:null,"a","cm",1);
+  renderToday();
+}
+function stepCfg(u){
+  if(u==="分钟")return [{l:"−1",v:-1},{l:"−0.5",v:-0.5},{l:"+0.5",v:0.5},{l:"+1",v:1}];
+  return [{l:"−10",v:-10},{l:"−1",v:-1},{l:"+1",v:1},{l:"+10",v:10}];
+}
+function sumText(){
+  const filled=todayRows.filter(x=>x.v!=null&&x.v>0);
+  let reps=0,secs=0,mins=0;
+  filled.forEach(x=>{const u=(exById(x.id)||{}).u;if(u==="次")reps+=Number(x.v);else if(u==="秒")secs+=Number(x.v);else if(u==="分钟")mins+=Number(x.v);});
+  const parts=[];if(reps)parts.push(reps+" 次");if(secs)parts.push(secs+" 秒");if(mins)parts.push((Math.round(mins*10)/10)+" 分钟");
+  return "已填 "+filled.length+" 项"+(parts.length?" · "+parts.join(" · "):"");
+}
+function renderToday(){
+  const box=document.getElementById("todayRows");
+  box.innerHTML=todayRows.map((row,i)=>{
+    const e=exById(row.id)||exById("pushup"),col=catOf(e.c).c;
+    const steps=stepCfg(e.u).map(s=>'<button class="'+(s.v>0?"plus":"")+'" onclick="stepRow('+i+','+s.v+')">'+s.l+'</button>').join("");
+    return '<div class="trow">'+
+      '<div class="th"><span class="cdot" style="background:'+col+'"></span><span class="tn">'+e.n+'</span>'+
+      '<span class="te">'+e.en+' · '+e.u+'</span><button class="tx" onclick="removeRow('+i+')">×</button></div>'+
+      '<div class="tv"><input type="number" step="any" inputmode="decimal" value="'+(row.v==null?"":row.v)+'" placeholder="—" oninput="setRow('+i+',this.value)"><span class="u">'+e.u+'</span></div>'+
+      '<div class="steps">'+steps+'</div>'+
+      '<div class="qchips"><span class="ql">快捷</span>'+e.q.map(q=>'<button class="qchip" onclick="setRowQ('+i+','+q+')">'+q+'</button>').join("")+'</div></div>';
+  }).join("");
+  document.getElementById("todayCount").textContent=todayRows.length+" 个项目";
+  document.getElementById("todaySum").textContent=sumText();
+  const favList=FAVS.filter(id=>!todayRows.some(r=>r.id===id)).slice(0,4);
+  document.getElementById("quickAdd").innerHTML=favList.map(id=>'<button class="achip" onclick="addRow(\''+id+'\')">＋ '+exById(id).n+'</button>').join("")+
+    '<button class="achip more" onclick="switchTab(\'library\')">全部 53 个动作 →</button>';
+}
+function setRow(i,v){todayRows[i].v=(v===""?null:Number(v));document.getElementById("todaySum").textContent=sumText();}
+function setRowQ(i,q){todayRows[i].v=q;renderToday();}
+function stepRow(i,d){
+  const e=exById(todayRows[i].id)||{};
+  let v=(todayRows[i].v||0)+d;if(v<0)v=0;
+  v=(e.u==="分钟")?Math.round(v*10)/10:Math.round(v);
+  todayRows[i].v=v;renderToday();
+}
+function addRow(id){if(todayRows.some(r=>r.id===id)){toast("这个动作已经在今日里了");return;}todayRows.push({id:id,v:null});renderToday();toast("已加入今日训练："+(exById(id)||{}).n);}
+function removeRow(i){todayRows.splice(i,1);renderToday();}
+function saveRecord(){
+  const items=todayRows.filter(x=>x.v!=null&&x.v>0).map(x=>({id:x.id,v:Number(x.v),u:(exById(x.id)||{}).u}));
+  if(!items.length){toast("至少填一个动作的数值");return;}
+  const w=parseFloat(document.getElementById("weightInput").value),a=parseFloat(document.getElementById("armInput").value);
+  const note=document.getElementById("noteInput").value.trim();
+  const push=items.find(x=>x.id==="pushup");
+  const pushSum=items.filter(x=>(exById(x.id)||{}).c==="push").reduce((s,x)=>s+x.v,0);
+  const obj={d:curDate,p:push?push.v:pushSum,items:items};
+  if(!isNaN(w))obj.w=w;if(!isNaN(a))obj.a=a;if(note)obj.note=note;
+  const i=DATA.findIndex(x=>x.d===curDate);
+  if(i>=0)DATA[i]=obj;else DATA.push(obj);
+  DATA.sort((x,y)=>x.d.localeCompare(y.d));
+  saveAll();toast("已保存 · "+fmtMD(curDate)+" "+items.length+" 个动作");
+}
+
+/* ============ 历史页 ============ */
+function shiftMonth(delta){let[y,m]=curMonth;m+=delta;if(m<1){m=12;y--;}if(m>12){m=1;y++;}curMonth=[y,m];renderHistory();}
+function renderHistory(){
+  const[y,m]=curMonth;
+  document.getElementById("monthLabel").textContent=y+"年 "+m+"月";
+  document.getElementById("countBadge").textContent=DATA.length+" 条记录";
+  const first=new Date(y,m-1,1),days=new Date(y,m,0).getDate(),lead=(first.getDay()+6)%7;
+  let html="";for(let i=0;i<lead;i++)html+='<div class="cell empty"></div>';
+  for(let d=1;d<=days;d++){
+    const ds=y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"),r=byDate(ds);
+    const cls=["cell",r?"has":"",ds===TODAY?"today":"",ds===selDate?"sel":"",ds>TODAY?"future":""].join(" ");
+    html+='<div class="'+cls+'" onclick="pickDate(\''+ds+'\')"><span class="dn">'+d+'</span>'+(r?'<span class="cv">'+r.p+'</span>':'')+'</div>';
+  }
+  document.getElementById("calendar").innerHTML=html;
+  const monthRows=DATA.filter(r=>r.d.startsWith(y+"-"+String(m).padStart(2,"0")));
+  const total=monthRows.reduce((s,r)=>s+r.p,0);
+  document.getElementById("monthSummary").innerHTML=
+    '<div class="it"><div class="v">'+monthRows.length+'</div><div class="k">训练天数</div></div>'+
+    '<div class="it"><div class="v">'+total+'</div><div class="k">本月累计（个）</div></div>'+
+    '<div class="it"><div class="v">'+(monthRows.length?Math.round(total/monthRows.length):0)+'</div><div class="k">日均（个）</div></div>';
+  renderDayDetail();
+  const list=[...monthRows].sort((a,b)=>b.d.localeCompare(a.d));
+  document.getElementById("recordList").innerHTML=list.length?list.map(r=>{
+    const tags=[];
+    if(r.w!=null)tags.push('<span class="tag">'+r.w.toFixed(2)+' kg</span>');
+    if(r.a!=null)tags.push('<span class="tag">臂围 '+r.a+' cm</span>');
+    const extra=(r.items&&r.items.length>1)?'<span class="tag">共 '+r.items.length+' 个动作</span>':"";
+    if(!tags.length&&!extra)tags.push('<span class="tag" style="background:transparent;color:var(--sub2)">仅俯卧撑</span>');
+    return '<div class="row" onclick="editFrom(\''+r.d+'\')"><div class="dt"><div class="dd">'+fmtSlash(r.d)+'</div><div class="dw">'+wdOf(r.d)+'</div></div>'+
+      '<div class="pv">'+r.p+'<small>个</small></div><div class="tags">'+extra+tags.join("")+'</div><div class="arrow">›</div></div>';
+  }).join(""):'<div class="muted" style="text-align:center;padding:24px">这个月还没有记录</div>';
+}
+function pickDate(ds){selDate=ds;renderHistory();document.getElementById("dayDetail").scrollIntoView({behavior:"smooth",block:"nearest"});}
+function renderDayDetail(){
+  const r=byDate(selDate),box=document.getElementById("dayDetail");
+  if(!r){box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><span>无记录</span></div><div style="font-size:12.5px;color:#9BA0A8;line-height:1.6">这天休息了。想补录的话，点下面的按钮。</div><div style="margin-top:12px"><button class="edit" onclick="editFrom(\''+selDate+'\')">＋ 补录这天</button></div>';return;}
+  const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"次"}];
+  let cards=items.slice(0,4).map(i=>{const e=exById(i.id)||{n:"俯卧撑"};return '<div class="di"><div class="k">'+e.n+'</div><div class="v">'+i.v+'<small>'+i.u+'</small></div></div>';}).join("");
+  if(r.w!=null)cards+='<div class="di"><div class="k">体重</div><div class="v">'+r.w.toFixed(2)+'<small>kg</small></div></div>';
+  if(r.a!=null)cards+='<div class="di"><div class="k">臂围</div><div class="v">'+r.a+'<small>cm</small></div></div>';
+  box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><button class="edit" onclick="editFrom(\''+selDate+'\')">编辑</button></div><div class="dg">'+cards+'</div>'+(r.note?'<div style="font-size:11.5px;color:#9BA0A8;margin-top:12px">备注：'+r.note+'</div>':'');
+}
+function editFrom(ds){curDate=ds;fillRecord();switchTab("record");toast("已载入 "+fmtMD(ds));}
+
+/* ============ 数据页（本轮未改动，仅网格线变量化） ============ */
+function renderStats(){
+  const total=DATA.reduce((s,r)=>s+r.p,0),avg=Math.round(total/DATA.length),best=Math.max(...DATA.map(r=>r.p));
+  const set=new Set(DATA.map(r=>r.d));let cur=parseD(TODAY),streak=0;
+  const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  while(set.has(key(cur))){streak++;cur.setDate(cur.getDate()-1);}
+  const kpi=(k,v,u,s,hl)=>'<div class="kpi'+(hl?" hl":"")+'"><div class="k">'+k+'</div><div class="v">'+v.toLocaleString()+'<small>'+u+'</small></div><div class="s">'+s+'</div></div>';
+  document.getElementById("kpis").innerHTML=kpi("累计俯卧撑",total,"个",DATA.length+" 天打卡",true)+kpi("日均",avg,"个","最高单日 "+best,false)+kpi("单日最高",best,"个","10/31 与 11/08",false)+kpi("连续打卡",streak,"天","10/27 起",false);
+  document.getElementById("streakText").textContent="连续 "+streak+" 天";
+  const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d)),W=342,H=132,maxV=Math.max(...rows.map(r=>r.p),200);
+  let bars="";rows.forEach((r,i)=>{const h=Math.max(5,Math.round(r.p/maxV*104)),x=i*(W/rows.length)+2,bw=W/rows.length-5,hot=r.p>=maxV;
+    bars+='<rect x="'+x.toFixed(1)+'" y="'+(112-h)+'" width="'+bw.toFixed(1)+'" height="'+h+'" rx="3" fill="'+(hot?"#FF6A3D":"#FFC4AC")+'"/>';
+    if(hot)bars+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(106-h)+'" text-anchor="middle" font-size="9" font-weight="700" fill="#FF6A3D">'+r.p+'</text>';});
+  document.getElementById("barChart").innerHTML='<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><line class="gridline" x1="0" y1="112" x2="'+W+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W+'" y2="60" stroke-dasharray="3 4"/>'+bars+'</svg>';
+  const wr=rows.filter(r=>r.w!=null),min=53.4,max=55.7,W2=342,H2=126;
+  const pts=wr.map((r,i)=>[10+i*((W2-20)/(wr.length-1)),112-((r.w-min)/(max-min))*92]);
+  const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const area=line+" L"+pts[pts.length-1][0].toFixed(1)+" 112 L"+pts[0][0].toFixed(1)+" 112 Z";
+  let dots="";pts.forEach((p,i)=>{dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===pts.length-1?4:2.4)+'" fill="#FF6A3D" stroke="#fff" stroke-width="'+(i===pts.length-1?2:0)+'"/>';});
+  document.getElementById("lineChart").innerHTML='<svg class="chart" viewBox="0 0 '+W2+' '+H2+'" preserveAspectRatio="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6A3D" stop-opacity=".20"/><stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/></linearGradient></defs><line class="gridline" x1="0" y1="112" x2="'+W2+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W2+'" y2="60" stroke-dasharray="3 4"/><path d="'+area+'" fill="url(#wg)"/><path d="'+line+'" fill="none" stroke="#FF6A3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'<text x="'+(pts[pts.length-1][0]-4).toFixed(1)+'" y="'+(pts[pts.length-1][1]-12).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#FF6A3D">55.40</text></svg>';
+}
+
+/* ============ 动作库 ============ */
+function renderFilters(){
+  document.getElementById("catFilters").innerHTML='<button class="fchip'+(fCat==="all"?" on":"")+'" onclick="setCat(\'all\')">全部 '+EX.length+'</button>'+
+    CATS.map(c=>'<button class="fchip'+(fCat===c.k?" on":"")+'" onclick="setCat(\''+c.k+'\')">'+c.n+' '+EX.filter(x=>x.c===c.k).length+'</button>').join("");
+  document.getElementById("lvFilters").innerHTML=["all","入门","进阶","高阶"].map(l=>'<button class="fchip'+(fLv===l?" on":"")+'" onclick="setLv(\''+l+'\')">'+(l==="all"?"全部难度":l)+'</button>').join("");
+}
+function setCat(k){fCat=k;renderFilters();renderLibrary();const el=document.querySelector("#catFilters .fchip.on");if(el)el.scrollIntoView({block:"nearest",inline:"center"});}
+function setLv(l){fLv=l;renderFilters();renderLibrary();}
+function toggleFav(id){const i=FAVS.indexOf(id);if(i>=0)FAVS.splice(i,1);else FAVS.push(id);saveAll();renderLibrary();renderToday();renderProfile();}
+function renderLibrary(){
+  renderFilters();
+  const q=(document.getElementById("libSearch").value||"").trim().toLowerCase();
+  const list=EX.filter(e=>{
+    if(fCat!=="all"&&e.c!==fCat)return false;
+    if(fLv!=="all"&&e.lv!==fLv)return false;
+    if(q){const hay=(e.n+" "+e.en+" "+e.m+" "+catOf(e.c).n+" "+e.g).toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  });
+  document.getElementById("favCount").textContent=FAVS.length;
+  document.getElementById("libSub").textContent=EX.length+" 个动作 · 已设为常用 "+FAVS.length+" 项"+(list.length!==EX.length?" · 当前筛出 "+list.length+" 项":"");
+  const box=document.getElementById("libList");
+  if(!list.length){box.innerHTML='<div class="muted" style="text-align:center;padding:40px 10px">没找到匹配的动作，换个关键词试试</div>';return;}
+  let html="";
+  CATS.forEach(cat=>{
+    const sub=list.filter(e=>e.c===cat.k);if(!sub.length)return;
+    html+='<div class="grp-title"><span class="gdot" style="background:'+cat.c+'"></span>'+cat.n+'<span class="gn">'+sub.length+' 个动作</span></div>';
+    sub.forEach(e=>{
+      const isFav=FAVS.includes(e.id),timeU=isTime(e.u);
+      html+='<div class="ex"><span class="bar" style="background:'+cat.c+'"></span>'+
+        '<div class="l1"><div class="names"><div class="cn">'+e.n+'</div><div class="en">'+e.en+'</div></div>'+
+        '<span class="unit '+(timeU?"sec":"rep")+'">'+e.u+'</span></div>'+
+        '<div class="meta"><span class="lvtag '+lvCls[e.lv]+'">'+e.lv+'</span><span class="mtag">'+e.m+'</span>'+
+        '<span class="gtag '+(e.g==="无"?"none":"")+'">'+(e.g==="无"?"纯徒手":"需"+e.g)+'</span></div>'+
+        '<div class="tip">'+e.t+'</div>'+
+        '<div class="bot"><span class="sug">建议 '+e.s+'</span><span style="display:flex;align-items:center"><span class="tgl-l">常用</span>'+
+        '<span class="tgl'+(isFav?" on":"")+'" onclick="toggleFav(\''+e.id+'\')"></span></span></div></div>';
+    });
+  });
+  box.innerHTML=html;
+}
+
+/* ============ 我的页 ============ */
+function renderProfile(){
+  document.getElementById("profileStats").innerHTML=
+    '<div class="it"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
+    '<div class="it"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
+    '<div class="it"><div class="v">'+FAVS.length+'</div><div class="k">常用动作</div></div>';
+  document.getElementById("themeLight").className=THEME==="light"?"on":"";
+  document.getElementById("themeDark").className=THEME==="dark"?"on":"";
+}
+function setTheme(t){
+  THEME=t;document.body.classList.toggle("dark",t==="dark");saveAll();renderProfile();
+  toast(t==="dark"?"已切换到深色模式":"已切换到浅色模式");
+}
+function download(name,text,type){
+  const blob=new Blob([text],{type:type}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+function exportJSON(){
+  const payload={app:"俯卧撑日记",version:"v0.3",exportedAt:new Date().toISOString(),data:DATA,favs:FAVS,theme:THEME};
+  download("俯卧撑日记-备份-"+TODAY+".json",JSON.stringify(payload,null,2),"application/json");
+  toast("已导出 "+DATA.length+" 条记录（JSON）");
+}
+function exportCSV(){
+  const lines=["日期,类型,名称,数值,单位"];
+  DATA.forEach(r=>{
+    const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"次"}];
+    items.forEach(i=>{const e=exById(i.id)||{n:"俯卧撑"};lines.push([r.d,"动作",e.n,i.v,i.u].join(","));});
+    if(r.w!=null)lines.push([r.d,"指标","体重",r.w.toFixed(2),"kg"].join(","));
+    if(r.a!=null)lines.push([r.d,"指标","臂围",r.a,"cm"].join(","));
+    if(r.note)lines.push([r.d,"备注",'"'+r.note.replace(/"/g,'""')+'"',"",""].join(","));
+  });
+  download("俯卧撑日记-"+TODAY+".csv","\ufeff"+lines.join("\n"),"text/csv;charset=utf-8");
+  toast("已导出 CSV 表格");
+}
+function openImport(){document.getElementById("importModal").classList.add("on");}
+function closeImport(){document.getElementById("importModal").classList.remove("on");}
+function parseLegacy(txt){
+  const out=[];
+  txt.split(/\n+/).forEach(line=>{
+    const dm=line.match(/(\d{1,2})\.(\d{1,2})/);if(!dm)return;
+    const m=parseInt(dm[1],10),d=parseInt(dm[2],10);
+    const ds="2026-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    const pm=line.match(/俯卧撑\s*(\d+)/);if(!pm)return;
+    const o={d:ds,p:parseInt(pm[1],10)};
+    const wm=line.match(/体重\s*([\d.]+)/);if(wm)o.w=parseFloat(wm[1]);
+    const am=line.match(/臂围\s*([\d.]+)/);if(am)o.a=parseFloat(am[1]);
+    out.push(o);
+  });
+  return out;
+}
+function doImport(){
+  const txt=document.getElementById("importText").value.trim();
+  if(!txt){toast("先粘贴内容");return;}
+  let rows=[];
+  if(txt.charAt(0)==="{"){
+    try{const j=JSON.parse(txt);rows=j.data||[];if(Array.isArray(j.favs)&&j.favs.length)FAVS=j.favs;if(j.theme)THEME=j.theme;}catch(e){toast("JSON 格式不对");return;}
+  }else rows=parseLegacy(txt);
+  const valid=rows.filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(r.d));
+  if(!valid.length){toast("没解析出记录，检查下格式");return;}
+  valid.forEach(r=>{const i=DATA.findIndex(x=>x.d===r.d);if(i>=0)DATA[i]={...DATA[i],...r};else DATA.push(r);});
+  DATA.sort((a,b)=>a.d.localeCompare(b.d));
+  document.body.classList.toggle("dark",THEME==="dark");
+  saveAll();closeImport();document.getElementById("importText").value="";renderAll();
+  toast("已导入 "+valid.length+" 条记录");
+}
+
+/* ============ 初始化 ============ */
+document.body.classList.toggle("dark",THEME==="dark");
+renderAll();
+</script>
+</body>
+</html>
