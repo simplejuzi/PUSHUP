@@ -12,6 +12,10 @@ on:
       - 'icons/**'
       - 'capacitor.config.json'
       - 'package.json'
+      - 'version.json'
+      - 'native/**'
+      - 'signing/**'
+      - '.github/workflows/build-apk.yml'
 
 permissions:
   contents: write
@@ -24,6 +28,29 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+
+      # 版本唯一来源：version.json；同时校验 index.html 的 APP_VERSION，防止两处漂移
+      - name: 读取版本信息
+        run: |
+          python3 - <<'PY'
+          import json
+          d = json.load(open('version.json', encoding='utf-8'))
+          v = d['version']
+          marker = 'const APP_VERSION="v' + v + '";'
+          if marker not in open('index.html', encoding='utf-8').read():
+              raise SystemExit('version.json 与 index.html 的 APP_VERSION 不一致')
+          with open('version.env', 'w', encoding='utf-8') as f:
+              f.write('APP_VER=' + v + '\n')
+              f.write('APK_NAME=' + d['apk'] + '\n')
+              f.write('REL_TAG=' + d['tag'] + '\n')
+          with open('release-notes.md', 'w', encoding='utf-8') as f:
+              f.write('v' + v + '\n')
+              for x in d['changelog']:
+                  f.write('· ' + x + '\n')
+          print('版本 v' + v + ' / 产物 ' + d['apk'])
+          PY
+          cat version.env >> $GITHUB_ENV
+          cat release-notes.md
 
       - name: 准备 Node 20
         uses: actions/setup-node@v4
@@ -83,6 +110,41 @@ jobs:
           echo "已注册的 Capacitor 插件："
           find android -name "capacitor.plugins.json" -exec cat {} \; 2>/dev/null || true
 
+      # v1.1：导出走系统分享面板、更新走 App 内下载安装，需要一点原生能力
+      - name: 注入原生能力（导出分享 / App 内安装）
+        run: |
+          python3 - <<'PY'
+          import glob, os
+          from pathlib import Path
+          mains = glob.glob('android/app/src/main/java/**/MainActivity.java', recursive=True)
+          if not mains:
+              raise SystemExit('找不到 MainActivity.java')
+          main = Path(mains[0])
+          pkg = str(main.parent).split('java' + os.sep)[-1].replace(os.sep, '.')
+          if pkg.startswith('.'):
+              pkg = pkg[1:]
+          header = 'package com.simplejuzi.pushup;'
+          bridge = Path('native/PUSHUPBridge.java').read_text(encoding='utf-8').replace(header, 'package ' + pkg + ';')
+          (main.parent / 'PUSHUPBridge.java').write_text(bridge, encoding='utf-8')
+          act = Path('native/MainActivity.java').read_text(encoding='utf-8').replace(header, 'package ' + pkg + ';')
+          main.write_text(act, encoding='utf-8')
+          xml = Path('android/app/src/main/res/xml')
+          xml.mkdir(parents=True, exist_ok=True)
+          (xml / 'file_paths.xml').write_text(Path('native/file_paths.xml').read_text(encoding='utf-8'), encoding='utf-8')
+          print('包名: ' + pkg)
+          m = Path('android/app/src/main/AndroidManifest.xml')
+          t = m.read_text(encoding='utf-8')
+          if 'REQUEST_INSTALL_PACKAGES' not in t:
+              i = t.find('<manifest')
+              j = t.find('>', i)
+              t = t[:j+1] + '\n    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />' + t[j+1:]
+              print('已加入 REQUEST_INSTALL_PACKAGES 权限')
+          if 'androidx.core.content.FileProvider' not in t:
+              raise SystemExit('模板缺少 FileProvider，无法分享/安装 APK')
+          m.write_text(t, encoding='utf-8')
+          print('原生能力注入完成')
+          PY
+
       # Android 14 = API 34；显式锁定 compileSdk / targetSdk，保证在 14/15/16 上可装可跑
       - name: 适配 Android 14+（API 34）
         run: |
@@ -118,6 +180,12 @@ jobs:
               print('未找到 versionCode，跳过（不影响签名一致性）')
           else:
               print('versionCode 已设为 ${{ github.run_number }}')
+          import os
+          ver = os.environ.get('APP_VER', '1.1')
+          s3 = re.sub(r'versionName\s+[\'"][^\'"]*[\'"]', 'versionName "' + ver + '"', s2, count=1)
+          if s3 != s2:
+              print('versionName 已设为 ' + ver)
+          s2 = s3
           # Capacitor 模板没有 signingConfigs，AGP 会在全新 runner 上自己生成
           # 随机 debug.keystore。必须显式让 Gradle 读仓库里的固定密钥。
           cfg = '\n    signingConfigs {\n        debug {\n'
@@ -172,16 +240,16 @@ jobs:
 
       - name: 收集产物
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk PUSHUP-v1.0.apk
-          ls -lh PUSHUP-v1.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$APK_NAME"
+          ls -lh "$APK_NAME"
           AAPT="$ANDROID_HOME/build-tools/34.0.0/aapt"
           if [ -x "$AAPT" ]; then
-            "$AAPT" dump badging PUSHUP-v1.0.apk 2>/dev/null | grep -iE "package:|sdkVersion|application-label" | head -6 || true
+            "$AAPT" dump badging "$APK_NAME" 2>/dev/null | grep -iE "package:|sdkVersion|application-label" | head -6 || true
           else
             echo "aapt 不可用，跳过包信息打印"
           fi
           echo "=== 签名证书指纹（APK 必须与仓库 keystore 完全一致）==="
-          APK_FP=$(keytool -printcert -jarfile PUSHUP-v1.0.apk 2>/dev/null | grep -i "SHA256:" | head -1 | tr -d '\r' | sed 's/.*SHA256: *//')
+          APK_FP=$(keytool -printcert -jarfile "$APK_NAME" 2>/dev/null | grep -i "SHA256:" | head -1 | tr -d '\r' | sed 's/.*SHA256: *//')
           KS_FP=$(keytool -list -v -keystore signing/debug.keystore -storepass android 2>/dev/null | grep -i "SHA256:" | head -1 | tr -d '\r' | sed 's/.*SHA256: *//')
           echo "APK 指纹: $APK_FP"
           echo "密钥指纹: $KS_FP"
@@ -195,16 +263,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PUSHUP-APK
-          path: PUSHUP-v1.0.apk
+          path: ${{ env.APK_NAME }}
           if-no-files-found: error
           retention-days: 90
 
-      # 便于手机上直接下载；失败不影响 APK 本身
+      # Release 的版本号与更新日志来自 version.json，不再是「自动构建」的固定话术
       - name: 发布到 Releases
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v1.0-apk-${{ github.run_number }}" PUSHUP-v1.0.apk \
-            --title "PUSHUP v1.0 · Android 安装包 (构建 #${{ github.run_number }})" \
-            --notes "由 GitHub Actions 自动构建。把 APK 传到手机，允许「未知来源」后安装即可。数据只存在手机本地。"
+          echo "发布版本 $REL_TAG / $APK_NAME"
+          if gh release view "$REL_TAG" >/dev/null 2>&1; then
+            gh release upload "$REL_TAG" "$APK_NAME" --clobber
+            gh release edit "$REL_TAG" --title "PUSHUP v$APP_VER" --notes-file release-notes.md
+            echo "已更新 Release $REL_TAG"
+          else
+            gh release create "$REL_TAG" "$APK_NAME" --title "PUSHUP v$APP_VER" --notes-file release-notes.md
+            echo "已创建 Release $REL_TAG"
+          fi

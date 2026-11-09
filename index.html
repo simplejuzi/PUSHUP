@@ -19,7 +19,7 @@
 :root{
   --bg:#F3F3F0; --surface:#FAFAF8; --card:#FFFFFF; --soft:#F5F5F2;
   --ink:#17181C; --sub:#8B9099; --sub2:#AFB3BB; --line:#EDEDE9;
-  --accent:#FF6A3D; --accent-soft:#FFF0E9; --accent-mid:#FFA27F;
+  --accent:#FF6A3D; --accent-soft:#FFF0E9; --accent-mid:#FFA27F; --accent-rgb:255,106,61;
   --green:#1F9D6B; --green-soft:#EAF7F0; --blue:#4C7DF0;
   --purple:#8B5CF6; --amber:#F59E0B; --blue-soft:#EAF1FF;
   --dark-card:#1C1D21; --dark-inner:#2A2B30; --dark-txt:#FFFFFF;
@@ -35,6 +35,88 @@ body.dark{
   --tabbar:rgba(21,23,26,.93); --phone-border:#2C3036;
   --shadow:0 4px 18px rgba(0,0,0,.25);
 }
+
+/* ===== v1.1：4 套配色主题 =====
+   只改强调色与轻微底色偏移，正文色 --ink / --sub 一律沿用 :root 与 body.dark，
+   保证任何主题下文字与背景的对比度都不下降（由 verify_v11.py 逐项校验）。 */
+body[data-palette="ocean"]{
+  --bg:#EFF4FB; --surface:#F7FAFF; --card:#FFFFFF; --soft:#EDF3FD; --line:#E2EAF6;
+  --accent:#1D5CB8; --accent-soft:#E6EFFC; --accent-mid:#6E9BE0; --accent-rgb:29,92,184;
+  --blue:#1D5CB8; --blue-soft:#E6EFFC; --green:#137A5C; --green-soft:#E3F4ED;
+  --tabbar:rgba(247,250,255,.93); --phone-border:#DCE6F5;
+}
+body.dark[data-palette="ocean"]{
+  --bg:#0B1018; --surface:#111827; --card:#182234; --soft:#1E2A3C; --line:#26344A;
+  --accent:#7FA9FF; --accent-soft:#1B2E4E; --accent-mid:#3F6096; --accent-rgb:127,169,255;
+  --blue:#7FA9FF; --blue-soft:#1B2E4E; --tabbar:rgba(17,24,39,.93); --phone-border:#26344A;
+}
+body[data-palette="forest"]{
+  --bg:#EFF6F1; --surface:#F7FCF9; --card:#FFFFFF; --soft:#ECF6F0; --line:#DEEBE3;
+  --accent:#0F7A54; --accent-soft:#E4F3EB; --accent-mid:#68B292; --accent-rgb:15,122,84;
+  --green:#0F7A54; --green-soft:#E4F3EB; --blue:#2B6CB0; --blue-soft:#E5EFF9;
+  --tabbar:rgba(247,252,249,.93); --phone-border:#D9E9DE;
+}
+body.dark[data-palette="forest"]{
+  --bg:#0B1410; --surface:#101C16; --card:#18281F; --soft:#1C3025; --line:#263C2E;
+  --accent:#5FD3A0; --accent-soft:#17392B; --accent-mid:#2F7A58; --accent-rgb:95,211,160;
+  --green:#5FD3A0; --green-soft:#17392B; --blue:#79AEEB; --blue-soft:#1B3049;
+  --tabbar:rgba(16,28,22,.93); --phone-border:#263C2E;
+}
+body[data-palette="dusk"]{
+  --bg:#F3F0FA; --surface:#FBF9FF; --card:#FFFFFF; --soft:#F1EDFA; --line:#E7E0F5;
+  --accent:#6242C4; --accent-soft:#EDE7FB; --accent-mid:#9C88DC; --accent-rgb:98,66,196;
+  --purple:#6242C4; --blue:#5B4FB0; --blue-soft:#EBE8FA;
+  --tabbar:rgba(251,249,255,.93); --phone-border:#E2DAF2;
+}
+body.dark[data-palette="dusk"]{
+  --bg:#100C18; --surface:#171226; --card:#221B34; --soft:#2A2140; --line:#362C4E;
+  --accent:#A98CFA; --accent-soft:#2A1E48; --accent-mid:#6B51A8; --accent-rgb:169,140,250;
+  --purple:#A98CFA; --blue:#9C93F5; --blue-soft:#292044;
+  --tabbar:rgba(23,18,38,.93); --phone-border:#362C4E;
+}
+/* 配色选择器 */
+.pal-row{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.pal{flex:1;min-width:70px;border:1px solid var(--line);background:var(--card);border-radius:13px;padding:10px 4px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+.pal.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.pal .dot{width:11px;height:11px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.1)}
+/* 记录页搜索添加 */
+.ex-search{margin-top:11px}
+.ex-search input{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:10px 12px;font-size:12px;outline:0;font-family:inherit}
+.ex-search input::placeholder{color:var(--sub2)}
+.ex-results{display:none;margin-top:8px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card);max-height:230px;overflow-y:auto}
+.ex-results.on{display:block}
+.exr{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12px}
+.exr:last-child{border-bottom:0}
+.exr .n{flex:1;font-weight:650;color:var(--ink)}
+.exr .u{font-size:10px;color:var(--sub2)}
+.exr .a{font-size:10.5px;color:var(--accent);font-weight:700}
+.exr.added .a{color:var(--sub2)}
+.exr.empty{color:var(--sub);cursor:default;justify-content:center}
+/* 导入 / 导出 / 更新 / 模板 弹层 */
+.imp-tools{display:flex;gap:8px;margin-top:13px}
+.imp-tools button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:11px 6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.imp-tools button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exp-box{background:var(--soft);border-radius:14px;padding:13px 14px;margin-top:13px}
+.exp-box .k{font-size:10.5px;color:var(--sub2);margin-bottom:3px}
+.exp-box .v{font-size:12.5px;font-weight:700;color:var(--ink);word-break:break-all;margin-bottom:10px}
+.exp-box .v:last-child{margin-bottom:0}
+.upd-log{font-size:12.5px;color:var(--ink);line-height:1.95;margin-top:12px;background:var(--soft);border-radius:14px;padding:13px 15px;white-space:pre-wrap}
+.upd-link{display:block;text-align:center;font-size:11.5px;color:var(--accent);margin-top:12px;cursor:pointer;text-decoration:underline}
+.tpl-bar{display:flex;gap:8px;margin-top:13px}
+.tpl-bar input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:10px;font-size:12px;outline:0;font-family:inherit}
+.tpl-acts{display:flex;gap:6px;align-items:center;margin-top:10px}
+.tpl-acts button{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:10px;padding:7px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.tpl-acts span{margin-left:auto;font-size:11px;color:var(--sub2)}
+.tpl-list{margin-top:10px;max-height:250px;overflow-y:auto;border:1px solid var(--line);border-radius:13px;background:var(--card)}
+.tpl-it{display:flex;align-items:center;gap:9px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--ink)}
+.tpl-it:last-child{border-bottom:0}
+.tpl-it .cb{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line);flex:none;position:relative}
+.tpl-it.on .cb{background:var(--accent);border-color:var(--accent)}
+.tpl-it.on .cb::after{content:"✓";position:absolute;left:2px;top:-2px;color:#fff;font-size:13px;font-weight:800}
+.tpl-it .tn{flex:1;font-weight:600}
+.tpl-it .tu{font-size:10.5px;color:var(--sub2)}
+.tpl-empty{text-align:center;color:var(--sub);font-size:12px;padding:26px}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .2s}
@@ -78,7 +160,7 @@ h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;fon
 .trend.flat{color:var(--sub2)}
 .note-input{width:100%;margin-top:10px;border:0;outline:0;background:var(--soft);border-radius:12px;padding:12px 13px;font-size:13px;font-family:inherit;color:var(--ink);resize:none}
 .note-input::placeholder{color:var(--sub2)}
-.save{width:100%;margin-top:16px;border:0;border-radius:18px;padding:17px;background:var(--accent);color:#fff;font-size:15px;font-weight:720;letter-spacing:.3px;cursor:pointer;box-shadow:0 8px 20px rgba(255,106,61,.28);font-family:inherit}
+.save{width:100%;margin-top:16px;border:0;border-radius:18px;padding:17px;background:var(--accent);color:#fff;font-size:15px;font-weight:720;letter-spacing:.3px;cursor:pointer;box-shadow:0 8px 20px rgba(var(--accent-rgb),.28);font-family:inherit}
 .save:active{transform:translateY(1px)}
 .privacy{text-align:center;font-size:11px;color:var(--sub2);margin-top:14px}
 
@@ -122,7 +204,7 @@ h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;fon
 .cell.has{background:var(--accent-soft)}
 .cell.has .dn{color:var(--accent)}
 .cell.today .dn::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--accent)}
-.cell.sel{background:var(--accent);box-shadow:0 5px 12px rgba(255,106,61,.3)}
+.cell.sel{background:var(--accent);box-shadow:0 5px 12px rgba(var(--accent-rgb),.3)}
 .cell.sel .dn,.cell.sel .cv{color:#fff}
 .cell.future .dn{color:var(--sub2);opacity:.55}
 .sumbar{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 0;margin-top:16px}
@@ -240,7 +322,7 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .theme-seg .sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
 .theme-seg .sw.l{background:#FAFAF8}.theme-seg .sw.d{background:#1C1D21}
 .about{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-top:12px;text-align:center}
-.app-ic{width:56px;height:56px;border-radius:17px;background:var(--accent);color:#fff;font-size:26px;font-weight:780;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 18px rgba(255,106,61,.28)}
+.app-ic{width:56px;height:56px;border-radius:17px;background:var(--accent);color:#fff;font-size:26px;font-weight:780;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 18px rgba(var(--accent-rgb),.28)}
 .app-nm{font-size:18px;font-weight:760;letter-spacing:-.3px}
 .app-vr{font-size:11px;color:var(--sub2);margin-top:4px}
 .app-ds{font-size:12px;color:var(--sub);line-height:1.8;text-align:left;margin:16px 0 4px}
@@ -276,10 +358,10 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 
 /* ===== v1.0 新增：开屏 ===== */
 .splash{position:absolute;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;text-align:center;background:radial-gradient(125% 78% at 50% 8%,#3B221A 0%,#1B1C22 46%,#0E0F12 100%);color:#fff;overflow:hidden}
-.splash::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:#FF6A3D;filter:blur(95px);opacity:.30;top:-70px;left:50%;transform:translateX(-50%);animation:glow 5s ease-in-out infinite alternate}
+.splash::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:var(--accent);filter:blur(95px);opacity:.30;top:-70px;left:50%;transform:translateX(-50%);animation:glow 5s ease-in-out infinite alternate}
 @keyframes glow{to{opacity:.55;transform:translateX(-50%) scale(1.16)}}
 .splash .brand{position:absolute;top:66px;left:0;right:0;font-size:11.5px;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,.38)}
-.splash .qmark{font-size:88px;line-height:.6;color:rgba(255,106,61,.6);font-weight:800;font-family:Georgia,serif;position:relative;animation:up .7s ease both}
+.splash .qmark{font-size:88px;line-height:.6;color:rgba(var(--accent-rgb),.6);font-weight:800;font-family:Georgia,serif;position:relative;animation:up .7s ease both}
 .splash .quote{font-size:25px;font-weight:760;line-height:1.6;letter-spacing:-.5px;margin-top:24px;position:relative;white-space:pre-line;animation:up .7s .12s ease both;max-width:310px}
 .splash .sub{font-size:12.5px;color:rgba(255,255,255,.48);margin-top:20px;line-height:1.7;position:relative;animation:up .7s .22s ease both}
 .splash .bot{position:absolute;bottom:58px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:19px;z-index:2}
@@ -345,9 +427,9 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .screen{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
 .splash .bot{bottom:calc(58px + env(safe-area-inset-bottom))}
 .splash .brand{top:calc(60px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:5px}
-.splash .brand img{width:54px;height:54px;border-radius:16px;object-fit:cover;box-shadow:0 10px 28px rgba(255,106,61,.42);animation:up .7s ease both}
+.splash .brand img{width:54px;height:54px;border-radius:16px;object-fit:cover;box-shadow:0 10px 28px rgba(var(--accent-rgb),.42);animation:up .7s ease both}
 @media (display-mode:standalone){.screen{padding-top:calc(18px + env(safe-area-inset-top))}}
-.app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(255,106,61,.24)}
+.app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(var(--accent-rgb),.24)}
 .app-ic img{width:100%;height:100%;object-fit:cover;display:block;border-radius:17px}
 @media (max-width:520px){body{background:var(--surface)}}
 </style>
@@ -373,32 +455,34 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page on" id="page-record">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow" id="recEyebrow">11月9日 星期一</div><h1 class="title">今天练了吗？</h1></div>
-          <div class="badge"><span class="dot"></span><span id="streakText">连续 14 天</span></div>
+          <div class="badge"><span class="dot"></span><span id="streakText">连续 0 天</span></div>
         </div>
         <div class="datebar">
           <button class="navbtn" onclick="shiftDate(-1)">‹</button>
-          <div class="d" id="dateLabel">今天 · 11月9日<small>已有记录，可直接修改</small></div>
+          <div class="d" id="dateLabel">今天<small>还没有记录，填完保存即可</small></div>
           <button class="navbtn" onclick="shiftDate(1)">›</button>
         </div>
         <div class="card" style="padding:16px 15px">
-          <div class="card-label"><span>今日训练</span><span class="en" id="todayCount">1 个项目</span></div>
+          <div class="card-label"><span>今日训练</span><span class="en" id="todayCount">0 个项目</span></div>
           <div id="todayRows"></div>
           <div class="addbox">
             <div class="at">＋ 添加动作</div>
             <div class="achips" id="quickAdd"></div>
+            <div class="ex-search"><input id="recordSearch" type="search" placeholder="搜索动作直接添加…" oninput="renderRecordSearch(this.value)" autocomplete="off"></div>
+            <div class="ex-results" id="recordSearchResults"></div>
           </div>
-          <div class="today-sum"><span id="todaySum">已填 1 项 · 40 次</span><span>选填指标在下方 ↓</span></div>
+          <div class="today-sum"><span id="todaySum">已填 0 项</span><span>选填指标在下方 ↓</span></div>
         </div>
         <div class="two">
           <div class="mini">
             <div class="card-label">体重 <span style="color:var(--sub2)">选填</span></div>
-            <div class="mini-row"><input id="weightInput" type="number" step="0.05" inputmode="decimal" value="55.40"><span class="u">kg</span></div>
-            <div class="trend" id="weightTrend">↗ 较首次 +1.65</div>
+            <div class="mini-row"><input id="weightInput" type="number" step="0.05" inputmode="decimal" placeholder="—"><span class="u">kg</span></div>
+            <div class="trend" id="weightTrend">—</div>
           </div>
           <div class="mini">
             <div class="card-label">臂围 <span style="color:var(--sub2)">选填</span></div>
-            <div class="mini-row"><input id="armInput" type="number" step="0.5" inputmode="decimal" value="29"><span class="u">cm</span></div>
-            <div class="trend" id="armTrend">↗ 较首次 +1.0</div>
+            <div class="mini-row"><input id="armInput" type="number" step="0.5" inputmode="decimal" placeholder="—"><span class="u">cm</span></div>
+            <div class="trend" id="armTrend">—</div>
           </div>
         </div>
         <div class="card" style="padding:14px 16px">
@@ -413,10 +497,10 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-history">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">HISTORY</div><h1 class="title">训练日历</h1></div>
-          <div class="badge" id="countBadge">19 条记录</div>
+          <div class="badge" id="countBadge">0 条记录</div>
         </div>
         <div class="monthbar">
-          <div class="m" id="monthLabel">2026年 11月</div>
+          <div class="m" id="monthLabel">—</div>
           <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" onclick="shiftMonth(1)">›</button></div>
         </div>
         <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
@@ -432,27 +516,23 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-stats">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">INSIGHTS</div><h1 class="title">你的进步</h1></div>
-          <div class="badge ok">↗ 体重 +1.65kg</div>
+          <div class="badge ok" id="weightBadge">暂无体重记录</div>
         </div>
         <div class="kpis" id="kpis"></div>
         <div class="chart-card">
-          <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x">峰值 <b>200</b> 个</span></div>
-          <div id="barChart"></div><div class="axis"><span id="axA">10/7</span><span id="axB">10/24</span><span id="axC">11/9</span></div>
+          <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x" id="peakLabel">峰值 <b>—</b> 个</span></div>
+          <div id="barChart"></div><div class="axis"><span id="axA">—</span><span id="axB">—</span><span id="axC">—</span></div>
           <div class="chart-tip">↑ 点任意柱子 / 折线点，查看当天的详细记录</div>
         </div>
         <div class="chart-card"><div id="inspect"></div></div>
         <div class="chart-card">
-          <div class="chart-head"><span class="t">体重变化</span><span class="x">12 次测量 · <b>+1.65 kg</b></span></div>
-          <div id="lineChart"></div><div class="axis"><span id="axW1">10/24 · 53.75</span><span id="axW2">11/08 · 55.40</span></div>
+          <div class="chart-head"><span class="t">体重变化</span><span class="x" id="weightMeta">暂无测量</span></div>
+          <div id="lineChart"></div><div class="axis"><span id="axW1">—</span><span id="axW2">—</span></div>
           <div class="wtip-hint">↔ 在折线上左右滑动，查看每次测量的体重</div>
         </div>
         <div class="chart-card">
-          <div class="chart-head"><span class="t">臂围</span><span class="x">2 次测量</span></div>
-          <div class="arm-cmp">
-            <div class="a"><div class="n">28<small>cm</small></div><div class="l">10月28日</div></div>
-            <div class="mid">↗ +1.0 cm</div>
-            <div class="a"><div class="n">29<small>cm</small></div><div class="l">11月8日</div></div>
-          </div>
+          <div class="chart-head"><span class="t">臂围</span><span class="x" id="armMeta">暂无测量</span></div>
+          <div class="arm-cmp" id="armCompare"></div>
         </div>
         <div class="muted" style="margin:14px 4px 0">正式版会为每个动作单独出趋势图；当前图表以俯卧撑为主项。</div>
         <div style="height:10px"></div>
@@ -464,14 +544,14 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
           <div class="badge">徒手 · 无器械为主</div>
         </div>
-        <div class="lib-sub" id="libSub">53 个动作 · 已设为常用 5 项</div>
+        <div class="lib-sub" id="libSub">—</div>
         <div class="searchbox">
           <svg width="15" height="15" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
           <input id="libSearch" type="search" placeholder="搜动作名 / 英文名 / 肌群" oninput="renderLibrary()">
         </div>
         <div class="filters" id="catFilters"></div>
         <div class="filters" id="lvFilters"></div>
-        <div class="legend"><span class="ub rep">次</span> 按次数 <span class="ub sec">秒 / 分钟</span> 按时间 <span>· 开关 = 加入我的常用</span></div>
+        <div class="legend"><span class="ub rep">次</span> 按次数 <span class="ub sec">秒</span> 按时间 <span>· 开关 = 加入我的常用</span></div>
         <button class="addcustom" onclick="openCustom()">＋ 新增自定义动作</button>
         <div id="libList"></div>
         <div style="height:70px"></div>
@@ -481,7 +561,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-profile">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
-          <div class="badge">v1.0</div>
+          <div class="badge" id="profileVersion">v1.1</div>
         </div>
         <div class="stat3" id="profileStats"></div>
 
@@ -493,6 +573,12 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
         </div>
 
+        <div class="sec-title">软件更新<span>启动时静默检查</span></div>
+        <div class="settings">
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.1</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
+        </div>
+
         <div class="sec-title">外观</div>
         <div class="theme-seg">
           <button id="themeLight" class="on" onclick="setTheme('light')"><span class="sw l"></span>浅色</button>
@@ -501,11 +587,19 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="muted" style="margin:9px 3px 0">「跟随系统」会按手机当前的深浅色设置自动切换</div>
 
+        <div class="sec-title">配色<span>文字与背景已做对比度校验</span></div>
+        <div class="pal-row">
+          <button class="pal on" id="paldefault" onclick="setPalette('default')"><span class="dot" style="background:#FF6A3D"></span>活力橙</button>
+          <button class="pal" id="palocean" onclick="setPalette('ocean')"><span class="dot" style="background:#1D5CB8"></span>海蓝</button>
+          <button class="pal" id="palforest" onclick="setPalette('forest')"><span class="dot" style="background:#0F7A54"></span>森绿</button>
+          <button class="pal" id="paldusk" onclick="setPalette('dusk')"><span class="dot" style="background:#6242C4"></span>暮紫</button>
+        </div>
+
         <div class="sec-title">关于</div>
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr">v1.0 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.1 · 正式版</div>
           <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。外观支持跟随系统，数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
@@ -518,7 +612,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     </div>
 
     <div class="lib-foot hide" id="libFoot">
-      <div class="cnt">常用动作已变更 · <b id="favCount">5</b> 项</div>
+      <div class="cnt">常用动作已变更 · <b id="favCount">0</b> 项</div>
       <button onclick="finishLib()">完成</button>
     </div>
 
@@ -530,12 +624,59 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <button class="tab" id="tab-profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
     </div>
 
+    <!-- v1.1：导入（文件 / 文本 / 模板） -->
     <div class="modal" id="importModal">
-      <div class="sheet">
+      <div class="sheet sheet-tall">
         <div class="sh-t">导入数据</div>
-        <div class="sh-s">粘贴导出的 JSON 备份，或直接粘贴你原来那种文本：<br>11.08 俯卧撑200 体重55.40 臂围29</div>
-        <textarea id="importText" rows="6" placeholder="在这里粘贴…"></textarea>
+        <div class="sh-s">三种方式：选择备份文件、粘贴 JSON / 文本、或按动作生成模板后填写数值。</div>
+        <div class="imp-tools">
+          <button onclick="pickImportFile()">选择文件</button>
+          <button class="primary" onclick="openTemplate()">按动作生成模板</button>
+        </div>
+        <input type="file" id="importFile" accept=".json,.csv,.txt,application/json,text/plain,text/csv" hidden onchange="onImportFile(event)">
+        <textarea id="importText" rows="7" placeholder="粘贴备份内容，或点上方按钮生成模板…"></textarea>
+        <div class="sh-note">模板每行：日期,类型,名称,数值,单位。数值留空的行会被忽略；动作名称需与动作库一致。导入只增改对应日期，不会覆盖其它记录。</div>
         <div class="sh-btns"><button onclick="closeImport()">取消</button><button class="primary" onclick="doImport()">导入</button></div>
+      </div>
+    </div>
+    <!-- v1.1：按动作生成导入模板 -->
+    <div class="modal" id="templateModal">
+      <div class="sheet sheet-tall">
+        <div class="sh-t">按动作生成导入模板</div>
+        <div class="sh-s">勾选要导入的动作，生成模板后填数值；留空的行会被忽略。</div>
+        <div class="tpl-bar">
+          <input id="tplSearch" type="search" placeholder="搜索动作…" oninput="renderTemplate()" autocomplete="off">
+          <input id="tplDate" type="date">
+        </div>
+        <div class="tpl-acts">
+          <button onclick="tplSelect('fav')">仅常用</button><button onclick="tplSelect('all')">全选</button><button onclick="tplSelect('none')">清空</button>
+          <span id="tplCount"></span>
+        </div>
+        <div class="tpl-list" id="tplList"></div>
+        <div class="sh-btns"><button onclick="closeTemplate()">取消</button><button class="primary" onclick="genTemplate()">生成模板</button></div>
+      </div>
+    </div>
+    <!-- v1.1：导出结果（明确文件名与保存路径） -->
+    <div class="modal" id="exportModal">
+      <div class="sheet">
+        <div class="sh-t">已导出</div>
+        <div class="sh-s">文件已生成，位置如下：</div>
+        <div class="exp-box">
+          <div class="k">文件名</div><div class="v" id="exportName"></div>
+          <div class="k">保存位置</div><div class="v" id="exportPath"></div>
+        </div>
+        <div class="sh-note" id="exportHint"></div>
+        <div class="sh-btns"><button onclick="closeExport()">完成</button><button class="primary" onclick="shareAgain()">再分享一次</button></div>
+      </div>
+    </div>
+    <!-- v1.1：发现新版本 -->
+    <div class="modal" id="updateModal">
+      <div class="sheet">
+        <div class="sh-t">发现新版本 <span id="updVer"></span></div>
+        <div class="upd-log" id="updLog"></div>
+        <div class="sh-note" id="updNote">直接覆盖安装，本机记录不会丢失。</div>
+        <span class="upd-link" onclick="window.open(RELEASE_PAGE,'_blank')">或用浏览器打开下载页</span>
+        <div class="sh-btns"><button onclick="closeUpdate()">稍后</button><button class="primary" id="updBtn" onclick="startUpdate()">立即更新</button></div>
       </div>
     </div>
     <div class="modal" id="clearModal">
@@ -555,7 +696,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <label>英文名 / 备注<input id="cfEn" placeholder="选填"></label>
           <div class="f2">
             <label>归入分类<select id="cfCat" onchange="onCatChange()"></select></label>
-            <label>计量单位<select id="cfUnit"><option>次</option><option>秒</option><option>分钟</option></select></label>
+            <label>计量单位<select id="cfUnit"><option>次</option><option>秒</option></select></label>
           </div>
           <label id="cfNewCatWrap" style="display:none">新分类名称<input id="cfNewCat" placeholder="例如：康复训练"></label>
           <div class="f2">
@@ -580,7 +721,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 <script>
 /* ============ 动作库（53 项 · 徒手/自重） ============ */
 const BASE_CATS=[
-  {k:"push",n:"上肢推",c:"#FF6A3D"},{k:"pull",n:"上肢拉",c:"#4C7DF0"},
+  {k:"push",n:"上肢推",c:"var(--accent)"},{k:"pull",n:"上肢拉",c:"#4C7DF0"},
   {k:"legs",n:"下肢臀腿",c:"#1F9D6B"},{k:"core",n:"核心稳定",c:"#8B5CF6"},
   {k:"full",n:"全身心肺",c:"#F59E0B"}
 ];
@@ -593,7 +734,7 @@ const BASE_EX=[
 {id:"pushup",n:"标准俯卧撑",en:"Push-up",c:"push",lv:"进阶",u:"次",m:"胸 / 肩 / 三头 / 核心",g:"无",s:"3组 × 15–20 次",t:"肘部约 45°，身体成直线不塌腰",q:[100,110,150,200],fav:true},
 {id:"wide-pushup",n:"宽距俯卧撑",en:"Wide Push-up",c:"push",lv:"进阶",u:"次",m:"胸肌外侧",g:"无",s:"3组 × 10–15 次",t:"双手 1.5–2 倍肩宽，更侧重胸肌",q:[10,15,20]},
 {id:"close-pushup",n:"窄距俯卧撑",en:"Close-grip Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌",g:"无",s:"3组 × 10–12 次",t:"双手窄于肩，手肘贴着肋骨走",q:[10,15,20]},
-{id:"diamond-pushup",n:"钻石俯卧撑",en:"Diamond Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 胸肌内侧",g:"无",s:"3组 × 8–12 次",t:"拇指食指围成菱形，手腕不适就停",q:[10,15,20],fav:true},
+{id:"diamond-pushup",n:"钻石俯卧撑",en:"Diamond Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 胸肌内侧",g:"无",s:"3组 × 8–12 次",t:"拇指食指围成菱形，手腕不适就停",q:[10,15,20]},
 {id:"decline-pushup",n:"下斜俯卧撑",en:"Decline Push-up",c:"push",lv:"进阶",u:"次",m:"上胸 / 肩前束",g:"椅子",s:"3组 × 10–12 次",t:"双脚垫高，负荷移向上胸和肩",q:[10,15,20]},
 {id:"pike-pushup",n:"折体俯卧撑",en:"Pike Push-up",c:"push",lv:"高阶",u:"次",m:"肩 / 三头",g:"无",s:"3组 × 6–8 次",t:"髋部高抬成倒 V，头向地面下降",q:[6,8,12]},
 {id:"spiderman-pushup",n:"蜘蛛俯卧撑",en:"Spiderman Push-up",c:"push",lv:"高阶",u:"次",m:"胸肩 / 腹斜肌",g:"无",s:"3组 × 8–10 次",t:"下降时一侧膝盖靠向同侧手肘",q:[8,10,12]},
@@ -607,10 +748,10 @@ const BASE_EX=[
 {id:"pullup",n:"引体向上",en:"Pull-up",c:"pull",lv:"高阶",u:"次",m:"背阔肌 / 二头 / 握力",g:"单杠",s:"3组 × 5–8 次",t:"正握，背部发力、缓慢下放不借力",q:[5,8,10]},
 {id:"chinup",n:"反手引体",en:"Chin-up",c:"pull",lv:"高阶",u:"次",m:"二头 / 背阔肌",g:"单杠",s:"3组 × 5–8 次",t:"反握略窄于肩，通常比正握更易上手",q:[5,8,10]},
 {id:"squat",n:"自重深蹲",en:"Bodyweight Squat",c:"legs",lv:"入门",u:"次",m:"股四头 / 臀 / 核心",g:"无",s:"3组 × 15–20 次",t:"向后坐、膝盖朝脚尖方向不内扣",q:[15,20,30]},
-{id:"glute-bridge",n:"臀桥",en:"Glute Bridge",c:"legs",lv:"入门",u:"分钟",m:"臀大肌 / 腘绳肌",g:"无",s:"3组 × 1 分钟",t:"脚跟发力顶髋，肩髋膝成直线静态保持",q:[0.5,1,2,3],fav:true},
+{id:"glute-bridge",n:"臀桥",en:"Glute Bridge",c:"legs",lv:"入门",u:"秒",m:"臀大肌 / 腘绳肌",g:"无",s:"3组 × 30–60 秒",t:"脚跟发力顶髋，肩髋膝成直线静态保持",q:[30,60,120,180],fav:true},
 {id:"single-leg-bridge",n:"单腿臀桥",en:"Single-leg Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀大肌 / 骨盆稳定",g:"无",s:"3组 × 8–10 次/侧",t:"一腿伸直悬空，骨盆保持不倾斜",q:[8,10,12]},
 {id:"marching-bridge",n:"行进臀桥",en:"Marching Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀 / 核心抗旋",g:"无",s:"3组 × 10 次",t:"顶峰交替抬脚，髋部始终不下沉",q:[10,12,16]},
-{id:"bridge-hold",n:"臀桥保持",en:"Glute Bridge Hold",c:"legs",lv:"入门",u:"分钟",m:"臀大肌 / 后链",g:"无",s:"3组 × 1 分钟",t:"顶髋静止保持，夹紧臀部不塌腰",q:[0.5,1,2]},
+{id:"bridge-hold",n:"臀桥保持",en:"Glute Bridge Hold",c:"legs",lv:"入门",u:"秒",m:"臀大肌 / 后链",g:"无",s:"3组 × 30–60 秒",t:"顶髋静止保持，夹紧臀部不塌腰",q:[30,60,120]},
 {id:"reverse-lunge",n:"反向弓步",en:"Reverse Lunge",c:"legs",lv:"入门",u:"次",m:"臀 / 股四头 / 平衡",g:"无",s:"3组 × 10–12 次/侧",t:"向后跨步，双膝成 90°，前脚跟蹬回",q:[10,12,15]},
 {id:"side-lunge",n:"侧弓步",en:"Side Lunge",c:"legs",lv:"入门",u:"次",m:"大腿内侧 / 臀",g:"无",s:"3组 × 10 次/侧",t:"向侧面大步下蹲，胸口保持抬起",q:[10,12,15]},
 {id:"bulgarian-squat",n:"保加利亚分腿蹲",en:"Bulgarian Split Squat",c:"legs",lv:"进阶",u:"次",m:"臀 / 股四头 / 平衡",g:"椅子",s:"3组 × 8–10 次/侧",t:"后脚垫高，重心压在前腿",q:[8,10,12]},
@@ -630,7 +771,7 @@ const BASE_EX=[
 {id:"crunch",n:"卷腹",en:"Crunch",c:"core",lv:"入门",u:"次",m:"腹直肌上部",g:"无",s:"3组 × 15 次",t:"肩胛微离地即可，别用脖子发力",q:[15,20,30]},
 {id:"bicycle-crunch",n:"自行车卷腹",en:"Bicycle Crunch",c:"core",lv:"入门",u:"次",m:"腹斜肌 / 腹直肌",g:"无",s:"3组 × 20 次",t:"肘碰对侧膝，控制速度不甩头",q:[20,30,40]},
 {id:"lying-leg-raise",n:"仰卧举腿",en:"Lying Leg Raise",c:"core",lv:"入门",u:"次",m:"下腹 / 髋屈肌",g:"无",s:"3组 × 12–15 次",t:"腰背贴地，双腿缓慢下放不触地",q:[12,15,20]},
-{id:"russian-twist",n:"俄罗斯转体",en:"Russian Twist",c:"core",lv:"入门",u:"次",m:"腹斜肌",g:"无",s:"3组 × 20 次",t:"坐姿后倾，转体时保持脊柱挺直",q:[20,30,40]},
+{id:"russian-twist",n:"俄罗斯转体",en:"Russian Twist",c:"core",lv:"入门",u:"次",m:"腹斜肌",g:"无",s:"3组 × 20 次",t:"坐姿后倾，转体时保持脊柱挺直",q:[20,30,40],fav:true},
 {id:"hollow-hold",n:"空心支撑",en:"Hollow Body Hold",c:"core",lv:"高阶",u:"秒",m:"全核心 / 体操基础",g:"无",s:"3组 × 20–30 秒",t:"下背压紧地面，四肢离地保持",q:[20,30,45]},
 {id:"mountain-climber",n:"登山者",en:"Mountain Climber",c:"full",lv:"入门",u:"次",m:"核心 / 肩 / 心肺",g:"无",s:"3组 × 20 次",t:"平板姿势交替提膝，髋部保持稳定",q:[20,30,40]},
 {id:"jumping-jacks",n:"开合跳",en:"Jumping Jacks",c:"full",lv:"入门",u:"次",m:"全身热身 / 心肺",g:"无",s:"3组 × 30 次",t:"轻量落地，常用作热身",q:[30,50,100]},
@@ -646,7 +787,20 @@ const EX_FALLBACK={n:"已删除的动作",en:"Custom",c:"push",lv:"入门",u:"�
 const exById=id=>EX.find(x=>x.id===id)||EX_FALLBACK;
 const catOf=k=>CATS.find(c=>c.k===k)||{k:k,n:"其他",c:"#8B9099"};
 const lvCls={"入门":"b","进阶":"i","高阶":"a"};
-const isTime=u=>u==="秒"||u==="分钟";
+const isTime=u=>u==="秒";
+
+/* ============ v1.1：版本、主题、更新 ============ */
+const APP_VERSION="v1.1";
+const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
+const UPDATE_ENDPOINTS=[
+  "https://api.github.com/repos/simplejuzi/PUSHUP/releases/latest",
+  "https://raw.githubusercontent.com/simplejuzi/PUSHUP/main/version.json"
+];
+const PKEY="fitness_palette_v1";
+let PALETTE="default";
+/* 清空数据 / 全新安装时保留的内置默认常用动作（顺序即展示顺序） */
+const DEFAULT_FAVS=["pushup","knee-pushup","russian-twist","plank","glute-bridge"];
+var curUpdate=null,lastExport=null,updateChecked=false,tplSel=null;
 
 /* ============ 记录数据 ============ */
 /* 下面这份数组仅用于识别并清除「旧版本出厂时预置的演示记录」，
@@ -687,8 +841,9 @@ function loadData(){
   return kept;
 }
 DATA=loadData();
-try{FAVS=JSON.parse(localStorage.getItem(FKEY))||EX.filter(x=>x.fav).map(x=>x.id);}catch(e){FAVS=EX.filter(x=>x.fav).map(x=>x.id);}
+try{FAVS=JSON.parse(localStorage.getItem(FKEY))||DEFAULT_FAVS.slice();}catch(e){FAVS=DEFAULT_FAVS.slice();}
 try{THEME=localStorage.getItem(TKEY)||"light";}catch(e){THEME="light";}
+try{PALETTE=localStorage.getItem(PKEY)||"default";}catch(e){PALETTE="default";}
 try{CUSTOM=JSON.parse(localStorage.getItem(CKEY))||[];}catch(e){CUSTOM=[];}
 try{const cc=JSON.parse(localStorage.getItem(CATKEY))||[];CATS=BASE_CATS.concat(cc);}catch(e){}
 EX=BASE_EX.concat(CUSTOM);
@@ -711,7 +866,8 @@ const LC_W=342,LC_H=126;
 function saveAll(){
   try{localStorage.setItem(KEY,JSON.stringify(DATA));localStorage.setItem(FKEY,JSON.stringify(FAVS));localStorage.setItem(TKEY,THEME);
     localStorage.setItem(CKEY,JSON.stringify(CUSTOM));
-    localStorage.setItem(CATKEY,JSON.stringify(CATS.filter(c=>c.k.indexOf("cc-")===0)));}catch(e){}
+    localStorage.setItem(CATKEY,JSON.stringify(CATS.filter(c=>c.k.indexOf("cc-")===0)));
+    localStorage.setItem(PKEY,PALETTE);}catch(e){}
 }
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);}
 function switchTab(name){
@@ -749,7 +905,7 @@ function fillRecord(){
   document.getElementById("recEyebrow").textContent=fmtMD(curDate)+" "+wdOf(curDate);
   document.getElementById("dateLabel").innerHTML=(isToday?"今天":"补录")+" · "+fmtMD(curDate)+"<small>"+(r?"已有记录，可直接修改":"还没有记录，填完保存即可")+"</small>";
   if(r)todayRows=(r.items&&r.items.length)?r.items.map(i=>({id:i.id,v:i.v})):[{id:"pushup",v:r.p}];
-  else todayRows=FAVS.slice(0,3).map(id=>({id:id,v:null}));
+  else todayRows=[{id:"pushup",v:null}];   // 默认只放一行俯卧撑（空输入，不写入任何数据）
   const wEl=document.getElementById("weightInput"),aEl=document.getElementById("armInput");
   wEl.placeholder="—";aEl.placeholder="—";
   wEl.value=(r&&r.w!=null)?r.w.toFixed(2):"";aEl.value=(r&&r.a!=null)?r.a:"";
@@ -760,14 +916,13 @@ function fillRecord(){
   renderToday();
 }
 function stepCfg(u){
-  if(u==="分钟")return [{l:"−1",v:-1},{l:"−0.5",v:-0.5},{l:"+0.5",v:0.5},{l:"+1",v:1}];
   return [{l:"−10",v:-10},{l:"−1",v:-1},{l:"+1",v:1},{l:"+10",v:10}];
 }
 function sumText(){
   const filled=todayRows.filter(x=>x.v!=null&&x.v>0);
-  let reps=0,secs=0,mins=0;
-  filled.forEach(x=>{const u=(exById(x.id)||{}).u;if(u==="次")reps+=Number(x.v);else if(u==="秒")secs+=Number(x.v);else if(u==="分钟")mins+=Number(x.v);});
-  const parts=[];if(reps)parts.push(reps+" 次");if(secs)parts.push(secs+" 秒");if(mins)parts.push((Math.round(mins*10)/10)+" 分钟");
+  let reps=0,secs=0;
+  filled.forEach(x=>{const u=(exById(x.id)||{}).u;if(u==="次")reps+=Number(x.v);else if(u==="秒")secs+=Number(x.v);});
+  const parts=[];if(reps)parts.push(reps+" 次");if(secs)parts.push(secs+" 秒");
   return "已填 "+filled.length+" 项"+(parts.length?" · "+parts.join(" · "):"");
 }
 function renderToday(){
@@ -786,17 +941,19 @@ function renderToday(){
   document.getElementById("todaySum").textContent=sumText();
   const favList=FAVS.filter(id=>!todayRows.some(r=>r.id===id)).slice(0,4);
   document.getElementById("quickAdd").innerHTML=favList.map(id=>'<button class="achip" onclick="addRow(\''+id+'\')">＋ '+exById(id).n+'</button>').join("")+
-    '<button class="achip more" onclick="switchTab(\'library\')">全部 '+EX.length+' 个动作 →</button>';
+    '<button class="achip more" onclick="switchTab(\'library\')">浏览动作库 →</button>';
 }
 function setRow(i,v){todayRows[i].v=(v===""?null:Number(v));document.getElementById("todaySum").textContent=sumText();}
 function setRowQ(i,q){todayRows[i].v=q;renderToday();}
 function stepRow(i,d){
   const e=exById(todayRows[i].id)||{};
   let v=(todayRows[i].v||0)+d;if(v<0)v=0;
-  v=(e.u==="分钟")?Math.round(v*10)/10:Math.round(v);
+  v=Math.round(v);
   todayRows[i].v=v;renderToday();
 }
-function addRow(id){if(todayRows.some(r=>r.id===id)){toast("这个动作已经在今日里了");return;}todayRows.push({id:id,v:null});renderToday();toast("已加入今日训练："+(exById(id)||{}).n);}
+function addRow(id){if(todayRows.some(r=>r.id===id)){toast("这个动作已经在今日里了");return;}todayRows.push({id:id,v:null});
+  const si=document.getElementById("recordSearch");if(si)si.value="";renderRecordSearch("");
+  renderToday();toast("已加入今日训练："+(exById(id)||{}).n);}
 function removeRow(i){todayRows.splice(i,1);renderToday();}
 function saveRecord(){
   const items=todayRows.filter(x=>x.v!=null&&x.v>0).map(x=>{const e=exById(x.id);return {id:x.id,v:Number(x.v),u:e.u,n:e.n};});
@@ -871,6 +1028,7 @@ function renderStats(){
     document.getElementById("lineChart").innerHTML=empty;
     document.getElementById("inspect").innerHTML='<div class="ins-empty">暂无数据 · 从零开始</div>';
     weightRows=[];weightPts=[];weightTipIdx=-1;
+    renderStatsMeta();
     return;
   }
   const total=DATA.reduce((s,r)=>s+r.p,0),avg=Math.round(total/DATA.length),best=Math.max(...DATA.map(r=>r.p));
@@ -884,7 +1042,7 @@ function renderStats(){
   const streakStart=slash2(key(stD))+" 起";
   document.getElementById("kpis").innerHTML=kpi("累计俯卧撑",total,"个",DATA.length+" 天打卡",true)+kpi("日均",avg,"个","最高单日 "+best,false)+kpi("单日最高",best,"个",bestDates,false)+kpi("连续打卡",streak,"天",streakStart,false);
   document.getElementById("streakText").textContent="连续 "+streak+" 天";
-  const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d)),W=342,H=132,maxV=Math.max(...rows.map(r=>r.p),200);
+  const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d)),W=342,H=132,maxV=Math.max(1,...rows.map(r=>r.p||0));
   if(rows.length){
     const axA=document.getElementById("axA"),axB=document.getElementById("axB"),axC=document.getElementById("axC");
     if(axA)axA.textContent=fmtSlash(rows[0].d);
@@ -896,10 +1054,10 @@ function renderStats(){
   rows.forEach((r,i)=>{
     const h=Math.max(5,Math.round(r.p/maxV*104)),x=i*colW+2,bw=colW-5,hot=r.p>=maxV;
     if(r.d===statDate)bars+='<rect x="'+(i*colW).toFixed(1)+'" y="8" width="'+colW.toFixed(1)+'" height="104" rx="5" style="fill:var(--accent-soft)"/>';
-    bars+='<rect x="'+x.toFixed(1)+'" y="'+(112-h)+'" width="'+bw.toFixed(1)+'" height="'+h+'" rx="3" fill="'+((hot||r.d===statDate)?"#FF6A3D":"#FFC4AC")+'"/>';
-    if(hot)bars+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(106-h)+'" text-anchor="middle" font-size="9" font-weight="700" fill="#FF6A3D">'+r.p+'</text>';
+    bars+='<rect x="'+x.toFixed(1)+'" y="'+(112-h)+'" width="'+bw.toFixed(1)+'" height="'+h+'" rx="3" style="fill:var(--accent);fill-opacity:'+((hot||r.d===statDate)?"1":".32")+'"/>';
+    if(hot)bars+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(106-h)+'" text-anchor="middle" font-size="9" font-weight="700" style="fill:var(--accent)">'+r.p+'</text>';
     hits+='<rect x="'+(i*colW).toFixed(1)+'" y="8" width="'+colW.toFixed(1)+'" height="106" fill="transparent" style="cursor:pointer" onclick="pickStatDate(\''+r.d+'\')"/>';
-    if(r.d===statDate)marks+='<circle cx="'+(i*colW+colW/2).toFixed(1)+'" cy="122" r="2.8" fill="#FF6A3D"/>';
+    if(r.d===statDate)marks+='<circle cx="'+(i*colW+colW/2).toFixed(1)+'" cy="122" r="2.8" style="fill:var(--accent)"/>';
   });
   document.getElementById("barChart").innerHTML='<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><line class="gridline" x1="0" y1="112" x2="'+W+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W+'" y2="60" stroke-dasharray="3 4"/>'+bars+hits+marks+'</svg>';
   const wr=rows.filter(r=>r.w!=null),W2=LC_W,H2=LC_H;
@@ -921,13 +1079,14 @@ function renderStats(){
     const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
     const area=line+" L"+pts[pts.length-1][0].toFixed(1)+" 112 L"+pts[0][0].toFixed(1)+" 112 Z";
     let dots="";pts.forEach((p,i)=>{
-      dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===pts.length-1?4:2.4)+'" fill="#FF6A3D" stroke="#fff" stroke-width="'+(i===pts.length-1?2:0)+'"/>';
+      dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===pts.length-1?4:2.4)+'" style="fill:var(--accent)" stroke="#fff" stroke-width="'+(i===pts.length-1?2:0)+'"/>';
       dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="11" fill="transparent" style="cursor:pointer" onclick="pickWeightAt('+i+')"/>';
     });
-    document.getElementById("lineChart").innerHTML='<svg class="chart" viewBox="0 0 '+W2+' '+H2+'" preserveAspectRatio="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6A3D" stop-opacity=".20"/><stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/></linearGradient></defs><line class="gridline" x1="0" y1="112" x2="'+W2+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W2+'" y2="60" stroke-dasharray="3 4"/><path d="'+area+'" fill="url(#wg)"/><path d="'+line+'" fill="none" stroke="#FF6A3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'<text x="'+(pts[pts.length-1][0]-4).toFixed(1)+'" y="'+(pts[pts.length-1][1]-12).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#FF6A3D">'+wr[wr.length-1].w.toFixed(2)+'</text></svg><div class="lc-overlay" id="lcOverlay" style="display:none"><div class="lc-line"></div><div class="lc-dot"></div><div class="lc-tip"></div></div>';
+    document.getElementById("lineChart").innerHTML='<svg class="chart" viewBox="0 0 '+W2+' '+H2+'" preserveAspectRatio="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.20"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs><line class="gridline" x1="0" y1="112" x2="'+W2+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W2+'" y2="60" stroke-dasharray="3 4"/><path d="'+area+'" fill="url(#wg)"/><path d="'+line+'" fill="none" style="stroke:var(--accent)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'<text x="'+(pts[pts.length-1][0]-4).toFixed(1)+'" y="'+(pts[pts.length-1][1]-12).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" style="fill:var(--accent)">'+wr[wr.length-1].w.toFixed(2)+'</text></svg><div class="lc-overlay" id="lcOverlay" style="display:none"><div class="lc-line"></div><div class="lc-dot"></div><div class="lc-tip"></div></div>';
   }
   renderInspect();
   renderWeightTip();
+  renderStatsMeta();
 }
 
 /* ---- 体重折线：手指左右滑动查看每次测量 ---- */
@@ -1055,13 +1214,13 @@ function renderLibrary(){
   if(!list.length){box.innerHTML='<div class="muted" style="text-align:center;padding:40px 10px">'+(fCat==="fav"?"还没勾选常用动作，打开开关试试":"没找到匹配的动作，换个关键词试试")+'</div>';return;}
   let html="";
   if(fCat==="fav"){
-    html+=grp("⭐ 我的常用 · 已勾选","#FF6A3D",list.length+" 项");
+    html+=grp("⭐ 我的常用 · 已勾选","var(--accent)",list.length+" 项");
     html+=list.map(exCard).join("");
     const rest=EX.length-FAVS.length;
     if(rest)html+='<div class="grp-title sub"><span class="gdot" style="background:var(--sub2)"></span>未勾选 · 其余 '+rest+' 项<span class="gn">切到「全部」查看</span></div>';
   }else if(fCat==="all"&&!q){
     const favs=list.filter(e=>FAVS.includes(e.id)),others=list.filter(e=>!FAVS.includes(e.id));
-    if(favs.length){html+=grp("⭐ 我的常用 · 已勾选","#FF6A3D",favs.length+" 项");html+=favs.map(exCard).join("");}
+    if(favs.length){html+=grp("⭐ 我的常用 · 已勾选","var(--accent)",favs.length+" 项");html+=favs.map(exCard).join("");}
     if(others.length){
       html+='<div class="grp-title sub"><span class="gdot" style="background:var(--sub2)"></span>未加入常用 · 按分类<span class="gn">'+others.length+' 项</span></div>';
       CATS.forEach(cat=>{const sub=others.filter(e=>e.c===cat.k);if(!sub.length)return;
@@ -1100,7 +1259,7 @@ function saveCustom(){
   const u=document.getElementById("cfUnit").value;
   const qs=document.getElementById("cfQuick").value.trim();
   let q=qs?qs.split(/[,，\s]+/).map(Number).filter(x=>!isNaN(x)&&x>0):[];
-  if(!q.length)q=u==="次"?[10,20,30]:u==="秒"?[30,60,90]:[0.5,1,2];
+  if(!q.length)q=u==="次"?[10,20,30]:[30,60,90];
   const e={id:"cf-"+Date.now(),n:n,en:document.getElementById("cfEn").value.trim()||"Custom",c:c,
     lv:document.getElementById("cfLv").value,u:u,
     m:document.getElementById("cfMuscle").value.trim()||"自定义",
@@ -1128,6 +1287,12 @@ function renderProfile(){
   document.getElementById("themeLight").className=THEME==="light"?"on":"";
   document.getElementById("themeDark").className=THEME==="dark"?"on":"";
   document.getElementById("themeAuto").className=THEME==="auto"?"on":"";
+  ["default","ocean","forest","dusk"].forEach(function(k){
+    const el=document.getElementById("pal"+k);if(el)el.className=PALETTE===k?"pal on":"pal";
+  });
+  const pv=document.getElementById("profileVersion");if(pv)pv.textContent=APP_VERSION;
+  const av=document.getElementById("aboutVersion");if(av)av.textContent=APP_VERSION+" · 正式版";
+  const cv=document.getElementById("curVersion");if(cv)cv.textContent=APP_VERSION;
 }
 const MQ=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
 
@@ -1153,7 +1318,8 @@ function sbStyleFor(color){
 }
 function syncStatusBar(mode){
   const SB=statusBar();if(!SB)return;
-  const color=mode==="splash"?"#1B1C22":(isDark()?"#15171A":"#FAFAF8");
+  /* 底色取当前配色主题的实际 --surface，图标色再由亮度自动反推 */
+  const color=mode==="splash"?"#1B1C22":currentSurfaceColor();
   const style=sbStyleFor(color);
   /* 必须串行：setOverlaysWebView(false) 会把底色恢复成上一次记录的颜色 */
   sbCall("setOverlaysWebView",{overlay:false})
@@ -1164,22 +1330,66 @@ function syncStatusBar(mode){
 }
 function applyTheme(){
   document.body.classList.toggle("dark",!!isDark());
+  document.body.setAttribute("data-palette",PALETTE);
   syncStatusBar();
 }
 if(MQ&&MQ.addEventListener)MQ.addEventListener("change",()=>{if(THEME==="auto"){applyTheme();toast("已跟随系统切换外观");}});
 function setTheme(t){
-  THEME=t;applyTheme();saveAll();renderProfile();
+  THEME=t;applyTheme();saveAll();renderAll();renderProfile();
   toast(t==="light"?"已切换到浅色模式":t==="dark"?"已切换到深色模式":"已设为跟随系统 · 当前"+(MQ&&MQ.matches?"深色":"浅色"));
+}
+function paletteName(p){return {default:"活力橙",ocean:"海蓝",forest:"森绿",dusk:"暮紫"}[p]||"活力橙";}
+function setPalette(p){
+  PALETTE=p;applyTheme();saveAll();renderAll();renderProfile();
+  toast("已切换配色 · "+paletteName(p));
+}
+function currentSurfaceColor(){
+  try{
+    const c=(getComputedStyle(document.body).getPropertyValue("--surface")||"").trim();
+    if(/^#[0-9a-fA-F]{6}$/.test(c))return c;
+  }catch(e){}
+  return isDark()?"#15171A":"#FAFAF8";
 }
 function download(name,text,type){
   const blob=new Blob([text],{type:type}),a=document.createElement("a");
   a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
 }
+/* APK 里 WebView 默认不处理 blob: 下载，交给原生插件写文件 + 调起系统分享面板 */
+function pushupBridge(){
+  const C=window.Capacitor;if(!C)return null;
+  if(typeof C.isNativePlatform==="function"&&!C.isNativePlatform())return null;
+  const P=C.Plugins||{};
+  if(P.PUSHUPBridge)return P.PUSHUPBridge;
+  if(typeof C.registerPlugin==="function")return C.registerPlugin("PUSHUPBridge");
+  return null;
+}
+async function saveOut(name,text,mime){
+  lastExport={name:name,text:text,mime:mime};
+  const B=pushupBridge();
+  if(B&&typeof B.saveFile==="function"){
+    try{
+      const r=await B.saveFile({name:name,content:text,mime:mime});
+      showExportResult(name,(r&&r.path)||"手机存储 / Android/data/com.simplejuzi.pushup/files/Documents/PUSHUP/",true);
+      return;
+    }catch(e){ /* 原生保存失败时静默回退，不弹网络/错误提示 */ }
+  }
+  download(name,text,mime);
+  showExportResult(name,"浏览器 / 系统默认下载目录",false);
+}
+function showExportResult(name,path,native){
+  document.getElementById("exportName").textContent=name;
+  document.getElementById("exportPath").textContent=path;
+  document.getElementById("exportHint").textContent=native
+    ?"已调起系统分享面板：可选「保存到文件」、发到微信或存到网盘。文件同时保存在上面的路径。"
+    :"文件已开始下载，请到浏览器或系统下载目录查看。";
+  document.getElementById("exportModal").classList.add("on");
+}
+function closeExport(){document.getElementById("exportModal").classList.remove("on");}
+function shareAgain(){if(!lastExport)return;closeExport();setTimeout(()=>saveOut(lastExport.name,lastExport.text,lastExport.mime),180);}
 function exportJSON(){
-  const payload={app:"PUSHUP",version:"v1.0",exportedAt:new Date().toISOString(),data:DATA,favs:FAVS,theme:THEME,custom:CUSTOM,cats:CATS.filter(c=>c.k.indexOf("cc-")===0)};
-  download("PUSHUP-备份-"+TODAY+".json",JSON.stringify(payload,null,2),"application/json");
-  toast("已导出 "+DATA.length+" 条记录（JSON）");
+  const payload={app:"PUSHUP",version:APP_VERSION,exportedAt:new Date().toISOString(),data:DATA,favs:FAVS,theme:THEME,palette:PALETTE,custom:CUSTOM,cats:CATS.filter(c=>c.k.indexOf("cc-")===0)};
+  saveOut("PUSHUP-备份-"+TODAY+".json",JSON.stringify(payload,null,2),"application/json");
 }
 function exportCSV(){
   const lines=["日期,类型,名称,数值,单位"];
@@ -1190,8 +1400,7 @@ function exportCSV(){
     if(r.a!=null)lines.push([r.d,"指标","臂围",r.a,"cm"].join(","));
     if(r.note)lines.push([r.d,"备注",'"'+r.note.replace(/"/g,'""')+'"',"",""].join(","));
   });
-  download("PUSHUP-"+TODAY+".csv","\ufeff"+lines.join("\n"),"text/csv;charset=utf-8");
-  toast("已导出 CSV 表格");
+  saveOut("PUSHUP-"+TODAY+".csv","\ufeff"+lines.join("\n"),"text/csv");
 }
 function openImport(){document.getElementById("importModal").classList.add("on");}
 function closeImport(){document.getElementById("importModal").classList.remove("on");}
@@ -1225,11 +1434,12 @@ function doImport(){
   if(!txt){toast("先粘贴内容");return;}
   let rows=[];
   if(txt.charAt(0)==="{"){
-    try{const j=JSON.parse(txt);rows=j.data||[];if(Array.isArray(j.favs)&&j.favs.length)FAVS=j.favs;if(j.theme)THEME=j.theme;
+    try{const j=JSON.parse(txt);rows=j.data||[];if(Array.isArray(j.favs)&&j.favs.length)FAVS=j.favs;if(j.theme)THEME=j.theme;if(j.palette)PALETTE=j.palette;
       if(Array.isArray(j.custom)){CUSTOM=j.custom;EX=BASE_EX.concat(CUSTOM);}
       if(Array.isArray(j.cats))CATS=BASE_CATS.concat(j.cats);
     }catch(e){toast("JSON 格式不对");return;}
-  }else rows=parseLegacy(txt);
+  }else if(isCSVTemplate(txt))rows=parseTemplate(txt);
+  else rows=parseLegacy(txt);
   const valid=rows.filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(r.d));
   if(!valid.length){toast("没解析出记录，检查下格式");return;}
   valid.forEach(r=>{const i=DATA.findIndex(x=>x.d===r.d);if(i>=0)DATA[i]={...DATA[i],...r};else DATA.push(r);});
@@ -1290,6 +1500,8 @@ function initSplash(){
 function skipSplash(){
   clearTimeout(splashTimer);
   syncStatusBar();
+  /* 每次打开 App 静默检查一次更新；开屏结束后才查，离线性失败一律零提示 */
+  if(!updateChecked){updateChecked=true;setTimeout(()=>checkUpdate(false),500);}
   const el=document.getElementById("splash");if(!el)return;
   el.classList.add("out");setTimeout(()=>{el.style.display="none";},450);
 }
@@ -1297,6 +1509,206 @@ function skipSplash(){
 /* ============ PUSHUP 正式版：离线 ============ */
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
+}
+
+/* ============ v1.1：新功能实现 ============ */
+
+/* ---- 状态栏 / 数据页静态标签：全部按真实数据渲染 ---- */
+function setTxt(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+function setHTML(id,v){const el=document.getElementById(id);if(el)el.innerHTML=v;}
+function renderStatsMeta(){
+  const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d));
+  const best=DATA.length?Math.max(...DATA.map(r=>r.p||0)):0;
+  const wr=rows.filter(r=>r.w!=null),ar=rows.filter(r=>r.a!=null);
+  const gain=wr.length>1?(wr[wr.length-1].w-wr[0].w):0;
+  setHTML("weightBadge",wr.length>1?((gain>=0?"↗ 体重 +":"↘ 体重 ")+gain.toFixed(2)+"kg"):"暂无体重记录");
+  setHTML("peakLabel",DATA.length?"峰值 <b>"+best+"</b> 个":"峰值 <b>—</b> 个");
+  setHTML("weightMeta",wr.length?(wr.length+" 次测量 · <b>"+(gain>=0?"+":"")+gain.toFixed(2)+" kg</b>"):"暂无测量");
+  setHTML("armMeta",ar.length?(ar.length+" 次测量"):"暂无测量");
+  setTxt("axA",rows.length?fmtSlash(rows[0].d):"—");
+  setTxt("axB",rows.length?fmtSlash(rows[Math.floor(rows.length/2)].d):"—");
+  setTxt("axC",rows.length?fmtSlash(rows[rows.length-1].d):"—");
+  setTxt("axW1",wr.length?fmtSlash(wr[0].d)+" · "+wr[0].w.toFixed(2):"—");
+  setTxt("axW2",wr.length?fmtSlash(wr[wr.length-1].d)+" · "+wr[wr.length-1].w.toFixed(2):"—");
+  const cmp=document.getElementById("armCompare");
+  if(cmp){
+    if(!ar.length)cmp.innerHTML='<div class="muted" style="text-align:center;padding:20px;width:100%;font-size:12px">还没有臂围记录 · 在「记录」页填写后这里会出现对比</div>';
+    else{
+      const f=ar[0],l=ar[ar.length-1],d=ar.length>1?(l.a-f.a):0;
+      cmp.innerHTML='<div class="a"><div class="n">'+f.a+'<small>cm</small></div><div class="l">'+fmtMD(f.d)+'</div></div>'+
+        '<div class="mid">'+(ar.length>1?((d>=0?"↗ +":"↘ ")+d.toFixed(1)+" cm"):"首次记录")+'</div>'+
+        (ar.length>1?'<div class="a"><div class="n">'+l.a+'<small>cm</small></div><div class="l">'+fmtMD(l.d)+'</div></div>':'');
+    }
+  }
+}
+
+/* ---- 记录页：搜索动作直接添加 ---- */
+function renderRecordSearch(kw){
+  const box=document.getElementById("recordSearchResults");if(!box)return;
+  kw=(kw||"").trim().toLowerCase();
+  if(!kw){box.innerHTML="";box.classList.remove("on");return;}
+  const list=EX.filter(e=>((e.n||"")+" "+(e.en||"")+" "+(e.m||"")).toLowerCase().indexOf(kw)>=0).slice(0,8);
+  if(!list.length){box.innerHTML='<div class="exr empty">没找到动作，可在「动作」页新增</div>';box.classList.add("on");return;}
+  box.innerHTML=list.map(e=>{
+    const added=todayRows.some(r=>r.id===e.id);
+    return '<div class="exr'+(added?" added":"")+'" onclick="addRow(\''+e.id+'\')"><span class="n">'+e.n+'</span><span class="u">'+e.u+'</span><span class="a">'+(added?"已在今日":"＋ 添加")+'</span></div>';
+  }).join("");
+  box.classList.add("on");
+}
+
+/* ---- 导入：文件 / 文本 / 按动作生成模板 ---- */
+function pickImportFile(){const el=document.getElementById("importFile");if(el)el.click();}
+function onImportFile(ev){
+  const f=ev.target.files&&ev.target.files[0];if(!f)return;
+  try{
+    const rd=new FileReader();
+    rd.onload=function(){document.getElementById("importText").value=String(rd.result||"");toast("已读取 "+f.name+" · 点「导入」完成");};
+    rd.onerror=function(){};
+    rd.readAsText(f,"utf-8");
+  }catch(e){}
+  ev.target.value="";
+}
+function openTemplate(){
+  tplSel=new Set(FAVS);
+  const d=document.getElementById("tplDate");if(d)d.value=TODAY;
+  const q=document.getElementById("tplSearch");if(q)q.value="";
+  renderTemplate();
+  document.getElementById("templateModal").classList.add("on");
+}
+function closeTemplate(){document.getElementById("templateModal").classList.remove("on");}
+function tplSelect(mode){
+  if(mode==="fav")tplSel=new Set(FAVS);
+  else if(mode==="all")tplSel=new Set(EX.map(e=>e.id));
+  else tplSel=new Set();
+  renderTemplate();
+}
+function toggleTpl(id){if(tplSel.has(id))tplSel.delete(id);else tplSel.add(id);renderTemplate();}
+function renderTemplate(){
+  const box=document.getElementById("tplList");if(!box)return;
+  const q=((document.getElementById("tplSearch")||{}).value||"").trim().toLowerCase();
+  const list=EX.filter(e=>!q||((e.n||"")+" "+(e.en||"")+" "+(e.m||"")).toLowerCase().indexOf(q)>=0);
+  document.getElementById("tplCount").textContent="已选 "+tplSel.size+" / "+EX.length;
+  box.innerHTML=list.length?list.map(e=>
+    '<div class="tpl-it'+(tplSel.has(e.id)?" on":"")+'" onclick="toggleTpl(\''+e.id+'\')"><span class="cb"></span><span class="tn">'+e.n+'</span><span class="tu">'+e.u+'</span></div>'
+  ).join(""):'<div class="tpl-empty">没找到动作</div>';
+}
+function genTemplate(){
+  const de=document.getElementById("tplDate"),date=(de&&de.value)||TODAY;
+  const lines=["日期,类型,名称,数值,单位"];
+  EX.filter(e=>tplSel.has(e.id)).forEach(e=>lines.push([date,"动作",e.n,"",e.u].join(",")));
+  lines.push([date,"指标","体重","","kg"].join(","));
+  lines.push([date,"指标","臂围","","cm"].join(","));
+  document.getElementById("importText").value=lines.join("\n");
+  closeTemplate();
+  document.getElementById("importModal").classList.add("on");
+  toast("模板已生成 · 填好数值后点「导入」");
+}
+function csvCells(line){
+  const out=[];let cur="",q=false;
+  for(let i=0;i<line.length;i++){
+    const c=line.charAt(i);
+    if(c==='"'){if(q&&line.charAt(i+1)==='"'){cur+='"';i++;}else q=!q;}
+    else if(c===","&&!q){out.push(cur);cur="";}
+    else cur+=c;
+  }
+  out.push(cur);return out.map(x=>x.trim());
+}
+function isCSVTemplate(txt){
+  const first=txt.split(/\r?\n/).filter(l=>l.trim())[0]||"";
+  return /^\ufeff?日期[,，](类型|动作)[,，]/.test(first);
+}
+function parseTemplate(txt){
+  const map=new Map();
+  txt.replace(/^\ufeff/,"").split(/\r?\n/).forEach(line=>{
+    if(!line.trim())return;
+    const c=csvCells(line);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(c[0]||""))return;
+    const ds=c[0],type=c[1]||"",name=c[2]||"",raw=c[3]||"",unit=c[4]||"";
+    if(!map.has(ds))map.set(ds,{d:ds,items:[]});
+    const o=map.get(ds);
+    if(type==="动作"){
+      const v=parseFloat(raw);if(!isFinite(v)||v<=0)return;
+      const e=EX.find(x=>x.n===name)||exById(name);
+      if(!e||e===EX_FALLBACK)return;
+      o.items.push({id:e.id,v:v,u:e.u||unit,n:e.n});
+    }else if(type==="指标"){
+      const v=parseFloat(raw);if(!isFinite(v))return;
+      if(name==="体重")o.w=v;else if(name==="臂围")o.a=v;
+    }
+  });
+  const rows=[];
+  map.forEach(o=>{
+    if(!o.items.length)return;
+    const push=o.items.find(x=>x.id==="pushup");
+    const pushSum=o.items.filter(x=>(exById(x.id)||{}).c==="push").reduce((s,x)=>s+x.v,0);
+    const r={d:o.d,p:push?push.v:pushSum,items:o.items};
+    if(o.w!=null)r.w=o.w;if(o.a!=null)r.a=o.a;
+    rows.push(r);
+  });
+  return rows;
+}
+
+/* ---- 检测更新：静默 / 手动 / App 内升级 ---- */
+function verNum(v){
+  const m=String(v||"").replace(/^v/,"").match(/(\d+)\.(\d+)(?:\.(\d+))?/);
+  return m?[+m[1],+m[2],+(m[3]||0)]:[0,0,0];
+}
+function verNewer(a,b){
+  const x=verNum(a),y=verNum(b);
+  for(let i=0;i<3;i++){if(x[i]>y[i])return true;if(x[i]<y[i])return false;}
+  return false;
+}
+async function fetchLatest(){
+  for(const u of UPDATE_ENDPOINTS){
+    try{
+      const ctl=(typeof AbortController!=="undefined")?new AbortController():null;
+      const timer=ctl?setTimeout(()=>ctl.abort(),6000):null;
+      const opt={cache:"no-store",headers:{"Accept":"application/vnd.github+json"}};
+      if(ctl)opt.signal=ctl.signal;
+      const r=await fetch(u,opt);
+      if(timer)clearTimeout(timer);
+      if(!r.ok)continue;
+      const j=await r.json();
+      if(u.indexOf("api.github.com")>=0){
+        const asset=(j.assets||[]).find(a=>/\.apk$/i.test(a.name||""));
+        return {version:j.tag_name||"",notes:j.body||"",url:asset?asset.browser_download_url:"",name:asset?asset.name:""};
+      }
+      return {version:"v"+(j.version||""),notes:(j.changelog||[]).map(x=>"· "+x).join("\n"),
+              url:j.apkUrl||"",name:j.apk||""};
+    }catch(e){ /* 离线 / 超时：完全静默，绝不弹网络错误 */ }
+  }
+  return null;
+}
+async function checkUpdate(manual){
+  const info=await fetchLatest();
+  if(!info||!info.version)return;                       // 没网 / 失败 → 零提示
+  if(!verNewer(info.version,APP_VERSION)){
+    if(manual)toast("已是最新版 "+APP_VERSION);
+    return;
+  }
+  curUpdate=info;
+  document.getElementById("updVer").textContent=info.version;
+  document.getElementById("updLog").textContent=(info.notes||"有新版本可用").trim();
+  document.getElementById("updBtn").textContent=info.url?"立即更新":"查看下载页";
+  document.getElementById("updateModal").classList.add("on");
+}
+function closeUpdate(){document.getElementById("updateModal").classList.remove("on");}
+async function startUpdate(){
+  const info=curUpdate;closeUpdate();
+  if(!info)return;
+  if(!info.url){try{window.open(RELEASE_PAGE,"_blank");}catch(e){}return;}
+  const B=pushupBridge();
+  if(B&&typeof B.installApk==="function"){
+    toast("正在下载新版本…");
+    try{
+      await B.installApk({url:info.url,name:info.name||("PUSHUP-"+info.version+".apk")});
+      toast("下载完成 · 在系统安装界面点「安装」");
+      return;
+    }catch(e){ /* 下载失败也不弹错误，给一个温和的浏览器入口 */ }
+  }
+  document.getElementById("updNote").textContent="可点下方链接用浏览器打开下载页，手动下载后安装。";
+  document.getElementById("updBtn").textContent="打开下载页";
+  document.getElementById("updateModal").classList.add("on");
 }
 
 /* ============ 初始化 ============ */

@@ -1,0 +1,13 @@
+{
+  "version": "1.1",
+  "tag": "v1.1",
+  "apk": "PUSHUP-v1.1.apk",
+  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.1/PUSHUP-v1.1.apk",
+  "changelog": [
+    "新增 4 套配色主题，状态栏与图表同步适配",
+    "新增静默检测更新、我的页检测按钮、App 内一键升级",
+    "动作计时单位统一为秒；记录页默认俯卧撑并支持搜索直接添加",
+    "导入支持文件 / 文本 / 按动作生成模板；导出改为系统分享并提示保存路径",
+    "默认常用动作调整；修复清空数据后仍残留演示数字"
+  ]
+}
