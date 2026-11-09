@@ -61,6 +61,9 @@ python -m http.server 8080
 ├── manifest.webmanifest         PWA 清单
 ├── sw.js                       离线缓存（pushup-v2）
 ├── icons/                      6 个图标（默认橙色 P 标 + logo.svg 源文件）
+├── package.json                Capacitor 依赖
+├── capacitor.config.json       Android 打包配置（appId / webDir）
+├── .github/workflows/          GitHub 云端自动打包 APK 的工作流
 ├── docs/                       交接文档、本地运行与 APK 打包指南、给 AI 的提示词
 ├── 原型历史/                   v0.1 ~ v0.6 共 6 个可点击原型
 ├── 预览图/                     41 张各版本页面截图
@@ -82,9 +85,17 @@ python -m http.server 8080
 
 ## 打包 Android APK
 
-推荐 Capacitor（WebView 壳 + 本地 assets），完整命令见 [`docs/本地运行与打包.md`](./docs/本地运行与打包.md) 第 3 节。
+仓库里已经配好 GitHub 云端自动打包：[`.github/workflows/build-apk.yml`](./.github/workflows/build-apk.yml)。
 
-不要用 TWA / Bubblewrap：线上地址带 `?sharecode=` 访问控制，做不了 Digital Asset Links 域名验证。
+**怎么拿到安装包**
+
+1. 打开仓库的 **Actions** 页 → 左侧选「打包 PUSHUP APK」→ 点 **Run workflow**（推荐）；或者改动 `index.html` / `icons` / `capacitor.config.json` 后推到 `main` 自动触发。
+2. 等构建完成（约几分钟），在该次运行的 **Artifacts** 里下载 `PUSHUP-APK`；同一个包也会发到仓库 **Releases**，手机浏览器可直接下载。
+3. 把 `PUSHUP-v1.0.apk` 传到手机，允许「未知来源」后安装即可。这是带 debug 签名的可安装包，不需要额外配置。
+
+**打包原理**：用 Capacitor 做 WebView 壳 + 本地 assets —— 构建时把 `index.html`、`manifest.webmanifest`、`sw.js`、`icons/` 复制成 `www/`（`webDir`），关掉这个副本的 Service Worker 注册（资源本来就在本地），把桌面图标换成默认橙色 P 标，再跑 `gradlew assembleDebug`。整个 App 都塞进 APK，离线完整可用，`localStorage` 正常存储数据。
+
+不要用 TWA / Bubblewrap：线上地址带 `?sharecode=` 访问控制，做不了 Digital Asset Links 域名验证。想在自己电脑上手动打包，见 [`docs/本地运行与打包.md`](./docs/本地运行与打包.md) 第 3 节。
 
 ---
 
