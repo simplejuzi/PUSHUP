@@ -223,14 +223,15 @@ h1.title.motto{font-size:20px;line-height:1.35;letter-spacing:-.4px;max-width:21
 .sumbar .it:last-child{border-right:0}
 .sumbar .v{font-size:17px;font-weight:760;letter-spacing:-.4px}
 .sumbar .k{font-size:10.5px;color:var(--sub);margin-top:3px}
-.detail{background:var(--dark-card);color:var(--dark-txt);border-radius:20px;padding:16px 18px;margin-top:12px}
-.detail .dh{font-size:12px;color:#9BA0A8;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between}
+/* v1.4：日详情卡片与上方日历卡 / 下方列表同规格，全部取主题变量，不再是写死的黑块 */
+.detail{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;margin-top:12px}
+.detail .dh{font-size:12px;color:var(--sub);font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between}
 .detail .dg{display:flex;gap:8px;flex-wrap:wrap}
-.detail .di{flex:1;min-width:88px;background:var(--dark-inner);border-radius:13px;padding:11px 10px}
-.detail .di .k{font-size:10.5px;color:#9BA0A8}
-.detail .di .v{font-size:19px;font-weight:730;margin-top:4px;letter-spacing:-.4px}
-.detail .di .v small{font-size:11px;color:#9BA0A8;font-weight:500;margin-left:2px}
-.detail .edit{background:var(--accent);border:0;color:#fff;font-size:11.5px;font-weight:700;border-radius:9px;padding:6px 11px;cursor:pointer;font-family:inherit}
+.detail .di{flex:1;min-width:88px;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:11px 10px}
+.detail .di .k{font-size:10.5px;color:var(--sub)}
+.detail .di .v{font-size:19px;font-weight:730;margin-top:4px;letter-spacing:-.4px;color:var(--ink)}
+.detail .di .v small{font-size:11px;color:var(--sub);font-weight:500;margin-left:2px}
+.detail .edit{background:var(--accent);border:0;color:var(--surface);font-size:11.5px;font-weight:700;border-radius:9px;padding:6px 11px;cursor:pointer;font-family:inherit}
 .row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-top:8px;cursor:pointer;box-shadow:var(--shadow)}
 .row .dt{width:52px;flex:none}
 .row .dt .dd{font-size:14px;font-weight:730;letter-spacing:-.3px}
@@ -614,7 +615,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-profile">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
-          <div class="badge" id="profileVersion">v1.3</div>
+          <div class="badge" id="profileVersion">v1.4</div>
         </div>
         <!-- v1.2：个人资料（头像 + 昵称，点卡片可修改） -->
         <div class="profile-card" onclick="openProfileEdit()">
@@ -653,7 +654,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
         <div class="sec-title">软件更新<span>启动时静默检查</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.3</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.4</span> <span class="ar">›</span></span></div>
           <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
         </div>
 
@@ -661,7 +662,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.3 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.4 · 正式版</div>
           <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。外观支持跟随系统，数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
@@ -896,7 +897,7 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.3";
+const APP_VERSION="v1.4";
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
   "https://api.github.com/repos/simplejuzi/PUSHUP/releases/latest",
@@ -909,26 +910,13 @@ const DEFAULT_FAVS=["pushup","knee-pushup","russian-twist","plank","glute-bridge
 var curUpdate=null,lastExport=null,updateChecked=false,tplSel=null;
 
 /* ============ 记录数据 ============ */
-/* 下面这份数组仅用于识别并清除「旧版本出厂时预置的演示记录」，
-   全新安装不会再拿它填充任何数据，App 打开就是空白的。 */
-const LEGACY_SEED=[
-  {d:"2026-10-07",p:110},{d:"2026-10-08",p:110},{d:"2026-10-09",p:60},
-  {d:"2026-10-24",p:100,w:53.75},{d:"2026-10-25",p:100,w:54.20},
-  {d:"2026-10-27",p:100,w:54.75},{d:"2026-10-28",p:50,w:54.45,a:28},
-  {d:"2026-10-29",p:120,w:55.0},{d:"2026-10-30",p:150,w:55.4},
-  {d:"2026-10-31",p:200,w:55.2},
-  {d:"2026-11-01",p:135,w:55.25},{d:"2026-11-02",p:100},
-  {d:"2026-11-03",p:110},{d:"2026-11-04",p:100,w:54.85},
-  {d:"2026-11-05",p:110,w:55.25},{d:"2026-11-06",p:110},
-  {d:"2026-11-07",p:160,w:55.45},{d:"2026-11-08",p:200,w:55.40,a:29},
-  {d:"2026-11-09",p:40}
-];
+/* v1.4：不再内置任何演示数据种子；全新安装就是空白。 */
 const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03",
       CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04";
 let DATA,FAVS,THEME;
-/* 逐条剔除旧版出厂演示记录：只删「和演示数据一模一样」的条目；
-   用户录入过的新日期、或改动过数值 / 加过明细的那条，一律保留。 */
 /* v1.2：旧版把「次」存进了记录明细 / 自定义动作，读取时统一迁移成「个」，数值不动 */
+/* v1.4：早期为清演示数据加的 isLegacyRow() 会按「日期 + 数值」误删用户导入的合法记录，
+   且全部命中时会直接清空整个数据键，造成永久丢失，故彻底移除，只做解析与单位迁移。 */
 function normUnit(u){return u==="次"?"个":u;}
 function normalizeRows(arr){
   let changed=false;
@@ -939,24 +927,15 @@ function normalizeRows(arr){
   });
   return changed;
 }
-function isLegacyRow(r){
-  if(!r||typeof r!=="object")return false;
-  const i=LEGACY_SEED.findIndex(s=>s.d===r.d);
-  if(i<0)return false;
-  const s=LEGACY_SEED[i];
-  if(Object.keys(r).some(k=>["d","p","w","a"].indexOf(k)<0))return false;
-  return r.p===s.p&&r.w===s.w&&r.a===s.a;
-}
 function loadData(){
   let raw=null;try{raw=localStorage.getItem(KEY);}catch(e){}
   let arr=null;if(raw){try{arr=JSON.parse(raw);}catch(e){arr=null;}}
   if(!Array.isArray(arr))return [];                 // 全新安装 / 已清空 → 空白
-  const kept=arr.filter(r=>!isLegacyRow(r));
-  const unitFixed=normalizeRows(kept);           // v1.2：旧单位「次」->「个」
-  if(kept.length!==arr.length||unitFixed){       // 一次性迁移，把清理结果写回去
-    try{kept.length?localStorage.setItem(KEY,JSON.stringify(kept)):localStorage.removeItem(KEY);}catch(e){}
+  const unitFixed=normalizeRows(arr);             // 旧单位「次」->「个」，数值不动
+  if(unitFixed){                                  // 只回写，绝不删除数据键
+    try{localStorage.setItem(KEY,JSON.stringify(arr));}catch(e){}
   }
-  return kept;
+  return arr;
 }
 DATA=loadData();
 try{FAVS=JSON.parse(localStorage.getItem(FKEY))||DEFAULT_FAVS.slice();}catch(e){FAVS=DEFAULT_FAVS.slice();}
@@ -1181,12 +1160,12 @@ function renderDayDetail(){
       '<div style="font-size:12.5px;color:var(--sub2);line-height:1.6;padding:6px 0">还没到这一天，不能提前记录。</div>';
     return;
   }
-  if(!r){box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><span>无记录</span></div><div style="font-size:12.5px;color:#9BA0A8;line-height:1.6">这天休息了。想补录的话，点下面的按钮。</div><div style="margin-top:12px"><button class="edit" onclick="editFrom(\''+selDate+'\')">＋ 补录这天</button></div>';return;}
+  if(!r){box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><span>无记录</span></div><div style="font-size:12.5px;color:var(--sub);line-height:1.6">这天休息了。想补录的话，点下面的按钮。</div><div style="margin-top:12px"><button class="edit" onclick="editFrom(\''+selDate+'\')">＋ 补录这天</button></div>';return;}
   const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"个"}];
   let cards=items.slice(0,6).map(i=>{const e=exById(i.id);return '<div class="di"><div class="k">'+(i.n||e.n)+'</div><div class="v">'+i.v+'<small>'+normUnit(i.u||e.u)+'</small></div></div>';}).join("");
   if(r.w!=null)cards+='<div class="di"><div class="k">体重</div><div class="v">'+r.w.toFixed(2)+'<small>kg</small></div></div>';
   if(r.a!=null)cards+='<div class="di"><div class="k">臂围</div><div class="v">'+r.a+'<small>cm</small></div></div>';
-  box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><button class="edit" onclick="editFrom(\''+selDate+'\')">编辑</button></div><div class="dg">'+cards+'</div>'+(r.note?'<div style="font-size:11.5px;color:#9BA0A8;margin-top:12px">备注：'+r.note+'</div>':'');
+  box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><button class="edit" onclick="editFrom(\''+selDate+'\')">编辑</button></div><div class="dg">'+cards+'</div>'+(r.note?'<div style="font-size:11.5px;color:var(--sub);margin-top:12px">备注：'+r.note+'</div>':'');
 }
 function editFrom(ds){curDate=ds>todayStr()?todayStr():ds;keepDateOnce=true;switchTab("record");toast("已载入 "+fmtMD(curDate));}
 
@@ -1667,9 +1646,17 @@ function doImport(){
   if(!valid.length){toast("没解析出记录，检查下格式");return;}
   valid.forEach(r=>{const i=DATA.findIndex(x=>x.d===r.d);if(i>=0)DATA[i]={...DATA[i],...r};else DATA.push(r);});
   DATA.sort((a,b)=>a.d.localeCompare(b.d));
+  /* v1.4：先落盘再刷新界面，并回读校验；写失败当场提示，避免「看着正常、重启没了」 */
+  let saved=0;
+  try{
+    saveAll();
+    const back=localStorage.getItem(KEY);
+    saved=back?JSON.parse(back).length:0;
+  }catch(e){saved=0;}
+  if(saved<valid.length){toast("保存失败，请检查存储空间后重试");return;}
   applyTheme();
-  saveAll();closeImport();document.getElementById("importText").value="";renderAll();
-  toast("已导入 "+valid.length+" 条记录");
+  closeImport();document.getElementById("importText").value="";renderAll();
+  toast("已导入并保存 "+valid.length+" 条记录");
 }
 
 /* ============ 开屏励志语句（固定词库 · 每次打开顺序循环） ============ */

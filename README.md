@@ -60,9 +60,9 @@ python -m http.server 8080
 
 ```
 .
-├── index.html                  ★ 正式版 v1.3，HTML + CSS + JS 全内嵌，零外部依赖
+├── index.html                  ★ 正式版 v1.4，HTML + CSS + JS 全内嵌，零外部依赖
 ├── manifest.webmanifest         PWA 清单
-├── sw.js                       离线缓存（pushup-v8）
+├── sw.js                       离线缓存（pushup-v9）
 ├── version.json                ★ 版本号与本次更新日志（唯一来源）
 ├── CHANGELOG.md                历次更新日志
 ├── icons/                      6 个图标 + default-avatar.jpg（默认头像源图，已内联进 index.html）
@@ -98,7 +98,7 @@ python -m http.server 8080
 
 1. 打开仓库的 **Actions** 页 → 左侧选「打包 PUSHUP APK」→ 点 **Run workflow**（推荐）；或者改动 `index.html` / `icons` / `capacitor.config.json` 后推到 `main` 自动触发。
 2. 等构建完成（约几分钟），在该次运行的 **Artifacts** 里下载 `PUSHUP-APK`；同一个包也会发到仓库 **Releases**，手机浏览器可直接下载。
-3. 把 `PUSHUP-v1.3.apk` 传到手机，允许「未知来源」后安装即可。这是带 debug 签名的可安装包，不需要额外配置。
+3. 把 `PUSHUP-v1.4.apk` 传到手机，允许「未知来源」后安装即可。这是带 debug 签名的可安装包，不需要额外配置。
 
 **版本号与更新日志**：`version.json` 是唯一版本源，构建时校验它与 `index.html` 的 `APP_VERSION` 一致，并据此设置 `versionName`、APK 文件名、Release 的 tag / 标题 / 正文。每次迭代升版本号，Release 里显示的是本次更新日志，不再是「自动构建」的固定话术；完整历史见 [`CHANGELOG.md`](./CHANGELOG.md)。
 
@@ -124,4 +124,4 @@ python -m http.server 8080
 ---
 
 **作者**：再多吃一口饭 · [酷安主页](https://www.coolapk.com/u/2456761)
-**版本**：v1.3 · 2026-11-09（突破奖励新增获奖欢呼音效）｜[更新日志](./CHANGELOG.md)
+**版本**：v1.4 · 2026-11-09（修复导入数据丢失、历史页日详情主题化）｜[更新日志](./CHANGELOG.md)

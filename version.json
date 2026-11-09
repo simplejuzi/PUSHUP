@@ -1,11 +1,10 @@
 {
-  "version": "1.3",
-  "tag": "v1.3",
-  "apk": "PUSHUP-v1.3.apk",
-  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.3/PUSHUP-v1.3.apk",
+  "version": "1.4",
+  "tag": "v1.4",
+  "apk": "PUSHUP-v1.4.apk",
+  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.4/PUSHUP-v1.4.apk",
   "changelog": [
-    "突破奖励新增「赢了」胜利号角音效：上行大调旋律 + 大三和弦齐鸣，纯合成、离线可用",
-    "关闭奖励弹窗时音效柔和淡出，重复触发不叠加爆音",
-    "点击音换成圆润上滑的「水滴」短音，替代原先的玻璃叮声"
+    "修复导入数据后退出重进丢失：移除会误删用户记录的演示数据比对逻辑，导入改为先落盘并回读校验",
+    "历史页日详情卡片改为随主题变色，不再是写死的黑色块"
   ]
 }
