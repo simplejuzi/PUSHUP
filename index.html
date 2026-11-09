@@ -44,11 +44,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
 body.dark .hint{color:#6E747D}body.dark .hint b{color:#9BA1AA}
 .phone{width:390px;height:844px;flex:none;background:var(--surface);border-radius:44px;border:1px solid var(--phone-border);box-shadow:0 30px 80px rgba(23,24,28,.13),0 2px 8px rgba(23,24,28,.04);overflow:hidden;position:relative;display:flex;flex-direction:column}
 body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.status{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:650;position:relative;z-index:3}
-.island{position:absolute;left:50%;top:9px;transform:translateX(-50%);width:92px;height:25px;border-radius:16px;background:#08090B}
-.status .icons{display:flex;gap:5px;align-items:center;color:var(--ink)}
-.status .icons svg{display:block}
-.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 20px 118px;scrollbar-width:none}
+/* 不再绘制模拟状态栏：手机上直接使用系统真实状态栏，全屏时用安全区留白 */
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(14px + env(safe-area-inset-top)) 20px 118px;scrollbar-width:none}
 .screen::-webkit-scrollbar{display:none}
 .page{display:none;animation:fade .22s ease}
 .page.on{display:block}
@@ -272,6 +269,10 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .sh-btns{display:flex;gap:10px;margin-top:14px}
 .sh-btns button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:13px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .sh-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sh-btns button.danger{background:#E5484D;color:#fff;border-color:#E5484D}
+.sh-note{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:13px;background:var(--soft);border-radius:13px;padding:11px 13px}
+.sh-link{color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline}
+.sitem.danger{color:#E5484D}
 
 /* ===== v1.0 新增：开屏 ===== */
 .splash{position:absolute;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;text-align:center;background:radial-gradient(125% 78% at 50% 8%,#3B221A 0%,#1B1C22 46%,#0E0F12 100%);color:#fff;overflow:hidden}
@@ -345,7 +346,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .splash .bot{bottom:calc(58px + env(safe-area-inset-bottom))}
 .splash .brand{top:calc(60px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:5px}
 .splash .brand img{width:54px;height:54px;border-radius:16px;object-fit:cover;box-shadow:0 10px 28px rgba(255,106,61,.42);animation:up .7s ease both}
-@media (display-mode:standalone){.status{display:none}.screen{padding-top:calc(10px + env(safe-area-inset-top))}}
+@media (display-mode:standalone){.screen{padding-top:calc(18px + env(safe-area-inset-top))}}
 .app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(255,106,61,.24)}
 .app-ic img{width:100%;height:100%;object-fit:cover;display:block;border-radius:17px}
 @media (max-width:520px){body{background:var(--surface)}}
@@ -364,14 +365,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="idx" id="splashStat"></div>
       </div>
     </div>
-    <div class="status">
-      <span id="clock">--:--</span><span class="island"></span>
-      <span class="icons">
-        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M1 9h2v2H1zM5 6.5h2V11H5zM9 4h2v7H9zM13 1h2v10h-2z" fill="currentColor"/></svg>
-        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M1 4.5C4.7 1.2 11.3 1.2 15 4.5M3.6 7c2.4-2.2 6.4-2.2 8.8 0M6.3 9.4c1-1 2.4-1 3.4 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="8" cy="11" r="1" fill="currentColor"/></svg>
-        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="1" y="1.5" width="19" height="9" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="2.8" y="3.2" width="14" height="5.6" rx="1.2" fill="currentColor"/><path d="M21.5 4.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </span>
-    </div>
+    <!-- 使用系统真实状态栏，不再绘制模拟状态栏 -->
 
     <div class="screen" id="screen">
 
@@ -496,6 +490,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="openImport()">导入数据<span class="r">支持备份文件 / 文本粘贴 <span class="ar">›</span></span></div>
+          <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
         </div>
 
         <div class="sec-title">外观</div>
@@ -541,6 +536,14 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sh-s">粘贴导出的 JSON 备份，或直接粘贴你原来那种文本：<br>11.08 俯卧撑200 体重55.40 臂围29</div>
         <textarea id="importText" rows="6" placeholder="在这里粘贴…"></textarea>
         <div class="sh-btns"><button onclick="closeImport()">取消</button><button class="primary" onclick="doImport()">导入</button></div>
+      </div>
+    </div>
+    <div class="modal" id="clearModal">
+      <div class="sheet">
+        <div class="sh-t">清空全部数据？</div>
+        <div class="sh-s">会删除所有训练记录、自定义动作、常用动作和外观设置，操作无法撤销。确认后页面会自动刷新，回到空白状态。</div>
+        <div class="sh-note">建议先 <span class="sh-link" onclick="exportJSON()">导出一份 JSON 备份</span>，以后还能用「导入数据」还原。</div>
+        <div class="sh-btns"><button onclick="closeClearData()">取消</button><button class="danger" onclick="doClearData()">确认清空并刷新</button></div>
       </div>
     </div>
     <div class="modal" id="customModal">
@@ -659,9 +662,13 @@ const SEED=[
   {d:"2026-11-09",p:40}
 ];
 const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03",
-      CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04";
+      CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04",
+      CLEARED="fitness_cleared_v1";
 let DATA,FAVS,THEME;
-try{DATA=JSON.parse(localStorage.getItem(KEY))||SEED.map(x=>({...x}));}catch(e){DATA=SEED.map(x=>({...x}));}
+/* 清空数据后不能重新灌入演示记录，因此用 CLEARED 标志记住「用户主动清空过」 */
+function seedData(){let cleared=false;try{cleared=localStorage.getItem(CLEARED)==="1";}catch(e){}
+  return cleared?[]:SEED.map(x=>({...x}));}
+try{DATA=JSON.parse(localStorage.getItem(KEY))||seedData();}catch(e){DATA=seedData();}
 try{FAVS=JSON.parse(localStorage.getItem(FKEY))||EX.filter(x=>x.fav).map(x=>x.id);}catch(e){FAVS=EX.filter(x=>x.fav).map(x=>x.id);}
 try{THEME=localStorage.getItem(TKEY)||"light";}catch(e){THEME="light";}
 try{CUSTOM=JSON.parse(localStorage.getItem(CKEY))||[];}catch(e){CUSTOM=[];}
@@ -834,6 +841,20 @@ function editFrom(ds){curDate=ds;fillRecord();switchTab("record");toast("已载�
 
 /* ============ 数据页（本轮未改动，仅网格线变量化） ============ */
 function renderStats(){
+  /* 清空数据后 DATA 为空：直接渲染空状态，避免图表对空数组取最大值/除零而报错 */
+  if(!DATA.length){
+    const kpi0=(k,v,u,s,hl)=>'<div class="kpi'+(hl?" hl":"")+'"><div class="k">'+k+'</div><div class="v">'+v+'<small>'+u+'</small></div><div class="s">'+s+'</div></div>';
+    document.getElementById("kpis").innerHTML=
+      kpi0("累计俯卧撑",0,"个","0 天打卡",true)+kpi0("日均",0,"个","还没有数据",false)+
+      kpi0("单日最高",0,"个","—",false)+kpi0("连续打卡",0,"天","—",false);
+    document.getElementById("streakText").textContent="连续 0 天";
+    const empty='<div class="muted" style="text-align:center;padding:34px 10px;font-size:12.5px">还没有记录，去「记录」页保存第一条吧</div>';
+    document.getElementById("barChart").innerHTML=empty;
+    document.getElementById("lineChart").innerHTML=empty;
+    document.getElementById("inspect").innerHTML='<div class="ins-empty">暂无数据 · 从零开始</div>';
+    weightRows=[];weightPts=[];weightTipIdx=-1;
+    return;
+  }
   const total=DATA.reduce((s,r)=>s+r.p,0),avg=Math.round(total/DATA.length),best=Math.max(...DATA.map(r=>r.p));
   const set=new Set(DATA.map(r=>r.d));let cur=parseD(TODAY),streak=0;
   const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -939,6 +960,7 @@ function finishLib(){
 /* ---- 数据页：点选当天明细 ---- */
 function pickStatDate(ds){weightTipIdx=-1;statDate=ds;renderStats();}
 function shiftStatDate(delta){
+  if(!DATA.length)return;
   const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d));
   let i=rows.findIndex(r=>r.d===statDate);if(i<0)i=rows.length-1;
   i=Math.max(0,Math.min(rows.length-1,i+delta));
@@ -1116,6 +1138,18 @@ function exportCSV(){
 }
 function openImport(){document.getElementById("importModal").classList.add("on");}
 function closeImport(){document.getElementById("importModal").classList.remove("on");}
+
+/* ============ 清空数据：清完自动刷新页面 ============ */
+function openClearData(){document.getElementById("clearModal").classList.add("on");}
+function closeClearData(){document.getElementById("clearModal").classList.remove("on");}
+function doClearData(){
+  try{
+    localStorage.clear();
+    localStorage.setItem(CLEARED,"1");
+    sessionStorage.setItem("pushup_cleared_toast","1");
+  }catch(e){}
+  location.reload();
+}
 function parseLegacy(txt){
   const out=[];
   txt.split(/\n+/).forEach(line=>{
@@ -1174,7 +1208,7 @@ function initSplash(){
   const q=QUOTES[i];
   document.getElementById("splashQuote").textContent=q.t;
   document.getElementById("splashSub").textContent=q.s;
-  const total=DATA.reduce((a,r)=>a+r.p,0),best=Math.max(...DATA.map(r=>r.p));
+  const total=DATA.reduce((a,r)=>a+(r.p||0),0),best=DATA.length?Math.max(...DATA.map(r=>r.p||0)):0;
   const ws=DATA.filter(r=>r.w!=null).sort((a,b)=>a.d.localeCompare(b.d));
   const gain=ws.length>1?(ws[ws.length-1].w-ws[0].w):0;
   const dset=new Set(DATA.map(r=>r.d));let cur=parseD(TODAY),streak=0;
@@ -1198,12 +1232,7 @@ function skipSplash(){
   el.classList.add("out");setTimeout(()=>{el.style.display="none";},450);
 }
 
-/* ============ PUSHUP 正式版：时钟 / 离线 ============ */
-function startClock(){
-  const el=document.getElementById("clock");if(!el)return;
-  const tick=()=>{const d=new Date();el.textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");};
-  tick();setInterval(tick,30000);
-}
+/* ============ PUSHUP 正式版：离线 ============ */
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
 }
@@ -1211,10 +1240,17 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
 /* ============ 初始化 ============ */
 applyTheme();
 try{localStorage.removeItem("pushup_logo_v1");}catch(e){}
-startClock();
 renderAll();
 bindWeightChart();
 initSplash();
+/* 清空数据并刷新后给一次明确反馈（开屏层会盖住 toast，先跳过开屏） */
+try{
+  if(sessionStorage.getItem("pushup_cleared_toast")==="1"){
+    sessionStorage.removeItem("pushup_cleared_toast");
+    skipSplash();
+    setTimeout(()=>toast("数据已清空 · 页面已自动刷新"),600);
+  }
+}catch(e){}
 </script>
 </body>
 </html>
