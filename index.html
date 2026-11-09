@@ -883,6 +883,21 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .feed-me-av img{width:100%;height:100%;object-fit:cover}
 .feed-me-av.off{background:var(--soft)}
 .feed-me-av.off .me-ph{font-size:19px}
+/* ===== v1.22 用户主页 ===== */
+.user-hero{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
+  border-radius:20px;box-shadow:var(--shadow);padding:18px 16px;margin-top:16px}
+.user-hero .me-av{width:68px;height:68px;font-size:34px}
+.user-hero .user-name{font-size:18px;font-weight:780;color:var(--ink)}
+.user-hero .user-sub{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.5}
+.user-actions{display:flex;gap:10px;margin-top:12px}
+.user-actions button{flex:1;border:0;border-radius:13px;padding:12px;font-size:13px;font-weight:700;
+  font-family:inherit;cursor:pointer}
+.user-actions .ua-chat{background:var(--accent);color:#fff}
+.user-actions .ua-follow{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.user-actions .ua-follow.on{background:var(--card);color:var(--sub)}
+.user-av-click{cursor:pointer}
+.fav-click{cursor:pointer}
+
 .feed-me-txt{flex:1;min-width:0}
 .feed-me-txt b{display:block;font-size:13px;color:var(--ink)}
 .feed-me-txt small{display:block;font-size:11px;color:var(--sub2);margin-top:3px}
@@ -1068,6 +1083,28 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="muted" style="margin:10px 3px">只有自己发过的会出现在这里，点卡片右上角「···」可删除</div>
         <div id="mypostsList"></div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.22 用户主页（点头像进入） ===== -->
+      <div class="page" id="page-user">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">PROFILE</div><h1 class="title" id="userTitle">用户主页</h1></div>
+        </div>
+        <div class="user-hero" id="userHero"></div>
+        <div class="stat3" id="userStats"></div>
+        <div class="user-actions" id="userActions"></div>
+        <div class="seg-row segbar" id="userSeg" style="margin-top:16px">
+          <button class="seg-data on" data-k="recs" onclick="setUserView('recs')">训练记录</button>
+          <button class="seg-data" data-k="posts" onclick="setUserView('posts')">TA 的动态</button>
+        </div>
+        <div id="userRecView">
+          <div class="recs-sum" id="userRecSum"></div>
+          <div class="recs-list" id="userRecList"></div>
+        </div>
+        <div id="userPostView" style="display:none">
+          <div id="userPostList"></div>
+        </div>
         <div style="height:80px"></div>
       </div>
 
@@ -1639,15 +1676,12 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.21";
+const APP_VERSION="v1.22";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "通知独立成页：消息页顶部加「通知」入口，点进去单独一页看全部通知，不再挤在消息页里",
-  "消息页底栏「消息」有未读消息时显示红点 + 数字，读完后自动消失",
-  "会话列表里来消息的好友头像右上角显示未读条数角标（微信风格），点进聊天读完后消失",
-  "删除评论也加了二次确认，避免误删",
-  "消息页右上角加「好友」按钮，一键跳到好友列表",
-  "未读角标移到头像右上角外侧，不再挡住头像",
+  "新增用户主页：点任意用户头像/名字即可进入，看 TA 的头像、名字、健身天数、关注/粉丝、训练记录和动态",
+  "用户主页可一键私聊、关注/取消关注；训练记录与动态用「训练记录 / TA 的动态」两段式切换条分开，可左右滑动切换",
+  "通知点进去即视为已读：消息页「通知」入口的红点数字读完后消失，之后有新点赞/评论再亮起",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1902,7 +1936,7 @@ function renderAll(){fillRecord();renderStats();renderHistory();renderLibrary();
    Native（MainActivity.onBackPressed）会调 window.__pushupBack()：
    返回 true  = 网页自己处理了（关弹窗 / 回上一级），别退出 App
    返回 false = 已经在记录首页，允许退出（退出前做了「再按一次」防误触） */
-const SUB_PARENT={library:"record",myposts:"profile",friends:"profile",chat:"chats",notifs:"chats",settings:"profile",recs:"profile",post:"feed"};
+const SUB_PARENT={library:"record",myposts:"profile",friends:"profile",chat:"chats",notifs:"chats",user:"feed",settings:"profile",recs:"profile",post:"feed"};
 const BACK_MODALS=[
   ["imgView",closeImgView],
   ["emojiPanel",function(){const m=document.getElementById("emojiPanel");if(m)m.classList.remove("on");}],
@@ -2709,6 +2743,124 @@ function openRecords(uid){
   switchTab("recs");
 }
 function closeRecords(){switchTab(RECS_BACK||"profile");}
+
+/* ============ v1.22：用户主页（点头像/名字进入） ============ */
+let USER_UID="",USER_BACK="feed";
+function openUserProfile(uid){
+  if(!uid)return;
+  const me=sMe();
+  if(me&&uid===me.id){switchTab("profile");return;}  /* 看自己就回「我的」 */
+  const from=(typeof currentPageName==="function")?currentPageName():"feed";
+  USER_BACK=(from==="user")?"feed":(from||"feed");
+  SUB_PARENT.user=USER_BACK;
+  USER_UID=uid;
+  renderUserProfile();
+  switchTab("user");
+}
+function closeUserProfile(){switchTab(USER_BACK||"feed");}
+function userWorkoutDays(uid){
+  const seen={};
+  sLoad().posts.forEach(function(p){
+    if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
+    const d=tsDate(p.ts);if(d)seen[d]=1;
+  });
+  return Object.keys(seen).length;
+}
+let USER_VIEW="recs";
+function renderUserProfile(){
+  const box=document.getElementById("userHero");if(!box)return;
+  const uid=USER_UID,u=sUser(uid);
+  const me=sMe();
+  if(uid===(me&&me.id)){switchTab("profile");return;}
+  const t=document.getElementById("userTitle");
+  if(t)t.textContent=(u.name||"TA")+" 的主页";
+  /* 头部卡 */
+  box.innerHTML='<div class="me-av'+(u.avatar?"":" off")+'">'+(u.avatar?'<img src="'+sEsc(u.avatar)+'" alt="">':'<span class="me-ph">'+(u.emoji||"💪")+'</span>')+'</div>'+
+    '<div class="me-info"><div class="user-name">'+sEsc(u.name)+'</div>'+
+    '<div class="user-sub">已健身 <b style="color:var(--accent)">'+userWorkoutDays(uid)+'</b> 天'+
+    (sFriend(uid)?' · <span class="vis-tag">好友</span>':'')+'</div></div>';
+  /* 数据：关注 / 粉丝 / 健身天数 */
+  const following=sFollowingIds(uid).length,followers=sFollowers(uid).length;
+  const stats=document.getElementById("userStats");
+  if(stats)stats.innerHTML=
+    '<div class="it"><div class="v">'+following+'</div><div class="k">关注</div></div>'+
+    '<div class="it"><div class="v">'+followers+'</div><div class="k">粉丝</div></div>'+
+    '<div class="it"><div class="v">'+userWorkoutDays(uid)+'</div><div class="k">健身天数</div></div>';
+  /* 操作：私聊 + 关注 */
+  const f=sFollowing(uid);
+  const act=document.getElementById("userActions");
+  if(act)act.innerHTML=
+    '<button class="ua-chat" onclick="chatFromUser(\''+uid+'\')">💬 私聊</button>'+
+    '<button class="ua-follow'+(f?" on":"")+'" onclick="toggleFollowFromUser(\''+uid+'\')">'+(f?"已关注":"＋ 关注")+'</button>';
+  /* 两个视图都渲染，再按当前 tab 显示 */
+  renderUserRecs(uid);
+  renderUserPosts(uid,me);
+  setUserView(USER_VIEW);
+}
+function renderUserRecs(uid){
+  const rows=recsRows(uid).filter(function(r){return !!r.d;})
+    .sort(function(a,b){return b.d.localeCompare(a.d);});
+  const rs=document.getElementById("userRecSum");
+  if(rs){
+    const total=rows.reduce(function(a,r){return a+(Number(r.total)||0);},0);
+    rs.innerHTML=rows.length?'<span><b>'+rows.length+'</b> 天</span><span>累计 <b>'+total.toLocaleString()+'</b> 个</span><span>只有 TA 公开的部分</span>':'';
+  }
+  const rl=document.getElementById("userRecList");
+  if(!rl)return;
+  if(!rows.length){rl.innerHTML='<div class="recs-empty">TA 还没有公开过训练内容</div>';return;}
+  let h="",month="";
+  rows.forEach(function(r){
+    const m=r.d.slice(0,7);
+    if(m!==month){month=m;h+='<div class="recs-month">'+m.slice(0,4)+" 年 "+Number(m.slice(5))+" 月</div>";}
+    const items=r.items.filter(function(i){return i.n;});
+    const shown=items.slice(0,3).map(function(i){
+      return '<span>'+sEsc(i.n)+(i.v!=null?" "+i.v+(i.u||""):"")+'</span>';}).join("");
+    const more=items.length>3?'<span>+'+(items.length-3)+'</span>':"";
+    h+='<div class="rrow">'+
+      '<div class="rdate"><b>'+r.d.slice(5).replace("-","/")+'</b><span>'+wdOf(r.d)+'</span></div>'+
+      '<div class="rmain"><div class="rtop"><b>'+(Number(r.total)||0)+'</b><i>个</i></div>'+
+      '<div class="rtags">'+(shown+more||'<span>未填写动作</span>')+'</div></div></div>';
+  });
+  rl.innerHTML=h;
+}
+function renderUserPosts(uid,me){
+  const pl=document.getElementById("userPostList");
+  if(!pl)return;
+  const ps=sLoad().posts.filter(function(p){return p.uid===uid;})
+    .filter(function(p){return p.vis!=="friends"||sFriend(uid);})
+    .sort(function(a,b){return b.ts-a.ts;});
+  pl.innerHTML=ps.length?ps.map(function(p){return postCardHtml(p,me);}).join("")
+    :'<div class="empty-hint">TA 还没有发过动态</div>';
+}
+/* v1.22：训练记录 / 动态 两段式切换（可左右滑） */
+function setUserView(k){
+  USER_VIEW=(k==="posts")?"posts":"recs";
+  document.querySelectorAll("#userSeg .seg-data").forEach(function(b){
+    b.className="seg-data"+((b.getAttribute("data-k")||"")===USER_VIEW?" on":"");});
+  const rv=document.getElementById("userRecView"),pv=document.getElementById("userPostView");
+  if(rv)rv.style.display=USER_VIEW==="recs"?"":"none";
+  if(pv)pv.style.display=USER_VIEW==="posts"?"":"none";
+  const sc=document.getElementById("screen");
+  if(sc)sc.scrollTop=0;
+}
+/* 从用户主页进好友列表（看 TA 的关注/粉丝） */
+function toggleFollowFromUser(uid){
+  if(!sMe()){openAuth();return;}
+  toggleFollow(uid);
+  /* toggleFollow 会 renderFriends，这里只刷新主页按钮状态，别重置当前视图 */
+  const f=sFollowing(uid);
+  const act=document.getElementById("userActions");
+  if(act){
+    const btn=act.querySelector(".ua-follow");
+    if(btn){btn.className="ua-follow"+(f?" on":"");btn.textContent=f?"已关注":"＋ 关注";}
+  }
+}
+/* 从用户主页点私聊：返回时回到用户主页而不是消息页 */
+function chatFromUser(uid){
+  SUB_PARENT.chat="user";
+  openChat(uid);
+}
+
 function tsDate(ts){
   const d=new Date(Number(ts)||0);
   if(isNaN(d.getTime()))return "";
@@ -4246,9 +4398,9 @@ function renderFriends(){
   el.innerHTML=list.length?list.map(function(u){
     const f=sFollowing(u.id),fd=sFriend(u.id);
     return '<div class="user-row" onclick="openChat(\''+u.id+'\')">'+
-      '<div class="user-av">'+sAv(u)+'</div>'+
-      '<div class="user-mid"><b>'+sEsc(u.name)+(fd?' <span class="vis-tag">好友</span>':'')+'</b>'+
-      '<small>'+(fd?'互相关注':(f?'我已关注':'关注了我'))+' · 点这行聊天</small></div>'+
+      '<div class="user-av user-av-click" onclick="event.stopPropagation();openUserProfile(\''+u.id+'\')">'+sAv(u)+'</div>'+
+      '<div class="user-mid"><b class="user-av-click" onclick="event.stopPropagation();openUserProfile(\''+u.id+'\')">'+sEsc(u.name)+(fd?' <span class="vis-tag">好友</span>':'')+'</b>'+
+      '<small>'+(fd?'互相关注':(f?'我已关注':'关注了我'))+' · 点头像看主页 · 点这行聊天</small></div>'+
       '<button class="mini-btn'+(f?' on':'')+'" onclick="event.stopPropagation();toggleFollow(\''+u.id+'\')">'+
       (f?'已关注':'＋ 关注')+'</button></div>';
   }).join(""):'<div class="empty-hint">'+(kw?"没找到这个人":(friendTab==="find"?"还没有其他伙伴":"这里还是空的"))+'</div>';
@@ -4325,8 +4477,8 @@ function postCardHtml(p,me){
   const u=sUser(p.uid),mine=me&&p.uid===me.id;
   /* v1.13：整张卡片可点，进动态详情页看图文、谁点赞、谁评论 */
   let h='<div class="fcard" onclick="openPostDetail(\''+p.id+'\')">'+
-    '<div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
-    '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
+    '<div class="fhead"><div class="fav fav-click" onclick="event.stopPropagation();openUserProfile(\''+p.uid+'\')">'+sAv(u)+'</div>'+
+    '<div class="fmeta"><div class="fname fav-click" onclick="event.stopPropagation();openUserProfile(\''+p.uid+'\')">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
     /* v1.20：可见性标签只有自己能看到，别人看不到你设置的权限 */
     (mine?'<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span>':'')+
     (mine?moreMenuHtml(p.id):'')+'</div>';
@@ -4424,8 +4576,8 @@ function renderPostDetail(){
   const likes=s.likes.filter(function(l){return l.a===p.id;});
   const cs=commentsOf(p.id),lk=postLiked(p.id);
   let h='<div class="fcard" style="margin-top:14px;cursor:default">'+
-    '<div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
-    '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
+    '<div class="fhead"><div class="fav fav-click" onclick="openUserProfile(\''+p.uid+'\')">'+sAv(u)+'</div>'+
+    '<div class="fmeta"><div class="fname fav-click" onclick="openUserProfile(\''+p.uid+'\')">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
     /* v1.20：可见性标签只有自己能看到 */
     (mine?'<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span>':'')+'</div>';
   if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
@@ -4441,7 +4593,7 @@ function renderPostDetail(){
   if(likes.length){
     h+=likes.map(function(l){
       const lu=sUser(l.b);
-      return '<span class="who"><span class="av">'+(lu.avatar?'<img src="'+sEsc(lu.avatar)+'" alt="">':sEsc(lu.emoji||"💪"))+'</span>'+sEsc(lu.name)+'</span>';
+      return '<span class="who fav-click" onclick="openUserProfile(\''+l.b+'\')"><span class="av">'+(lu.avatar?'<img src="'+sEsc(lu.avatar)+'" alt="">':sEsc(lu.emoji||"💪"))+'</span>'+sEsc(lu.name)+'</span>';
     }).join("");
   }
   h+='</div>';
@@ -4455,8 +4607,8 @@ function renderPostDetail(){
   h+='<div class="sec-title" style="margin-top:16px">评论 <span>共 '+cs.length+' 条</span></div><div class="pd-cm">';
   h+=cs.length?cs.map(function(c){
     const cu=sUser(c.uid);
-    return '<div class="fcm"><div class="fcm-av">'+sAv(cu)+'</div><div class="fcm-body">'+
-      '<div class="fcm-name">'+sEsc(cu.name)+'<span>'+sTime(c.ts)+'</span>'+
+    return '<div class="fcm"><div class="fcm-av fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sAv(cu)+'</div><div class="fcm-body">'+
+      '<div class="fcm-name"><span class="fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sEsc(cu.name)+'</span><span>'+sTime(c.ts)+'</span>'+
       (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
       '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
   }).join(""):'<div class="pd-empty">还没有评论，来说一句</div>';
@@ -4926,16 +5078,31 @@ function renderNotifications(){
   box.innerHTML=list.length?list.map(notifItemHtml).join("")
     :'<div class="notif-empty">还没有通知</div>';
 }
+/* v1.22：通知已读 —— 记录「上次看通知」的时间，之后的点赞/评论才算未读 */
+const NOTIF_READ_KEY="pushup_notif_read_at";
+function notifReadAt(){
+  try{return Number(localStorage.getItem(NOTIF_READ_KEY))||0;}catch(e){return 0;}
+}
+function notifUnreadCount(){
+  const at=notifReadAt(),list=buildNotifications();
+  /* follow 无时间戳，不参与红点；只统计有时间戳且晚于上次查看的赞/评论 */
+  return list.filter(function(n){return n.type!=="follow"&&(n.ts||0)>at;}).length;
+}
+function openNotifs(){
+  /* 进入通知页即视为已读：记录当前时间，刷新入口红点 */
+  try{localStorage.setItem(NOTIF_READ_KEY,String(Date.now()));}catch(e){}
+  switchTab("notifs");
+}
 /* 消息页顶部的「通知」入口行：显示未读通知数，点进去看全部 */
 function renderNotifEntry(){
   const box=document.getElementById("notifEntry");
   if(!box)return;
   const me=sMe();if(!me){box.innerHTML="";return;}
-  const list=buildNotifications();
-  const badge=list.length?'<span class="chat-unread" style="position:static">'+list.length+'</span>':"";
-  box.innerHTML='<div class="notif-entry" onclick="switchTab(\'notifs\')">'+
+  const unread=notifUnreadCount();
+  const badge=unread?'<span class="chat-unread" style="position:static">'+(unread>99?"99+":unread)+'</span>':"";
+  box.innerHTML='<div class="notif-entry" onclick="openNotifs()">'+
     '<span class="notif-ic">🔔</span>'+
-    '<div class="notif-mid"><b>通知</b><small>'+(list.length?list.length+' 条通知':'暂无通知')+'</small></div>'+
+    '<div class="notif-mid"><b>通知</b><small>'+(unread?unread+' 条新通知':'暂无新通知')+'</small></div>'+
     badge+
     '<span class="ar">›</span></div>';
 }
@@ -5229,6 +5396,7 @@ function socialOnEnter(name){
     if(name==="chats"){renderChats();renderNotifEntry();}
     if(name==="notifs")renderNotifications();
     if(name==="chat")renderChat();
+    if(name==="user"&&USER_UID)renderUserProfile();
     if(name==="profile"||name==="settings"){renderProfile();refreshSocialCounts();}
     if(name==="data")setDataView(dataView);
     if(name==="feed"||name==="chats"||name==="myposts")netProbe();   /* 进社区页顺手探一次（30 秒内不重复探） */
