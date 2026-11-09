@@ -916,7 +916,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑个数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。训练数据本机优先，登录后自动同步到账号，也可以随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
-          <div class="about-row"><span class="k">GitHub</span><a href="https://github.com/simplejuzi" target="_blank" rel="noopener">作者主页 →</a></div>
+          <div class="about-row"><span class="k">项目</span><a href="https://github.com/simplejuzi/PUSHUP" target="_blank" rel="noopener">GitHub 仓库 →</a></div>
           <div class="about-row"><span class="k">数据</span><span class="v">本机优先 · 登录后云端同步</span></div>
           <div class="about-row"><span class="k">社区</span><span class="v" id="socialModeTag">—</span></div>
         </div>
@@ -940,14 +940,14 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     </div>
 
 
-    <!-- ===== v1.5 注册 / 登录（名称 + 手机号 + 密码，无验证码） ===== -->
+    <!-- ===== v1.6 注册 / 登录（名称 + 邮箱 + 密码，无验证码） ===== -->
     <div class="modal" id="authModal">
       <div class="sheet form">
         <div class="ins-head"><b id="auTitle">加入 PUSHUP</b><button class="tx" onclick="closeAuth()">✕</button></div>
         <label id="auNameLb">名称<input id="auName" maxlength="12" placeholder="朋友看到的名字，不能重复"></label>
-        <label>手机号<input id="auPhone" inputmode="numeric" maxlength="11" placeholder="11 位手机号，当账号用"></label>
-        <label>密码<input id="auPass" type="password" placeholder="1~8 位都行"></label>
-        <div class="muted" style="margin-top:8px">名称 / 11 位手机号 / 密码，不需要验证码；名称不能和别人重复</div>
+        <label>邮箱<input id="auEmail" type="email" inputmode="email" maxlength="60" autocomplete="email" placeholder="当账号用，如 name@qq.com"></label>
+        <label>密码<input id="auPass" type="password" maxlength="32" placeholder="随便设，记住就行"></label>
+        <div class="muted" style="margin-top:8px">名称 / 邮箱 / 密码，不需要验证码；名称和邮箱都不能和别人重复</div>
         <div class="btn-row">
           <button class="btn-primary" onclick="submitAuth('reg')">注册</button>
           <button class="btn-ghost" onclick="submitAuth('login')">登录</button>
@@ -962,7 +962,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="ins-head"><b>当前账号</b><button class="tx" onclick="closeLogout()">✕</button></div>
         <div class="logout-box">
           <div class="me-av" id="loAv"></div>
-          <div><b id="loName"></b><small id="loPhone"></small></div>
+          <div><b id="loName"></b><small id="loMail"></small></div>
         </div>
         <div class="muted" style="margin-top:12px">退出后可重新登录，本机训练记录不会丢失</div>
         <div class="btn-row">
@@ -1230,21 +1230,14 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.5";
+const APP_VERSION="v1.6";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "底栏改版：取消「动作」Tab，新增居中的「动态」；动作库改从记录页「浏览动作库」进入",
-  "新增动态专区：图文发布、附带当天训练成果、全部人 / 仅好友可见",
-  "新增好友功能：关注 / 粉丝 / 找人，互相关注才算好友",
-  "新增最简好友私聊：文字、图片、内置表情与表情包（打开 App 可收发）",
-  "新增名称 + 11 位手机号 + 密码三字段注册登录，无验证码；社区支持本地演示与 Supabase 双模式",
-  "导航与我的页重构：历史 + 数据合并为「数据」页并加页内切换，原数据位改「消息」；设置项全部收进设置页；未登录显示灰色头像与提示，发动态必须登录",
-  "点资料卡整体：未登录弹注册登录、已登录弹退出登录确认；手机号强制 11 位；动态只留「全部 / 好友」且默认全部，我的动态拆为独立页；设置与快捷入口去掉重复账号 / 消息入口",
-  "训练数据上云：登录后逐日实时同步，改一条推一条；未登录只存本机并在保存时提示可登录；登录时把本机数据并入账号，多设备按修改时间合并；导入 / 清空同步到云端",
-  "动态支持点赞与评论：评论可带表情，别人发的也能点；未登录点一下会提示登录",
-  "昵称唯一：注册和改名都会查重（不区分大小写），云端另有唯一索引兜底",
-  "联网后文案清理：去掉「只存本机」「离线可用」等旧说法，改为登录后自动同步",
-  "关于页改为跳到作者 GitHub 主页；更新日志改为应用内查看（仓库转私有后外部发行页打不开）"
+  "账号改为「邮箱 + 密码」注册登录：不收验证码、不做邮箱确认，邮箱即唯一账号",
+  "名称依然唯一；邮箱不再写进公开资料，只有本人能看到自己的账号",
+  "注册弹窗、退出确认、本地与云端校验的「手机号」文案与规则全部换成邮箱",
+  "关于页恢复指向 GitHub 仓库",
+  "数据库结构同步调整：profiles 表移除手机号字段，账号只存在 Supabase Auth"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -2574,10 +2567,10 @@ function renderMeCard(){
 function meCardClick(){if(sMe())openLogout();else openAuth();}
 function openLogout(){
   const me=sMe();if(!me){openAuth();return;}
-  const av=document.getElementById("loAv"),n=document.getElementById("loName"),p=document.getElementById("loPhone");
+  const av=document.getElementById("loAv"),n=document.getElementById("loName"),p=document.getElementById("loMail");
   if(av){av.innerHTML=sAv(me);av.className="me-av";}
   if(n)n.textContent=me.name;
-  if(p)p.textContent=me.phone?String(me.phone).replace(/^(\d{3})\d{4}(\d{4})$/,"$1****$2"):"";
+  if(p)p.textContent=me.email?maskMail(me.email):"";
   document.getElementById("logoutModal").classList.add("on");
 }
 function closeLogout(){document.getElementById("logoutModal").classList.remove("on");}
@@ -2603,6 +2596,8 @@ function feedMeClick(){if(sMe())openPost();else openAuth();}
    ================================================================== */
 const SB_URL="https://zqrlolyntlcewrwfhumd.supabase.co";
 const SB_ANON="sb_publishable_O7AmNzcRHCKtWThXB9_8tg_xWaMoRQU";
+/* v1.6：邮箱当账号。只做格式校验，不发验证码、不做邮箱确认 */
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 const SOC_KEY="pushup_social_v1";
 const CLOUD=()=>!!(SB_URL&&SB_ANON);
 let SOC=null,SB_TOKEN="",feedFilter="all",friendTab="following",postVis="all",
@@ -2641,6 +2636,14 @@ function sAv(u){return u.avatar?'<img src="'+sEsc(u.avatar)+'" alt="">':'<span>'
 function sFollowing(id){const s=sLoad();return s.follows.some(f=>f.a===s.session&&f.b===id);}
 function sFriend(id){const s=sLoad();return id!==s.session&&sFollowing(id)&&s.follows.some(f=>f.a===id&&f.b===s.session);}
 /* v1.5：昵称唯一。本地缓存里覆盖所有从云端拉下来的资料，先本地查；云端再查一次防缓存过期 */
+/* 邮箱打码：ab***@qq.com */
+function maskMail(m){
+  const s=String(m||""),i=s.indexOf("@");
+  if(i<1)return s?s.slice(0,2)+"***":"" ;
+  const n=s.slice(0,i),d=s.slice(i);
+  if(n.length<=2)return n.charAt(0)+"***"+d;
+  return n.slice(0,2)+"***"+d;
+}
 function nameTaken(name,exceptId){
   const k=String(name||"").trim().toLowerCase();
   if(!k)return false;
@@ -2687,14 +2690,15 @@ function sbUpsertProfile(u){
   sbFetch("/rest/v1/profiles",{
     method:"POST",
     headers:Object.assign(sbH(),{"Prefer":"resolution=ignore-duplicates,return=minimal"}),
-    body:JSON.stringify({id:u.id,name:u.name,phone:u.phone,avatar:u.avatar||""})
+    body:JSON.stringify({id:u.id,name:u.name,avatar:u.avatar||""})
   });
 }
-function cloudApplySession(d,phone,fallbackName){
+function cloudApplySession(d,email,fallbackName){
   if(!d||!d.access_token||!d.user)return false;
   SB_TOKEN=d.access_token;
   const meta=d.user.user_metadata||{};
-  const u={id:d.user.id,name:meta.name||fallbackName||phone,phone:phone,pass:"",
+  /* 账号只存在本机与 Supabase Auth 里，不写进任何公开可读的资料表 */
+  const u={id:d.user.id,name:meta.name||fallbackName||email,email:email||d.user.email||"",pass:"",
            avatar:meta.avatar||"",emoji:"💪"};
   const s=sLoad();if(!s.users.some(x=>x.id===u.id))s.users.push(u);
   s.session=u.id;sSave();
@@ -2702,27 +2706,30 @@ function cloudApplySession(d,phone,fallbackName){
   syncCloud();
   onLoginMerge();return true;
 }
-function cloudRegister(name,phone,pass){
-  if(!/^\d{11}$/.test(String(phone||"")))return Promise.resolve({ok:false,why:"phone"});
+function cloudRegister(name,email,pass){
+  email=String(email||"").trim();
+  if(!EMAIL_RE.test(email))return Promise.resolve({ok:false,why:"email"});
   /* 先查云端有没有同名，避免注册成功但昵称撞车 */
   return cloudNameTaken(name).then(function(taken){
     if(taken)return {ok:false,why:"name"};
-    return sbAuth("signup",{email:phone+"@pushup.local",password:pass,
-      data:{name:name,phone:phone}}).then(function(d){
+    /* v1.6：邮箱直接当账号，不再拼一个假的内部邮箱地址 */
+    return sbAuth("signup",{email:email,password:pass,data:{name:name}}).then(function(d){
         if(!d||d.error){
           const msg=String((d&&d.error&&(d.error.message||d.error.code))||"");
-          if(/already|exists|registered|duplicate/i.test(msg))return {ok:false,why:"phone"};
+          if(/already|exists|registered|duplicate/i.test(msg))return {ok:false,why:"email"};
+          if(/email/i.test(msg)&&/invalid/i.test(msg))return {ok:false,why:"email"};
           return {ok:false,why:"fail"};
         }
-        const go=d.access_token?cloudApplySession(d,phone,name):cloudLogin(phone,pass);
+        const go=d.access_token?cloudApplySession(d,email,name):cloudLogin(email,pass);
         return Promise.resolve(go).then(function(r){
           return (r===true||(r&&r.ok))?{ok:true}:{ok:false,why:"fail"};});
       }).catch(function(){return {ok:false,why:"net"};});
   }).catch(function(){return {ok:false,why:"net"};});
 }
-function cloudLogin(phone,pass){
-  return sbAuth("token?grant_type=password",{email:phone+"@pushup.local",password:pass})
-    .then(function(d){return cloudApplySession(d,phone,phone);})
+function cloudLogin(email,pass){
+  email=String(email||"").trim();
+  return sbAuth("token?grant_type=password",{email:email,password:pass})
+    .then(function(d){return cloudApplySession(d,email,email);})
     .catch(()=>false);
 }
 function syncCloud(){
@@ -2737,7 +2744,7 @@ function syncCloud(){
   ]).then(function(a){
     const s=sLoad(),ps=a[0],fs=a[1],po=a[2],ms=a[3],lk=a[4],cm=a[5];
     if(ps)ps.forEach(p=>{if(!s.users.some(u=>u.id===p.id))s.users.push(
-      {id:p.id,name:p.name,phone:p.phone||"",pass:"",avatar:p.avatar||"",emoji:"💪"});});
+      {id:p.id,name:p.name,pass:"",avatar:p.avatar||"",emoji:"💪"});});
     if(fs)fs.forEach(f=>{if(!s.follows.some(x=>x.a===f.a&&x.b===f.b))s.follows.push({a:f.a,b:f.b});});
     if(po)po.forEach(p=>{if(!s.posts.some(x=>x.id===p.id))s.posts.push(p);});
     if(ms)ms.forEach(m=>{const x=normMsg(m);
@@ -2772,42 +2779,45 @@ function startPolling(){
 }
 
 /* ---- 注册 / 登录：本地与云端统一入口 ---- */
-function localRegister(name,phone,pass){
-  if(!/^\d{11}$/.test(String(phone||""))){toast("手机号要 11 位数字");return false;}
-  const s=sLoad();if(s.users.some(u=>u.phone===phone)){toast("这个手机号已经注册过了");return false;}
+function localRegister(name,email,pass){
+  email=String(email||"").trim();
+  if(!EMAIL_RE.test(email)){toast("邮箱格式不对，比如 name@qq.com");return false;}
+  const s=sLoad(),k=email.toLowerCase();
+  if(s.users.some(u=>String(u.email||"").toLowerCase()===k)){toast("这个邮箱已经注册过了");return false;}
   if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return false;}
-  const u={id:sUid(),name:name,phone:phone,pass:pass,
+  const u={id:sUid(),name:name,email:email,pass:pass,
     avatar:(typeof AVATAR!=="undefined"?AVATAR:""),emoji:"💪"};
   s.users.push(u);s.session=u.id;sSave();toast("注册成功 · 欢迎 "+u.name);return true;
 }
-function localLogin(phone,pass){
-  const s=sLoad(),u=s.users.find(x=>x.phone===phone&&x.pass===pass);
-  if(!u){toast("手机号或密码不对");return false;}
+function localLogin(email,pass){
+  const s=sLoad(),k=String(email||"").trim().toLowerCase();
+  const u=s.users.find(x=>String(x.email||"").toLowerCase()===k&&x.pass===pass);
+  if(!u){toast("邮箱或密码不对");return false;}
   s.session=u.id;sSave();onLoginMerge();toast("欢迎回来 "+u.name);return true;
 }
 function submitAuth(mode){
   const name=(document.getElementById("auName").value||"").trim();
-  const phone=(document.getElementById("auPhone").value||"").trim();
-  const pass=document.getElementById("auPass").value||"";
-  if(!phone||!pass){toast("手机号和密码填一下");return;}
+  const email=(document.getElementById("auEmail").value||"").trim();
+  const pass=(document.getElementById("auPass").value||"");
+  if(!email||!pass){toast("邮箱和密码填一下");return;}
   if(mode==="reg"&&!name){toast("给自己起个名称");return;}
-  if(!/^\d{11}$/.test(phone)){toast("手机号要 11 位数字");return;}
+  if(!EMAIL_RE.test(email)){toast("邮箱格式不对，比如 name@qq.com");return;}
   if(mode==="reg"){
     if(name.length>12){toast("名称最多 12 个字");return;}
     if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return;}
   }
   if(CLOUD()){
-    const p=mode==="reg"?cloudRegister(name,phone,pass):cloudLogin(phone,pass);
+    const p=mode==="reg"?cloudRegister(name,email,pass):cloudLogin(email,pass);
     Promise.resolve(p).then(function(r){
       if(r===true||(r&&r.ok)){closeAuth();refreshSocialUI();toast(mode==="reg"?"注册成功":"欢迎回来");return;}
       const why=(r&&r.why)||"fail";
       toast(why==="name"?"这个名称已经有人用了，换一个"
-          :why==="phone"?"这个手机号已经注册过了"
+          :why==="email"?"这个邮箱已经注册过了"
           :why==="net"?"连不上云端，稍后再试"
-          :"没成功，检查手机号或密码");
+          :"没成功，检查邮箱或密码");
     }).catch(function(){toast("连不上云端，稍后再试");});
   }else{
-    const ok=mode==="reg"?localRegister(name,phone,pass):localLogin(phone,pass);
+    const ok=mode==="reg"?localRegister(name,email,pass):localLogin(email,pass);
     if(ok){closeAuth();refreshSocialUI();}
   }
 }

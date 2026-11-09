@@ -6,14 +6,22 @@
 --        ① 关闭 "Confirm email"  ② Minimum password length 调到 1
 -- ============================================================
 
+-- ---------- 账号说明（v1.6）----------
+-- 账号 = 邮箱 + 密码，由 Supabase Auth 管理，不发验证码。
+-- 该脚本不会在任何表里存邮箱或手机号：profiles 只有昵称与头像，
+-- 所以即使 anon/publishable key 公开，也拿不到别人的账号信息。
+
 -- ---------- 4 张表 ----------
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   name text not null default '新朋友',
-  phone text not null default '',
   avatar text not null default '',
   created_at timestamptz not null default now()
 );
+
+-- v1.6：账号（邮箱）只存在 Supabase Auth 的 auth.users 里，profiles 不再存任何账号字段。
+-- 早期版本存过手机号，这里直接删列，避免它继续被「所有人可读」的策略暴露。
+alter table public.profiles drop column if exists phone;
 
 create table if not exists public.follows (
   a uuid not null references public.profiles(id) on delete cascade,
@@ -95,11 +103,10 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, name, phone)
+  insert into public.profiles (id, name)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data->>'name', '新朋友'),
-    coalesce(new.raw_user_meta_data->>'phone', '')
+    coalesce(new.raw_user_meta_data->>'name', '新朋友')
   )
   on conflict (id) do nothing;
   return new;
