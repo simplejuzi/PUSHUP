@@ -573,7 +573,6 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .ins-met span{font-size:11px;color:var(--sub);background:var(--soft);border-radius:8px;padding:6px 9px}
 .ins-note{font-size:11.5px;color:var(--sub);line-height:1.6;margin-top:10px}
 .ins-empty{text-align:center;font-size:12px;color:var(--sub2);padding:22px 0 10px}
-.ins-edit{width:100%;margin-top:13px;border:0;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;padding:11px;border-radius:12px;cursor:pointer;font-family:inherit}
 /* ===== 动作库：自定义 / 常用分组 ===== */
 .addcustom{width:100%;margin-top:12px;border:1.5px dashed var(--accent-mid);background:var(--accent-soft);color:var(--accent);border-radius:14px;padding:12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
 .grp-title.sub{margin-top:24px;font-size:12.5px;color:var(--sub)}
@@ -622,15 +621,24 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 @media (max-width:520px){body{background:var(--surface)}}
 
 /* ===== v1.5 社区：动态 / 好友 / 聊天（全主题变量） ===== */
-.sub-back{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:12.5px;font-weight:700;margin-top:12px;cursor:pointer}
 .btn-primary,.btn-ghost{border:0;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .btn-primary{background:var(--accent);color:var(--surface)}
 .btn-ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
 .btn-primary.sm,.btn-ghost.sm{padding:8px 12px;font-size:12px;border-radius:10px}
 .btn-primary.wide,.btn-ghost.wide{width:100%;margin-top:12px}
 .seg-row{display:flex;gap:8px;margin-top:16px}
-.seg-feed,.seg-f{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:11px;padding:9px 0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
-.seg-feed.on,.seg-f.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+.seg-f{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:11px;padding:9px 0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.seg-f.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+/* v1.16：两段式切换条 —— 合成一个整体、中间一条分割线；选中那段沿用原来的强调色突出 */
+.seg-row.segbar{position:relative;gap:0;background:var(--soft);border:1px solid var(--line);
+  border-radius:12px;padding:3px}
+.segbar::after{content:"";position:absolute;left:50%;top:8px;bottom:8px;width:1px;
+  background:var(--line);transform:translateX(-.5px);pointer-events:none}
+.segbar .seg-data,.segbar .seg-feed{flex:1;border:1px solid transparent;background:transparent;
+  color:var(--sub);border-radius:9px;padding:9px 0;font-size:12px;font-weight:700;
+  font-family:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.segbar .seg-data.on,.segbar .seg-feed.on{background:var(--accent-soft);color:var(--accent);
+  border-color:rgba(var(--accent-rgb),.4)}
 .fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;margin-top:12px}
 .fhead{display:flex;align-items:center;gap:10px}
 .fav,.user-av,.bubble-av{width:38px;height:38px;flex:none;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
@@ -711,21 +719,52 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
   background:var(--card);border-top:1px solid var(--line);padding:9px 20px;
   display:flex;gap:6px;align-items:center;z-index:6;
   box-shadow:0 -8px 20px rgba(23,24,28,.06)}
+/* v1.17：详情页隐藏底栏时，评论条贴到底部 */
+.bar-less .pd-bar{bottom:calc(0px + env(safe-area-inset-bottom))}
 .pd-bar[hidden]{display:none}
 .pd-bar input{flex:1;min-width:0;border:1px solid var(--line);background:var(--soft);
   border-radius:999px;height:32px;padding:0 13px;font:inherit;font-size:13px;
   color:var(--ink);outline:0}
-/* v1.15：点赞并进「N 人点赞」这一行 —— 点它点赞 / 取消，只用颜色区分状态 */
+/* v1.15/17：点赞按钮 —— 爱心图标 + 「点赞」，只用颜色区分状态 */
 .pd-likebtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
   background:var(--card);color:var(--sub);border-radius:999px;padding:6px 12px;
   font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
-.pd-likebtn .pd-thumb{font-size:13px;filter:grayscale(1);opacity:.5;transition:filter .15s,opacity .15s}
+.pd-likebtn .pd-thumb{font-size:14px;filter:grayscale(1);opacity:.5;transition:filter .15s,opacity .15s}
 .pd-likebtn.on{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.1);color:var(--accent)}
 .pd-likebtn.on .pd-thumb{filter:none;opacity:1}
 .pd-likebtn:active{transform:scale(.96)}
+/* v1.17：详情页操作行 —— 左边评论数，右边点赞按钮 */
+.pd-actbar{display:flex;align-items:center;justify-content:space-between;margin-top:12px;
+  padding-top:12px;border-top:1px solid var(--line)}
+.pd-act-comment{font-size:12px;color:var(--sub);font-weight:650}
 .pd-ops{display:flex;justify-content:flex-end;margin-top:2px}
 .pd-ops button{border:0;background:transparent;color:var(--sub2);font:inherit;
   font-size:11.5px;padding:7px 2px;cursor:pointer}
+/* v1.17：「三个点」更多菜单（微信风格），详情页与我的动态通用 */
+.more{position:relative;flex:none;margin-left:auto}
+.more-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border:0;background:transparent;color:var(--sub);border-radius:50%;cursor:pointer;font-size:16px;
+  letter-spacing:-1px;font-weight:700}
+.more-btn:active{background:var(--soft)}
+.more-menu{position:absolute;top:34px;right:0;z-index:8;min-width:130px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.14);
+  padding:5px;display:none}
+.more-menu.on{display:block}
+.more-menu button{display:flex;align-items:center;gap:9px;width:100%;border:0;background:transparent;
+  color:var(--ink);font:inherit;font-size:13px;font-weight:650;padding:9px 11px;border-radius:8px;
+  cursor:pointer;text-align:left}
+.more-menu button:active{background:var(--soft)}
+.more-menu button.danger{color:#E5484D}
+.more-menu .mi{font-size:14px;line-height:1}
+/* v1.17：删除动态二次确认弹窗 */
+.confirm-sheet{max-width:330px}
+.confirm-sheet .sh-s{font-size:12.5px;line-height:1.6;color:var(--sub)}
+.confirm-sheet .sh-btns{gap:10px}
+.confirm-sheet .sh-btns button{flex:1}
+.confirm-sheet .sh-btns .danger{background:#E5484D;color:#fff;border:0}
+/* v1.17：详情页隐藏底栏时，评论条贴到底部 */
+.tabbar.hide-bar{display:none}
+.page-barless{padding-bottom:0}
 .pd-empty{text-align:center;color:var(--sub2);font-size:12px;padding:16px 0}
 /* ===== v1.13：下拉刷新提示 ===== */
 .pullhint{height:0;overflow:hidden;text-align:center;color:var(--sub2);font-size:11.5px;transition:height .16s}
@@ -738,7 +777,16 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .user-time{font-size:10px;color:var(--sub2)}
 .mini-btn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
 .mini-btn.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
-.chat-body{height:calc(100vh - 236px);min-height:260px;overflow-y:auto;margin-top:12px;padding-bottom:8px}
+/* v1.17：聊天页整体覆盖手机屏，顶部标题 + 中间记录滚动 + 底部固定输入条 */
+#page-chat.on{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--surface);z-index:3}
+.chat-body{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 90px;scrollbar-width:none}
+.chat-body::-webkit-scrollbar{display:none}
+/* v1.17：聊天页微信风格 —— 顶部居中标题栏 */
+.chat-top{display:flex;align-items:center;justify-content:center;
+  height:52px;padding-top:env(safe-area-inset-top);
+  background:var(--tabbar);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);flex:none}
+.chat-top-name{font-size:16px;font-weight:750;color:var(--ink);letter-spacing:-.2px;
+  max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bubble-row{display:flex;align-items:flex-end;gap:7px;margin-top:12px}
 .bubble-row.out{justify-content:flex-end}
 .bubble{max-width:72%;background:var(--card);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:9px 11px;font-size:13px;line-height:1.55;color:var(--ink);word-break:break-word;box-shadow:var(--shadow)}
@@ -748,9 +796,16 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .bubble-img{max-width:100%;border-radius:10px;display:block}
 .bubble-sticker{font-size:46px;line-height:1.2;text-align:center}
 .bubble-cap{font-size:11px;text-align:center;opacity:.8}
-.chat-bar{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;margin-top:8px}
-.chat-bar input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-size:13px;font-family:inherit;outline:0;padding:6px}
-.chat-icon{border:0;background:var(--soft);border-radius:10px;width:32px;height:32px;font-size:16px;cursor:pointer;flex:none}
+/* v1.17：聊天输入条固定贴底，不随记录滚动 */
+.chat-bar{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;align-items:center;
+  gap:7px;background:var(--tabbar);backdrop-filter:blur(16px);border-top:1px solid var(--line);
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom))}
+.chat-bar[hidden]{display:none}
+.chat-bar input{flex:1;min-width:0;border:0;background:var(--soft);border-radius:18px;
+  color:var(--ink);font-size:13.5px;font-family:inherit;outline:0;padding:9px 14px}
+.chat-icon{border:0;background:transparent;color:var(--sub);border-radius:50%;width:34px;height:34px;
+  font-size:19px;cursor:pointer;flex:none}
+.chat-icon:active{background:var(--soft)}
 .img-hint{font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer}
 .post-tool{display:flex;align-items:center;gap:8px;margin-top:10px}
 .post-imgs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -804,13 +859,11 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .feed-me-txt b{display:block;font-size:13px;color:var(--ink)}
 .feed-me-txt small{display:block;font-size:11px;color:var(--sub2);margin-top:3px}
 .feed-me-go{font-size:11.5px;font-weight:700;color:var(--accent);white-space:nowrap}
-.seg-data{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:11px;padding:9px 0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
-.seg-data.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
 </style>
 </head>
 <body>
 <div class="stage">
-  <div class="phone">
+  <div class="phone" id="phone">
     <div class="splash" id="splash" onclick="skipSplash()">
       <div class="brand"><img src="icons/icon-512.png" alt=""><span>P U S H U P</span></div>
       <div class="qmark">“</div>
@@ -883,7 +936,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
             <div class="badge ok" id="weightBadge">暂无体重记录</div>
           </div>
         </div>
-        <div class="seg-row">
+        <div class="seg-row segbar">
           <button class="seg-data on" data-k="stats" onclick="setDataView('stats')">数据统计</button>
           <button class="seg-data" data-k="history" onclick="setDataView('history')">历史日历</button>
         </div>
@@ -932,7 +985,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 动作库 ===== -->
       <div class="page" id="page-library">
-        <div class="sub-back" onclick="switchTab('record')">‹ 返回记录</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
           <div class="badge">徒手 · 无器械为主</div>
@@ -955,7 +1007,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-feed">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
-          <button class="btn-primary sm" id="feedPostBtn" onclick="openPost()">登录后发布</button>
         </div>
         <div class="netbar hide" onclick="openServerAddr()">
           <span class="nb-ic">⚠️</span>
@@ -966,7 +1017,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="feed-me-txt"><b id="feedMeName">未登录</b><small id="feedMeHint">登录后即可发布动态、看好友训练</small></div>
           <span class="feed-me-go" id="feedMeGo">去登录</span>
         </div>
-        <div class="seg-row">
+        <div class="seg-row segbar">
           <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all',1)">全部</button>
           <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends',1)">好友</button>
         </div>
@@ -977,26 +1028,23 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.13：动态详情（图文 + 谁点赞 + 谁评论，评论只能在这里发） ===== -->
       <div class="page" id="page-post">
-        <div class="sub-back" onclick="closePostDetail()">‹ 返回动态</div>
         <div id="pdBody"></div>
         <div style="height:92px"></div>
       </div>
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
       <div class="page" id="page-myposts">
-        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">MY POSTS</div><h1 class="title">我的动态</h1></div>
           <button class="btn-primary sm" onclick="openPost()">＋ 发动态</button>
         </div>
-        <div class="muted" style="margin:10px 3px">只有自己发过的会出现在这里，可点卡片下方删除</div>
+        <div class="muted" style="margin:10px 3px">只有自己发过的会出现在这里，点卡片右上角「···」可删除</div>
         <div id="mypostsList"></div>
         <div style="height:80px"></div>
       </div>
 
       <!-- ===== v1.5 好友 ===== -->
       <div class="page" id="page-friends">
-        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">FRIENDS</div><h1 class="title">好友</h1></div>
           <div class="badge">互相关注 = 好友</div>
@@ -1029,22 +1077,12 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div style="height:80px"></div>
       </div>
 
-      <!-- ===== v1.5 聊天 ===== -->
+      <!-- ===== v1.5 聊天（v1.17 微信风格：顶部居中标题 + 固定输入条 + 我方头像） ===== -->
       <div class="page" id="page-chat">
-        <div class="sub-back" onclick="switchTab('chats')">‹ 返回消息</div>
-        <div class="head-row" style="margin-top:10px">
-          <div><div class="eyebrow">CHAT</div><h1 class="title" id="chatTitle">聊天</h1></div>
-          <button class="btn-ghost sm" onclick="openChatPicker()">换人</button>
+        <div class="chat-top">
+          <div class="chat-top-name" id="chatTitle">聊天</div>
         </div>
         <div id="chatBody" class="chat-body"></div>
-        <div class="chat-bar">
-          <button class="chat-icon" onclick="document.getElementById('chatFile').click()" title="发图片">▣</button>
-          <button class="chat-icon" onclick="toggleEmoji('chatInput')" title="表情">☺</button>
-          <input id="chatInput" type="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')submitChat()">
-          <button class="btn-primary sm" onclick="submitChat()">发送</button>
-        </div>
-        <div id="chatImgHint" class="img-hint" style="display:none" onclick="chatImg=null;this.style.display='none'"></div>
-        <input id="chatFile" type="file" accept="image/*" style="display:none" onchange="onChatImg(event)">
       </div>
 
       <!-- ===== 我的（重做：只留资料 / 概览 / 快捷入口） ===== -->
@@ -1081,7 +1119,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.12：训练记录（简洁列表，可看自己，也可看别人公开的部分） ===== -->
       <div class="page" id="page-recs">
-        <div class="sub-back" onclick="closeRecords()">‹ 返回</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">RECORDS</div><h1 class="title" id="recsTitle">训练记录</h1></div>
           <div class="badge" id="recsCount">0 天</div>
@@ -1093,7 +1130,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 设置：原我的页所有设置 / 关于项统一搬到这里 ===== -->
       <div class="page" id="page-settings">
-        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
           <div class="badge" id="profileVersion">v1.9</div>
@@ -1172,7 +1208,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <button onclick="finishLib()">完成</button>
     </div>
 
-    <div class="tabbar">
+    <div class="tabbar" id="tabbar">
       <button class="tab on" id="tab-record" onclick="switchTab('record')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>记录</button>
       <button class="tab" id="tab-data" onclick="switchTab('data')"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
       <button class="tab mid" id="tab-feed" onclick="switchTab('feed')" aria-label="动态">
@@ -1185,6 +1221,16 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
     <!-- v1.15：详情页评论输入条（固定贴在底栏上方，不跟着内容滚） -->
     <div class="pd-bar" id="pdBar" hidden></div>
+
+    <!-- v1.17：聊天输入条（固定，微信风格，不随记录滚动） -->
+    <div class="chat-bar" id="chatBar" hidden>
+      <button class="chat-icon" onclick="document.getElementById('chatFile').click()" title="发图片">▣</button>
+      <button class="chat-icon" onclick="toggleEmoji('chatInput')" title="表情">☺</button>
+      <input id="chatInput" type="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')submitChat()">
+      <button class="btn-primary sm" onclick="submitChat()">发送</button>
+    </div>
+    <div id="chatImgHint" class="img-hint" style="display:none" onclick="chatImg=null;this.style.display='none'"></div>
+    <input id="chatFile" type="file" accept="image/*" style="display:none" onchange="onChatImg(event)">
 
     <!-- v1.7：悬浮保存球（拖动后自动吸附左右侧边，位置记住） -->
     <button class="fab-save" id="fabSave" onclick="fabTap()" aria-label="保存记录">
@@ -1423,6 +1469,18 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sh-btns"><button onclick="closeClearData()">取消</button></div>
       </div>
     </div>
+    <!-- v1.17：删除动态二次确认 -->
+    <div class="modal" id="delPostModal" onclick="modalBackdropClose(event,'delPostModal')">
+      <div class="sheet confirm-sheet">
+        <div class="sh-t">删除这条动态？</div>
+        <div class="sh-s">删除后无法恢复，点赞和评论也会一起清掉。</div>
+        <div class="sh-btns">
+          <button onclick="closeDelPost()">取消</button>
+          <button class="danger" onclick="confirmDelPost()">删除</button>
+        </div>
+      </div>
+    </div>
+
     <div class="modal" id="customModal">
       <div class="sheet sheet-tall">
         <div class="sh-t">新增自定义动作</div>
@@ -1526,12 +1584,19 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.15";
+const APP_VERSION="v1.18";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "动态详情页：去掉下面重复的点赞按钮，直接点「N 人点赞」那一行就能点赞 / 取消，已点赞时变强调色、大拇指变实心",
-  "修：详情页评论输入框一聚焦，就冒出一个半透明的「保存」悬浮球——保存球收起时不再让路变半透明",
-  "修：滚动详情页时评论输入条会跟着内容跑、盖住评论；现在固定在底栏上方，不再穿模"
+  "聊天页改成微信风格：顶部中间居中显示对方名字，我方也显示头像，气泡两侧都有头像",
+  "聊天输入条固定贴底，不再跟着聊天记录一起滚动；聊天页隐藏底栏",
+  "动态详情页：点赞按钮改成「爱心 + 点赞」，不再显示人数；和「评论 N 条」同一排、点赞放最右边",
+  "动态详情页上方单独显示「N 人点赞」+ 点赞人头像",
+  "进入动态详情页时隐藏底栏，评论框不再挡住动态图标",
+  "删掉各页面左上角的「‹ 返回」按钮，统一用系统物理返回键 / 全面屏返回手势",
+  "删掉动态页右上角的「发布」按钮，发动态入口保留在顶部的个人条上",
+  "删除动态改成「三个点」菜单（微信风格）：自己的动态卡片右上角点「···」展开，里面是「删除」；我的动态页里同样能直接删",
+  "删除动态需要二次确认，避免误删",
+  "我的页删掉「已记录 N 天」副标题，同步状态（已同步）保留"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1752,7 +1817,16 @@ function switchTab(name){
   document.getElementById("libFoot").classList.toggle("hide",!(name==="library"&&libDirty));
   if(name==="record")refreshFab();else setFabVisible(false);   /* v1.7：只在记录页 + 有改动时出现 */
   document.getElementById("screen").scrollTop=0;
+  /* v1.17：详情页 / 聊天页隐藏底栏；其它页恢复底栏 */
+  const tb=document.getElementById("tabbar");
+  const phone=document.getElementById("phone");
+  const barless=(name==="post"||name==="chat");
+  if(tb)tb.classList.toggle("hide-bar",barless);
+  if(phone)phone.classList.toggle("bar-less",barless);
   if(name!=="post")hidePdBar();          /* v1.15：评论条只在详情页出现 */
+  /* v1.17：聊天输入条只在聊天页出现 */
+  const cb=document.getElementById("chatBar");
+  if(cb)cb.hidden=(name!=="chat");
   if(name==="data"){if(dataView==="history")renderHistory();else renderStats();}
   if(name==="library")renderLibrary();
   if(name==="record"||name==="data")pullRecordsThrottled();
@@ -1794,7 +1868,8 @@ const BACK_MODALS=[
   ["exportModal",closeExport],
   ["profileModal",closeProfileEdit],
   ["clearModal",closeClearData],
-  ["customModal",closeCustom]
+  ["customModal",closeCustom],
+  ["delPostModal",closeDelPost]
 ];
 let lastBackAt=0;
 function currentPageName(){
@@ -1850,13 +1925,16 @@ window.__pushupBack=handleAppBack;
    数据页的两个子视图也算在序列里、而且优先于底栏：
    「历史日历」左滑先到「数据统计」，再左滑才去「动态」；
    反过来在「数据统计」右滑先回记录页。 */
-const SWIPE_SEQ=["record","data:stats","data:history","feed","chats","profile"];
+const SWIPE_SEQ=["record","data:stats","data:history","feed:all","feed:friends","chats","profile"];
 function swipeIndexAt(page,view){
   if(page==="data")return (view==="history")?2:1;
+  if(page==="feed")return (view==="friends")?4:3;   /* v1.16：动态页滑动 = 切全部 / 好友 */
   return SWIPE_SEQ.indexOf(page);
 }
 function swipeIndex(){
-  return swipeIndexAt(currentPageName(),(typeof dataView!=="undefined"?dataView:""));
+  const pg=currentPageName();
+  return swipeIndexAt(pg,pg==="feed"?(typeof feedFilter!=="undefined"?feedFilter:"")
+                                   :(typeof dataView!=="undefined"?dataView:""));
 }
 function swipeIgnore(t){
   let n=t;
@@ -1880,6 +1958,8 @@ function goSwipe(dir){
   const target=SWIPE_SEQ[j];
   if(target==="data:stats"){switchTab("data");setDataView("stats");}
   else if(target==="data:history"){switchTab("data");setDataView("history");}
+  else if(target==="feed:all"){switchTab("feed");setFeedFilter("all");}
+  else if(target==="feed:friends"){switchTab("feed");setFeedFilter("friends");}
   else switchTab(target);
 }
 function bindSwipe(){
@@ -2424,9 +2504,9 @@ function renderInspect(){
   const met=[];
   if(r.w!=null)met.push('<span>体重 '+r.w.toFixed(2)+' kg</span>');
   if(r.a!=null)met.push('<span>臂围 '+r.a+' cm</span>');
+  /* v1.16：不再放「编辑这天」按钮 —— 历史日历点某天就能补录，两边重复 */
   box.innerHTML=head+'<div class="ins-rows">'+irs+'</div>'+(met.length?'<div class="ins-met">'+met.join("")+'</div>':"")+
-    (r.note?'<div class="ins-note">备注：'+r.note+'</div>':"")+
-    '<button class="ins-edit" onclick="editFrom(\''+statDate+'\')">编辑这天 →</button>';
+    (r.note?'<div class="ins-note">备注：'+r.note+'</div>':"");
 }
 
 /* ============ 动作库 ============ */
@@ -2547,10 +2627,7 @@ function delCustom(id){
 function renderProfile(){
   syncServerAddrUI();
   syncTrashUI();
-  const pAv=document.getElementById("profileAvatar");if(pAv)pAv.src=AVATAR||DEFAULT_AVATAR;
-  setTxt("profileName",NICKNAME);
-  const pTotal=DATA.reduce((a,r)=>a+(r.p||0),0);
-  setTxt("profileSub",DATA.length?("已记录 "+DATA.length+" 天 · 累计 "+pTotal.toLocaleString()+" 个"):"还没有记录 · 从今天开始");
+  /* v1.17：我的页旧版顶部的资料卡已合并进 me-card，这里不再有独立的资料文本 */
   /* v1.14：这三项都能点，但外观保持以前的灰色，不额外暗示可点 */
   document.getElementById("profileStats").innerHTML=
     '<div class="it" onclick="openRecords()"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
@@ -3544,8 +3621,9 @@ function renderMeCard(){
          av.className="me-av"+(me?"":" off");}
   const n=document.getElementById("meName"),sub=document.getElementById("meSub");
   if(n)n.textContent=me?me.name:"未登录";
-  if(sub)sub.textContent=me?("已记录 "+((typeof DATA!=="undefined"?DATA:[]).length)+" 天")
-                          :"登录后即可发动态、加好友、聊天";
+  /* v1.17：登录后不再显示「已记录 N 天」（同步状态 meSync 保留），未登录时仍提示去登录 */
+  if(sub){sub.textContent=me?"":"登录后即可发动态、加好友、聊天";
+          sub.style.display=me?"none":"";}
   const f=document.getElementById("myFollowing"),r=document.getElementById("myFollowers");
   if(f)f.textContent=me?sFollowingIds(me.id).length:0;
   if(r)r.textContent=me?sFollowers(me.id).length:0;
@@ -3565,14 +3643,12 @@ function openFriends(k){if(!sMe()){openAuth();return;}setFriendTab(k);switchTab(
 function openMyPosts(){if(!sMe()){openAuth();return;}switchTab("myposts");}
 function renderFeedMe(){
   const me=sMe(),av=document.getElementById("feedMeAv"),n=document.getElementById("feedMeName"),
-        h=document.getElementById("feedMeHint"),go=document.getElementById("feedMeGo"),
-        btn=document.getElementById("feedPostBtn");
+        h=document.getElementById("feedMeHint"),go=document.getElementById("feedMeGo");
   if(av){av.innerHTML=me?sAv(me):'<span class="me-ph">?</span>';
          av.className="feed-me-av"+(me?"":" off");}
   if(n)n.textContent=me?me.name:"未登录";
   if(h)h.textContent=me?"今天练得怎么样？":"登录后即可发布动态、看好友训练";
   if(go)go.textContent=me?"＋ 发动态":"去登录";
-  if(btn)btn.textContent=me?"＋ 发布":"登录后发布";
 }
 function feedMeClick(){if(sMe())openPost();else openAuth();}
 
@@ -4175,7 +4251,8 @@ function postCardHtml(p,me){
   let h='<div class="fcard" onclick="openPostDetail(\''+p.id+'\')">'+
     '<div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
     '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
-    '<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span></div>';
+    '<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span>'+
+    (mine?moreMenuHtml(p.id):'')+'</div>';
   if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
   if(p.images&&p.images.length)h+='<div class="fimgs">'+p.images.map(function(d,i){
     return '<img src="'+d+'" alt="动态图片" onclick="event.stopPropagation();openImgView(\''+p.id+'\','+i+')">';}).join("")+'</div>';
@@ -4188,10 +4265,62 @@ function postCardHtml(p,me){
   h+='<div class="fbar">'+
     '<button class="fbtn'+(lk?' on':'')+'" onclick="event.stopPropagation();toggleLike(\''+p.id+'\')">👍 <b>'+lc+'</b></button>'+
     '<button class="fbtn" onclick="event.stopPropagation();openPostDetail(\''+p.id+'\')">💬 <b>'+cc+'</b></button>'+
-    (mine?'<span class="fbar-sp"></span><button class="fbtn" onclick="event.stopPropagation();delPost(\''+p.id+'\')">删除</button>':'')+
     '</div>';
   return h+'</div>';
 }
+/* ============ v1.17：「三个点」更多菜单（赞 / 删除） ============
+   微信风格：点三个点展开，菜单里是「❤ 赞」和「删除」。删除要二次确认。 */
+let PENDING_DEL_ID="";
+function moreMenuHtml(id){
+  return '<div class="more" onclick="event.stopPropagation()">'+
+    '<button class="more-btn" onclick="toggleMore(\''+id+'\')">···</button>'+
+    '<div class="more-menu" id="moreMenu_'+id+'">'+
+      '<button class="danger" onclick="openDelPost(\''+id+'\');closeMoreMenus()"><span class="mi">🗑️</span>删除</button>'+
+    '</div></div>';
+}
+function toggleMore(id){
+  const m=document.getElementById("moreMenu_"+id);
+  if(!m)return;
+  const on=m.classList.contains("on");
+  closeMoreMenus();
+  if(!on)m.classList.add("on");
+}
+function closeMoreMenus(){
+  document.querySelectorAll(".more-menu.on").forEach(function(m){m.classList.remove("on");});
+}
+/* 点其它地方收起菜单 */
+function bindMoreOutside(){
+  if(document._moreOutside)return;
+  document._moreOutside=1;
+  document.addEventListener("click",function(e){
+    let n=e.target;
+    while(n&&n!==document.body){
+      if(n.getAttribute&&/toggleMore|more-btn/.test(String(n.getAttribute("onclick")||"")))return;
+      n=n.parentNode;
+    }
+    closeMoreMenus();
+  });
+}
+/* v1.17：删除动态二次确认 */
+function openDelPost(id){PENDING_DEL_ID=id;document.getElementById("delPostModal").classList.add("on");}
+function closeDelPost(){PENDING_DEL_ID="";document.getElementById("delPostModal").classList.remove("on");}
+function confirmDelPost(){
+  const id=PENDING_DEL_ID;
+  closeDelPost();
+  if(id)doDelPost(id);
+}
+function doDelPost(id){
+  const s=sLoad(),i=s.posts.findIndex(function(p){return p.id===id;});
+  if(i<0||s.posts[i].uid!==s.session)return;
+  s.posts.splice(i,1);
+  s.likes=s.likes.filter(function(l){return l.a!==id;});
+  s.comments=s.comments.filter(function(c){return c.p!==id;});
+  sSave();sbDel("posts","id=eq."+id);
+  const onDetail=document.getElementById("page-post");
+  renderFeed();renderMyPosts();toast("已删除");
+  if(onDetail&&onDetail.classList.contains("on")&&PD_ID===id)closePostDetail();
+}
+
 /* ============ v1.13：动态详情页 ============
    图文 + 谁点赞（头像 + 名字）+ 全部评论；评论输入只在这里出现。 */
 let PD_ID="",PD_BACK="feed";
@@ -4227,19 +4356,22 @@ function renderPostDetail(){
   if(p.workout&&p.workout.length)h+='<div class="workout-box">'+p.workout.map(function(x){
     return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+
     '<span class="wb-more" onclick="openRecords(\''+p.uid+'\')">'+(mine?"看我的记录 ›":"看 TA 的记录 ›")+'</span></div>';
-  /* v1.15：不再单独放一个点赞按钮 —— 点赞并进「N 人点赞」这一行，点它就是点赞 / 取消，
-     已点赞时整颗变强调色 + 实心大拇指，未点赞是灰的 */
+  /* v1.17：上面单独显示「谁点赞 + 人数」；下面一行放「评论 N 条」+ 最右边的「[爱心] 点赞」按钮 */
   h+='<div class="pd-like">'+
-    '<button class="pd-likebtn'+(lk?" on":"")+'" onclick="toggleLike(\''+p.id+'\')">'+
-    '<span class="pd-thumb">👍</span>'+(lk?"已点赞 · ":"")+likes.length+' 人点赞</button>';
+    '<span class="lb">👍 '+likes.length+' 人点赞</span>';
   if(likes.length){
     h+=likes.map(function(l){
       const lu=sUser(l.b);
       return '<span class="who"><span class="av">'+(lu.avatar?'<img src="'+sEsc(lu.avatar)+'" alt="">':sEsc(lu.emoji||"💪"))+'</span>'+sEsc(lu.name)+'</span>';
     }).join("");
-  }else h+='<span class="lb">还没有人点赞</span>';
+  }
   h+='</div>';
-  if(mine)h+='<div class="pd-ops"><button onclick="delPost(\''+p.id+'\')">删除动态</button></div>';
+  /* 操作行：评论数在左，点赞按钮在最右（爱心图标 + 点赞，不显示数字） */
+  h+='<div class="pd-actbar">'+
+    '<span class="pd-act-comment">💬 评论 '+cs.length+'</span>'+
+    '<button class="pd-likebtn'+(lk?" on":"")+'" onclick="toggleLike(\''+p.id+'\')">'+
+    '<span class="pd-thumb">❤️</span>'+(lk?"已赞":"点赞")+'</button>'+
+    '</div>';
   /* 评论 */
   h+='<div class="sec-title" style="margin-top:16px">评论 <span>共 '+cs.length+' 条</span></div><div class="pd-cm">';
   h+=cs.length?cs.map(function(c){
@@ -4514,18 +4646,6 @@ function submitPost(){
     else toast("已发布");
   });
 }
-function delPost(id){
-  const s=sLoad(),i=s.posts.findIndex(p=>p.id===id);
-  if(i<0||s.posts[i].uid!==s.session)return;
-  s.posts.splice(i,1);
-  s.likes=s.likes.filter(function(l){return l.a!==id;});
-  s.comments=s.comments.filter(function(c){return c.p!==id;});
-  sSave();sbDel("posts","id=eq."+id);
-  const onDetail=document.getElementById("page-post");
-  renderFeed();renderMyPosts();toast("已删除");
-  if(onDetail&&onDetail.classList.contains("on")&&PD_ID===id)closePostDetail();
-}
-
 /* ---- 图片压缩（纯 canvas，无外部库） ---- */
 function compressImage(file,maxSide,quality){
   return new Promise(function(resolve){
@@ -4605,8 +4725,11 @@ function renderChat(){
     if(m.image)body='<img class="bubble-img" src="'+m.image+'" alt="图片" onclick="window.open(this.src)">';
     if(m.sticker)body+='<div class="bubble-sticker">'+m.sticker+'</div><div class="bubble-cap">'+sEsc(m.text||"")+'</div>';
     else if(m.text)body+='<div>'+sEsc(m.text)+'</div>';
-    return '<div class="bubble-row '+(mine?"out":"in")+'">'+(mine?"":'<div class="bubble-av">'+sAv(u)+'</div>')+
-      '<div class="bubble">'+body+'<div class="bubble-time">'+sTime(m.ts)+'</div></div></div>';
+    /* v1.17：我方也显示头像（微信风格，双方头像都显示，靠边对齐） */
+    return '<div class="bubble-row '+(mine?"out":"in")+'">'+
+      (mine?('<div class="bubble">'+body+'<div class="bubble-time">'+sTime(m.ts)+'</div></div><div class="bubble-av">'+sAv(me)+'</div>')
+          :('<div class="bubble-av">'+sAv(u)+'</div><div class="bubble">'+body+'<div class="bubble-time">'+sTime(m.ts)+'</div></div>'))+
+      '</div>';
   }).join(""):'<div class="empty-hint">还没有消息，打个招呼吧</div>';
   el.scrollTop=el.scrollHeight;
 }
@@ -4956,6 +5079,7 @@ bindSwipe();
 bindImgView();                      /* v1.13：图片预览手势 */
 bindFeedPull();                     /* v1.13：动态页下拉刷新 */
 bindEmojiOutside();                 /* v1.13：表情面板点空白关闭 */
+bindMoreOutside();                  /* v1.17：三个点菜单点空白收起 */
 netProbe();                        /* v1.9：启动就探一次云端到底通不通 */
 initSplash();
 initMotto();
