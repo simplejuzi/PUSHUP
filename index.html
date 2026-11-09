@@ -614,7 +614,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-profile">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
-          <div class="badge" id="profileVersion">v1.2</div>
+          <div class="badge" id="profileVersion">v1.3</div>
         </div>
         <!-- v1.2：个人资料（头像 + 昵称，点卡片可修改） -->
         <div class="profile-card" onclick="openProfileEdit()">
@@ -653,7 +653,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
         <div class="sec-title">软件更新<span>启动时静默检查</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.2</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.3</span> <span class="ar">›</span></span></div>
           <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
         </div>
 
@@ -661,7 +661,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.2 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.3 · 正式版</div>
           <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。外观支持跟随系统，数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
@@ -896,7 +896,7 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.2";
+const APP_VERSION="v1.3";
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
   "https://api.github.com/repos/simplejuzi/PUSHUP/releases/latest",
@@ -2002,7 +2002,7 @@ function showBreakthrough(diff,prev,now){
   box.classList.add("on");
   celebrateSound();
 }
-function closeBreakthrough(){const b=document.getElementById("breakModal");if(b)b.classList.remove("on");}
+function closeBreakthrough(){stopCheer();const b=document.getElementById("breakModal");if(b)b.classList.remove("on");}
 
 /* ============ v1.2：点击音效（Web Audio 合成，离线可用、零外部音频文件） ============ */
 let AC=null;
@@ -2026,12 +2026,109 @@ function tone(freq,dur,vol,delay){
     o.start(t);o.stop(t+dur+0.02);
   }catch(e){}
 }
-/* 简约通透：一声极轻的高频正弦「叮」，无低频、无方波，不刺耳 */
-function clickSound(){tone(1180,0.055,0.020,0);tone(1770,0.030,0.007,0.006);}
+/* 通用短音：可指定波形与频率滑动，仍然全是极短、极轻、无低频 */
+function tick(f,dur,vol,delay,type,to){
+  const ac=audioCtx();if(!ac)return;
+  try{
+    const t=ac.currentTime+(delay||0),o=ac.createOscillator(),g=ac.createGain();
+    o.type=type||"sine";
+    o.frequency.setValueAtTime(f,t);
+    if(to)o.frequency.exponentialRampToValueAtTime(to,t+dur);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol,t+0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g);g.connect(ac.destination);
+    o.start(t);o.stop(t+dur+0.02);
+  }catch(e){}
+}
+/* 点击音（正式）：③ 水滴上滑，880→1400Hz / 45ms，圆润通透、无低频、不刺耳 */
+function clickSound(){tick(880,0.045,0.020,0,"sine",1400);}
 /* 奖励特效：C5-E5-G5-C6 上行琶音 + 一个轻高音收尾 */
 function celebrateSound(){
+  stopCheer();
   [523.25,659.25,783.99,1046.50].forEach(function(f,i){tone(f,0.28,0.030,i*0.095);});
   tone(1567.98,0.40,0.014,0.40);
+  cheerSound();
+}
+/* ============ v1.3：胜利音效（约 2.5 秒，纯 Web Audio 合成，零音频文件） ============
+   「赢了」的音乐性取胜音效，不再做人群欢呼 / 掌声：
+   ① 上行大调动机（短-短-短-长，再冲一次顶）
+   ② 结尾 C 大三和弦齐鸣落定，配一颗高音闪光
+   每个音 = triangle 主体 + 轻微失谐的低通 sawtooth 提亮，做号角齐奏质感；
+   整段走一条音量总线，关闭弹窗时 0.14s 柔和淡出；不支持 Web Audio 时全程静默。
+   只有这一套「赢了」号角，不做人群欢呼与备选变体。 */
+let CHEER_BUS=null, CHEER_UNTIL=0;
+const WIN_FANFARE=[
+  [0.00,523.25,0.13],[0.13,659.25,0.13],[0.26,783.99,0.13],[0.39,1046.50,0.22],
+  [0.66,783.99,0.11],[0.77,1046.50,0.11],[0.88,1318.51,0.11],[0.99,1567.98,0.16]
+];
+/* 单个号角音：triangle 主体 + 失谐低通 sawtooth（只提亮，不轰鸣） */
+function winNote(ac,bus,st,f,dur,vol){
+  const g=ac.createGain();
+  g.gain.setValueAtTime(0.0001,st);
+  g.gain.exponentialRampToValueAtTime(vol,st+0.012);
+  g.gain.setValueAtTime(vol,st+Math.max(0.02,dur-0.05));
+  g.gain.exponentialRampToValueAtTime(0.0001,st+dur);
+  g.connect(bus);
+  [["triangle",1.000,1.00],["sawtooth",1.004,0.26]].forEach(function(q){
+    const o=ac.createOscillator();o.type=q[0];
+    o.frequency.setValueAtTime(f*q[1],st);
+    const og=ac.createGain();og.gain.value=q[2];
+    if(q[0]==="sawtooth"){
+      const lp=ac.createBiquadFilter();lp.type="lowpass";
+      lp.frequency.value=Math.max(1600,f*3.0);
+      o.connect(lp);lp.connect(og);
+    }else{o.connect(og);}
+    og.connect(g);
+    o.start(st);o.stop(st+dur+0.02);
+  });
+}
+function cheerSound(){
+  const ac=audioCtx();if(!ac)return;
+  try{
+    const now=(typeof performance!=="undefined"&&performance.now)?performance.now():Date.now();
+    if(now<CHEER_UNTIL)return;                 /* 极快连点不叠加，避免爆音 */
+    CHEER_UNTIL=now+400;
+    const DUR=2.5;
+    const t0=ac.currentTime+0.05;
+    const bus=ac.createGain();
+    bus.gain.setValueAtTime(0.0001,t0);
+    bus.gain.exponentialRampToValueAtTime(0.60,t0+0.10);
+    bus.gain.setValueAtTime(0.60,t0+DUR-0.45);
+    bus.gain.exponentialRampToValueAtTime(0.0001,t0+DUR);
+    bus.connect(ac.destination);
+    CHEER_BUS=bus;
+
+    /* ① 上行大调动机 */
+    WIN_FANFARE.forEach(function(p){
+      winNote(ac,bus,t0+p[0],p[1],p[2],0.055);
+    });
+
+    /* ② 结尾大三和弦齐鸣 + 高音闪光，落定「赢了」 */
+    const chordAt=1.18,chordDur=0.90;
+    [1046.50,1318.51,1567.98].forEach(function(f){
+      winNote(ac,bus,t0+chordAt,f,chordDur,0.030);
+    });
+    winNote(ac,bus,t0+chordAt,2093.00,0.22,0.020);
+
+    /* 播完释放节点 */
+    setTimeout(function(){
+      try{bus.disconnect();}catch(e){}
+      if(CHEER_BUS===bus)CHEER_BUS=null;
+    },(DUR+0.3)*1000);
+  }catch(e){}
+}
+function stopCheer(){
+  CHEER_UNTIL=0;
+  if(!AC||!CHEER_BUS)return;
+  try{
+    const t=AC.currentTime,g=CHEER_BUS.gain;
+    g.cancelScheduledValues(t);
+    const cur=Math.max(0.0001,Math.min(1,g.value||0.0001));
+    g.setValueAtTime(cur,t);
+    g.exponentialRampToValueAtTime(0.0001,t+0.14);
+  }catch(e){}
+  CHEER_BUS=null;
 }
 /* 只在真的点按钮 / 带 onclick 的可点控件时响；
    输入框、禁用按钮、未来格子、开屏空白处、弹窗遮罩一律不响 */
