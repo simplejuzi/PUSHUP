@@ -134,6 +134,8 @@ body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .eyebrow{font-size:12.5px;color:var(--sub);font-weight:550;letter-spacing:.3px}
 h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;font-weight:750}
+/* v1.2：记录页标题激励短句，字号收小避免挤到右侧徽标，淡入淡出过渡 */
+h1.title.motto{font-size:20px;line-height:1.35;letter-spacing:-.4px;max-width:212px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s ease}
 .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent-soft);color:var(--accent);font-size:11.5px;font-weight:700;padding:7px 11px;border-radius:999px;white-space:nowrap;margin-top:4px}
 .badge.ok{background:var(--green-soft);color:var(--green)}
@@ -144,10 +146,13 @@ h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;fon
 .sec-title{font-size:15px;font-weight:720;margin:22px 2px 10px;letter-spacing:-.2px}
 .sec-title span{font-size:12px;color:var(--sub);font-weight:500;margin-left:6px}
 .muted{font-size:11.5px;color:var(--sub2);line-height:1.6}
-.datebar{display:flex;align-items:center;justify-content:space-between;margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow)}
-.datebar .d{font-size:13.5px;font-weight:700;text-align:center}
-.datebar .d small{display:block;font-size:11px;color:var(--sub);font-weight:500;margin-top:2px}
+.datebar{display:flex;align-items:center;gap:8px;margin-top:18px;background:var(--card);border:1px solid rgba(var(--accent-rgb),.28);border-left:4px solid var(--accent);border-radius:16px;padding:12px;box-shadow:0 6px 18px rgba(var(--accent-rgb),.10)}
+.datebar .d{font-size:15.5px;font-weight:780;letter-spacing:-.2px;text-align:center;flex:1;min-width:0;color:var(--ink)}
+.datebar .d small{display:block;font-size:10.5px;color:var(--sub);font-weight:500;margin-top:3px;letter-spacing:0}
 .navbtn{width:30px;height:30px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:16px;border:0;cursor:pointer;flex:none}
+.datebar .navbtn{background:rgba(var(--accent-rgb),.12);color:var(--accent)}
+.today-btn{border:0;background:var(--accent);color:var(--surface);border-radius:999px;padding:7px 11px;font-size:11px;font-weight:760;cursor:pointer;font-family:inherit;white-space:nowrap;flex:none;box-shadow:0 3px 10px rgba(var(--accent-rgb),.24)}
+.today-btn[hidden]{display:none!important}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
 .mini{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px 15px}
 .mini .card-label{font-size:11.5px}
@@ -197,6 +202,10 @@ h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;fon
 .monthbar .m{font-size:20px;font-weight:750;letter-spacing:-.4px}
 .week{display:grid;grid-template-columns:repeat(7,1fr);margin-top:18px;text-align:center;font-size:11px;color:var(--sub2);font-weight:600}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+/* v1.2：日历整体包成卡片，与下方汇总/记录列表同风格 */
+.cal-card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:12px 10px;margin-top:16px}
+.cal-card .week{margin-top:0}
+.cal-card .cal{margin-top:8px}
 .cell{height:48px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;position:relative}
 .cell.empty{cursor:default}
 .cell .dn{font-size:12px;color:var(--sub);font-weight:600}
@@ -206,7 +215,9 @@ h1.title{font-size:29px;line-height:1.25;letter-spacing:-.8px;margin:7px 0 0;fon
 .cell.today .dn::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--accent)}
 .cell.sel{background:var(--accent);box-shadow:0 5px 12px rgba(var(--accent-rgb),.3)}
 .cell.sel .dn,.cell.sel .cv{color:#fff}
-.cell.future .dn{color:var(--sub2);opacity:.55}
+.cell.future{background:var(--soft);cursor:not-allowed}
+.cell.future .dn{color:var(--sub2);opacity:.45}
+.datebar .navbtn:disabled,.monthbar .navbtn:disabled{background:var(--soft);color:var(--sub2);opacity:.45;cursor:default}
 .sumbar{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 0;margin-top:16px}
 .sumbar .it{flex:1;text-align:center;border-right:1px solid var(--line)}
 .sumbar .it:last-child{border-right:0}
@@ -306,7 +317,17 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .lib-foot button{border:0;background:var(--ink);color:var(--surface);font-size:12px;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer;font-family:inherit}
 
 /* 我的页 */
-.stat3{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 0;margin-top:16px}
+.profile-card{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 15px;margin-top:16px;cursor:pointer}
+.profile-avatar{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:none;background:var(--soft);border:2px solid var(--accent-soft)}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:16px;font-weight:770;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-sub{font-size:11px;color:var(--sub);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-edit{font-size:11px;color:var(--accent);font-weight:750;flex:none}
+.pe-avatar-wrap{display:flex;align-items:center;gap:14px;margin-top:14px}
+.pe-avatar-wrap img{width:68px;height:68px;border-radius:50%;object-fit:cover;flex:none;background:var(--soft);border:2px solid var(--accent-soft)}
+.pe-avatar-btns{display:flex;flex-direction:column;gap:7px}
+.pe-avatar-btns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.stat3{display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 0;margin-top:10px}
 .stat3 .it{flex:1;text-align:center;border-right:1px solid var(--line)}
 .stat3 .it:last-child{border-right:0}
 .stat3 .v{font-size:20px;font-weight:770;letter-spacing:-.5px}
@@ -343,6 +364,35 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 /* 导入弹层 */
 .modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
 .modal.on{display:flex}
+/* ===== v1.2：突破奖励弹窗（全主题变量，浅色/深色自适应） ===== */
+.modal.celebrate{z-index:35;background:transparent;align-items:center;justify-content:center;pointer-events:none}
+.modal.celebrate.on{display:flex;pointer-events:auto}
+.cel-mask{position:absolute;inset:0;background:rgba(10,11,14,.62);backdrop-filter:blur(3px);animation:celFade .3s both}
+.cel-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cel-piece{position:absolute;top:-24px;border-radius:2px;opacity:1;animation:celFall var(--dur) linear var(--delay) forwards}
+.cel-card{position:relative;width:min(300px,84%);background:var(--card);border:1px solid rgba(var(--accent-rgb),.35);border-radius:26px;padding:24px 20px 20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.30),0 0 0 6px rgba(var(--accent-rgb),.10);animation:celPop .55s cubic-bezier(.2,1.4,.4,1) both;overflow:hidden}
+.cel-halo{position:absolute;left:50%;top:40px;width:130px;height:130px;margin-left:-65px;border-radius:50%;background:radial-gradient(circle,rgba(var(--accent-rgb),.34),transparent 70%);animation:celHalo 1.9s ease-out infinite;pointer-events:none}
+.cel-trophy{width:74px;height:74px;margin:0 auto 4px;position:relative;animation:celFloat 2.4s ease-in-out infinite}
+.cel-trophy svg{width:100%;height:100%;filter:drop-shadow(0 6px 12px rgba(var(--accent-rgb),.35))}
+.cel-kicker{font-size:10px;letter-spacing:2px;font-weight:800;color:var(--accent)}
+.cel-gain{font-size:46px;font-weight:800;letter-spacing:-2px;color:var(--accent);line-height:1.15;margin-top:2px;animation:celNum .6s .22s cubic-bezier(.2,1.5,.4,1) both}
+.cel-gain small{font-size:15px;letter-spacing:0;margin-left:3px;font-weight:700}
+.cel-title{font-size:16px;font-weight:780;color:var(--ink);margin-top:2px}
+.cel-word{font-size:12px;color:var(--sub);line-height:1.7;margin-top:8px;padding:0 4px}
+.cel-compare{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;background:var(--soft);border-radius:16px;padding:11px}
+.cel-cmp-it{display:flex;flex-direction:column;gap:2px;min-width:54px}
+.cel-cmp-it span{font-size:10px;color:var(--sub)}
+.cel-cmp-it b{font-size:19px;font-weight:780;color:var(--ink)}
+.cel-cmp-it.hi b{color:var(--accent)}
+.cel-arrow{color:var(--sub2);font-size:14px}
+.cel-btn{width:100%;margin-top:16px;border:0;border-radius:14px;padding:14px;background:var(--accent);color:var(--surface);font-size:13.5px;font-weight:760;cursor:pointer;font-family:inherit;box-shadow:0 8px 20px rgba(var(--accent-rgb),.28)}
+@keyframes celFade{from{opacity:0}to{opacity:1}}
+@keyframes celPop{0%{transform:scale(.72) translateY(26px);opacity:0}65%{transform:scale(1.05) translateY(0);opacity:1}100%{transform:scale(1) translateY(0);opacity:1}}
+@keyframes celNum{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes celHalo{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes celFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+@keyframes celFall{0%{transform:translate3d(0,-10%,0) rotate(0);opacity:1}100%{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:0}}
+
 .sheet{width:100%;background:var(--surface);border-radius:26px 26px 0 0;padding:22px 20px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
 .sh-t{font-size:17px;font-weight:750}
 .sh-s{font-size:11.5px;color:var(--sub);line-height:1.7;margin-top:7px}
@@ -454,13 +504,14 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <!-- ===== 记录 ===== -->
       <div class="page on" id="page-record">
         <div class="head-row" style="margin-top:10px">
-          <div><div class="eyebrow" id="recEyebrow">11月9日 星期一</div><h1 class="title">今天练了吗？</h1></div>
+          <div><div class="eyebrow" id="recEyebrow">11月9日 星期一</div><h1 class="title motto" id="recMotto">今天也撑一下</h1></div>
           <div class="badge"><span class="dot"></span><span id="streakText">连续 0 天</span></div>
         </div>
         <div class="datebar">
           <button class="navbtn" onclick="shiftDate(-1)">‹</button>
           <div class="d" id="dateLabel">今天<small>还没有记录，填完保存即可</small></div>
-          <button class="navbtn" onclick="shiftDate(1)">›</button>
+          <button class="today-btn" id="backTodayBtn" onclick="backToToday()" hidden>回今天</button>
+          <button class="navbtn" id="nextDateBtn" onclick="shiftDate(1)" disabled>›</button>
         </div>
         <div class="card" style="padding:16px 15px">
           <div class="card-label"><span>今日训练</span><span class="en" id="todayCount">0 个项目</span></div>
@@ -501,10 +552,12 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="monthbar">
           <div class="m" id="monthLabel">—</div>
-          <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" onclick="shiftMonth(1)">›</button></div>
+          <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" id="nextMonthBtn" onclick="shiftMonth(1)">›</button></div>
         </div>
-        <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-        <div class="cal" id="calendar"></div>
+        <div class="cal-card">
+          <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="cal" id="calendar"></div>
+        </div>
         <div class="sumbar" id="monthSummary"></div>
         <div class="detail" id="dayDetail"></div>
         <div class="sec-title">本月记录<span>点击可编辑 / 补录</span></div>
@@ -551,7 +604,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="filters" id="catFilters"></div>
         <div class="filters" id="lvFilters"></div>
-        <div class="legend"><span class="ub rep">次</span> 按次数 <span class="ub sec">秒</span> 按时间 <span>· 开关 = 加入我的常用</span></div>
+        <div class="legend"><span class="ub rep">个</span> 按个数 <span class="ub sec">秒</span> 按时间 <span>· 开关 = 加入我的常用</span></div>
         <button class="addcustom" onclick="openCustom()">＋ 新增自定义动作</button>
         <div id="libList"></div>
         <div style="height:70px"></div>
@@ -561,23 +614,18 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-profile">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
-          <div class="badge" id="profileVersion">v1.1</div>
+          <div class="badge" id="profileVersion">v1.2</div>
+        </div>
+        <!-- v1.2：个人资料（头像 + 昵称，点卡片可修改） -->
+        <div class="profile-card" onclick="openProfileEdit()">
+          <img class="profile-avatar" id="profileAvatar" alt="我的头像">
+          <div class="profile-info">
+            <div class="profile-name" id="profileName">卷卷大人</div>
+            <div class="profile-sub" id="profileSub">今天也练了吗？</div>
+          </div>
+          <span class="profile-edit">编辑 ›</span>
         </div>
         <div class="stat3" id="profileStats"></div>
-
-        <div class="sec-title">数据管理<span>本地保存 · 不上传</span></div>
-        <div class="settings">
-          <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="openImport()">导入数据<span class="r">支持备份文件 / 文本粘贴 <span class="ar">›</span></span></div>
-          <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
-        </div>
-
-        <div class="sec-title">软件更新<span>启动时静默检查</span></div>
-        <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.1</span> <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
-        </div>
 
         <div class="sec-title">外观</div>
         <div class="theme-seg">
@@ -595,14 +643,29 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <button class="pal" id="paldusk" onclick="setPalette('dusk')"><span class="dot" style="background:#6242C4"></span>暮紫</button>
         </div>
 
+        <div class="sec-title">数据管理<span>本地保存 · 不上传</span></div>
+        <div class="settings">
+          <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openImport()">导入数据<span class="r">支持备份文件 / 文本粘贴 <span class="ar">›</span></span></div>
+          <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
+        </div>
+
+        <div class="sec-title">软件更新<span>启动时静默检查</span></div>
+        <div class="settings">
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.2</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
+        </div>
+
         <div class="sec-title">关于</div>
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.1 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.2 · 正式版</div>
           <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。外观支持跟随系统，数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
+          <div class="about-row"><span class="k">项目</span><a href="https://github.com/simplejuzi/PUSHUP" target="_blank" rel="noopener">GitHub 仓库 →</a></div>
           <div class="about-row"><span class="k">数据</span><span class="v">仅本机 · 离线可用</span></div>
         </div>
         <div class="foot-note2">PUSHUP · 为每天多一点坚持而做<br>数据不会上传，换设备请用导出 / 导入</div>
@@ -679,10 +742,53 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sh-btns"><button onclick="closeUpdate()">稍后</button><button class="primary" id="updBtn" onclick="startUpdate()">立即更新</button></div>
       </div>
     </div>
+    <!-- v1.2：编辑个人资料 -->
+    <div class="modal" id="profileModal">
+      <div class="sheet">
+        <div class="sh-t">编辑个人资料</div>
+        <div class="sh-s">头像和名字只存在这台手机上，不会上传。头像会自动压缩，换设备可用「导出备份」带走。</div>
+        <div class="pe-avatar-wrap">
+          <img id="peAvatar" alt="头像预览">
+          <div class="pe-avatar-btns">
+            <button onclick="pickAvatar()">更换头像</button>
+            <button onclick="resetAvatar()">恢复默认</button>
+          </div>
+          <input type="file" id="avatarFile" accept="image/*" hidden onchange="onAvatarFile(event)">
+        </div>
+        <div class="form">
+          <label>昵称<input id="peName" type="text" maxlength="12" placeholder="卷卷大人"></label>
+        </div>
+        <div class="sh-btns"><button onclick="closeProfileEdit()">取消</button><button class="primary" onclick="saveProfileEdit()">保存</button></div>
+      </div>
+    </div>
+    <!-- v1.2：突破奖励（今天比上次多做 >10 个） -->
+    <div class="modal celebrate" id="breakModal">
+      <div class="cel-mask" onclick="closeBreakthrough()"></div>
+      <div class="cel-confetti" id="celConfetti" aria-hidden="true"></div>
+      <div class="cel-card">
+        <div class="cel-halo"></div>
+        <div class="cel-trophy"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M19 9h26v14c0 9-5.5 15-13 15S19 32 19 23V9Z" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:3;stroke-linejoin:round"/>
+    <path d="M19 13h-6v6c0 6 4 10 9 10M45 13h6v6c0 6-4 10-9 10" style="fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round"/>
+    <path d="M32 38v8M25 50h14M27 46h10l2 4H25l2-4Z" style="fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>
+    <path d="M32 13l2.3 4.8 5.2.7-3.8 3.7.9 5.2-4.6-2.5-4.6 2.5.9-5.2-3.8-3.7 5.2-.7L32 13Z" style="fill:var(--accent)"/>
+  </svg></div>
+        <div class="cel-kicker">PUSHUP · 新突破</div>
+        <div class="cel-gain">+<span id="celGain">0</span><small>个</small></div>
+        <div class="cel-title" id="celTitle">比上次多做了 15 个！</div>
+        <div class="cel-word" id="celWord">这个进步，值得记一笔。</div>
+        <div class="cel-compare">
+          <div class="cel-cmp-it"><span>上次</span><b id="celPrev">40</b></div>
+          <div class="cel-arrow">→</div>
+          <div class="cel-cmp-it hi"><span>今天</span><b id="celNow">55</b></div>
+        </div>
+        <button class="cel-btn" onclick="closeBreakthrough()">继续加油 →</button>
+      </div>
+    </div>
     <div class="modal" id="clearModal">
       <div class="sheet">
         <div class="sh-t">清空全部数据？</div>
-        <div class="sh-s">会删除所有训练记录、自定义动作、常用动作和外观设置，操作无法撤销。确认后页面会自动刷新，回到空白状态。</div>
+        <div class="sh-s">会删除所有训练记录、自定义动作、常用动作、外观设置和个人资料（头像与昵称恢复默认），操作无法撤销。确认后页面会自动刷新，回到空白状态。</div>
         <div class="sh-note">建议先 <span class="sh-link" onclick="exportJSON()">导出一份 JSON 备份</span>，以后还能用「导入数据」还原。</div>
         <div class="sh-btns"><button onclick="closeClearData()">取消</button><button class="danger" onclick="doClearData()">确认清空并刷新</button></div>
       </div>
@@ -696,7 +802,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <label>英文名 / 备注<input id="cfEn" placeholder="选填"></label>
           <div class="f2">
             <label>归入分类<select id="cfCat" onchange="onCatChange()"></select></label>
-            <label>计量单位<select id="cfUnit"><option>次</option><option>秒</option></select></label>
+            <label>计量单位<select id="cfUnit"><option>个</option><option>秒</option></select></label>
           </div>
           <label id="cfNewCatWrap" style="display:none">新分类名称<input id="cfNewCat" placeholder="例如：康复训练"></label>
           <div class="f2">
@@ -705,7 +811,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           </div>
           <label>主要肌群<input id="cfMuscle" placeholder="例如：胸 / 三头"></label>
           <div class="f2">
-            <label>建议量<input id="cfSug" placeholder="3组 × 10 次"></label>
+            <label>建议量<input id="cfSug" placeholder="3组 × 10 个"></label>
             <label>快捷值<input id="cfQuick" placeholder="10,20,30"></label>
           </div>
           <label>动作要点<input id="cfTip" placeholder="选填"></label>
@@ -727,70 +833,70 @@ const BASE_CATS=[
 ];
 let CATS=BASE_CATS.slice();
 const BASE_EX=[
-{id:"wall-pushup",n:"靠墙俯卧撑",en:"Wall Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"墙面",s:"3组 × 15 次",t:"站立推墙，全程身体成一条直线",q:[15,20,30]},
-{id:"incline-pushup",n:"上斜俯卧撑",en:"Incline Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"椅子",s:"3组 × 12 次",t:"手撑高处，支撑面越低难度越高",q:[10,15,20]},
-{id:"knee-pushup",n:"跪姿俯卧撑",en:"Knee Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 肩 / 三头",g:"无",s:"3组 × 10 次",t:"膝盖到头保持直线，髋部不要弯折",q:[10,15,20],fav:true},
-{id:"negative-pushup",n:"离心俯卧撑",en:"Negative Push-up",c:"push",lv:"入门",u:"次",m:"胸 / 三头",g:"无",s:"3组 × 5 次",t:"用 4–5 秒缓慢下降，膝盖撑回",q:[5,8,10]},
-{id:"pushup",n:"标准俯卧撑",en:"Push-up",c:"push",lv:"进阶",u:"次",m:"胸 / 肩 / 三头 / 核心",g:"无",s:"3组 × 15–20 次",t:"肘部约 45°，身体成直线不塌腰",q:[100,110,150,200],fav:true},
-{id:"wide-pushup",n:"宽距俯卧撑",en:"Wide Push-up",c:"push",lv:"进阶",u:"次",m:"胸肌外侧",g:"无",s:"3组 × 10–15 次",t:"双手 1.5–2 倍肩宽，更侧重胸肌",q:[10,15,20]},
-{id:"close-pushup",n:"窄距俯卧撑",en:"Close-grip Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌",g:"无",s:"3组 × 10–12 次",t:"双手窄于肩，手肘贴着肋骨走",q:[10,15,20]},
-{id:"diamond-pushup",n:"钻石俯卧撑",en:"Diamond Push-up",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 胸肌内侧",g:"无",s:"3组 × 8–12 次",t:"拇指食指围成菱形，手腕不适就停",q:[10,15,20]},
-{id:"decline-pushup",n:"下斜俯卧撑",en:"Decline Push-up",c:"push",lv:"进阶",u:"次",m:"上胸 / 肩前束",g:"椅子",s:"3组 × 10–12 次",t:"双脚垫高，负荷移向上胸和肩",q:[10,15,20]},
-{id:"pike-pushup",n:"折体俯卧撑",en:"Pike Push-up",c:"push",lv:"高阶",u:"次",m:"肩 / 三头",g:"无",s:"3组 × 6–8 次",t:"髋部高抬成倒 V，头向地面下降",q:[6,8,12]},
-{id:"spiderman-pushup",n:"蜘蛛俯卧撑",en:"Spiderman Push-up",c:"push",lv:"高阶",u:"次",m:"胸肩 / 腹斜肌",g:"无",s:"3组 × 8–10 次",t:"下降时一侧膝盖靠向同侧手肘",q:[8,10,12]},
-{id:"archer-pushup",n:"弓箭手俯卧撑",en:"Archer Push-up",c:"push",lv:"高阶",u:"次",m:"单侧胸肩 / 三头",g:"无",s:"3组 × 5–8 次/侧",t:"一臂伸直，另一臂承担主要推撑",q:[5,8,10]},
-{id:"clap-pushup",n:"击掌俯卧撑",en:"Clap Push-up",c:"push",lv:"高阶",u:"次",m:"爆发力 / 胸肩",g:"无",s:"3组 × 3–6 次",t:"爆发推起击掌，小组数、不做到力竭",q:[3,5,8]},
-{id:"bench-dip",n:"凳上臂屈伸",en:"Bench Dip",c:"push",lv:"进阶",u:"次",m:"肱三头肌 / 下胸",g:"椅子",s:"3组 × 10–15 次",t:"背对稳固椅子，肩下沉、肘屈到 90°",q:[10,15,20]},
-{id:"superman",n:"俯卧超人",en:"Superman",c:"pull",lv:"入门",u:"次",m:"竖脊肌 / 臀 / 后肩",g:"无",s:"3组 × 12 次",t:"四肢同时离地，顶端停顿 2 秒",q:[10,12,15]},
+{id:"wall-pushup",n:"靠墙俯卧撑",en:"Wall Push-up",c:"push",lv:"入门",u:"个",m:"胸 / 肩 / 三头",g:"墙面",s:"3组 × 15 个",t:"站立推墙，全程身体成一条直线",q:[15,20,30]},
+{id:"incline-pushup",n:"上斜俯卧撑",en:"Incline Push-up",c:"push",lv:"入门",u:"个",m:"胸 / 肩 / 三头",g:"椅子",s:"3组 × 12 个",t:"手撑高处，支撑面越低难度越高",q:[10,15,20]},
+{id:"knee-pushup",n:"跪姿俯卧撑",en:"Knee Push-up",c:"push",lv:"入门",u:"个",m:"胸 / 肩 / 三头",g:"无",s:"3组 × 10 个",t:"膝盖到头保持直线，髋部不要弯折",q:[10,15,20],fav:true},
+{id:"negative-pushup",n:"离心俯卧撑",en:"Negative Push-up",c:"push",lv:"入门",u:"个",m:"胸 / 三头",g:"无",s:"3组 × 5 个",t:"用 4–5 秒缓慢下降，膝盖撑回",q:[5,8,10]},
+{id:"pushup",n:"标准俯卧撑",en:"Push-up",c:"push",lv:"进阶",u:"个",m:"胸 / 肩 / 三头 / 核心",g:"无",s:"3组 × 15–20 个",t:"肘部约 45°，身体成直线不塌腰",q:[100,110,150,200],fav:true},
+{id:"wide-pushup",n:"宽距俯卧撑",en:"Wide Push-up",c:"push",lv:"进阶",u:"个",m:"胸肌外侧",g:"无",s:"3组 × 10–15 个",t:"双手 1.5–2 倍肩宽，更侧重胸肌",q:[10,15,20]},
+{id:"close-pushup",n:"窄距俯卧撑",en:"Close-grip Push-up",c:"push",lv:"进阶",u:"个",m:"肱三头肌",g:"无",s:"3组 × 10–12 个",t:"双手窄于肩，手肘贴着肋骨走",q:[10,15,20]},
+{id:"diamond-pushup",n:"钻石俯卧撑",en:"Diamond Push-up",c:"push",lv:"进阶",u:"个",m:"肱三头肌 / 胸肌内侧",g:"无",s:"3组 × 8–12 个",t:"拇指食指围成菱形，手腕不适就停",q:[10,15,20]},
+{id:"decline-pushup",n:"下斜俯卧撑",en:"Decline Push-up",c:"push",lv:"进阶",u:"个",m:"上胸 / 肩前束",g:"椅子",s:"3组 × 10–12 个",t:"双脚垫高，负荷移向上胸和肩",q:[10,15,20]},
+{id:"pike-pushup",n:"折体俯卧撑",en:"Pike Push-up",c:"push",lv:"高阶",u:"个",m:"肩 / 三头",g:"无",s:"3组 × 6–8 个",t:"髋部高抬成倒 V，头向地面下降",q:[6,8,12]},
+{id:"spiderman-pushup",n:"蜘蛛俯卧撑",en:"Spiderman Push-up",c:"push",lv:"高阶",u:"个",m:"胸肩 / 腹斜肌",g:"无",s:"3组 × 8–10 个",t:"下降时一侧膝盖靠向同侧手肘",q:[8,10,12]},
+{id:"archer-pushup",n:"弓箭手俯卧撑",en:"Archer Push-up",c:"push",lv:"高阶",u:"个",m:"单侧胸肩 / 三头",g:"无",s:"3组 × 5–8 个/侧",t:"一臂伸直，另一臂承担主要推撑",q:[5,8,10]},
+{id:"clap-pushup",n:"击掌俯卧撑",en:"Clap Push-up",c:"push",lv:"高阶",u:"个",m:"爆发力 / 胸肩",g:"无",s:"3组 × 3–6 个",t:"爆发推起击掌，小组数、不做到力竭",q:[3,5,8]},
+{id:"bench-dip",n:"凳上臂屈伸",en:"Bench Dip",c:"push",lv:"进阶",u:"个",m:"肱三头肌 / 下胸",g:"椅子",s:"3组 × 10–15 个",t:"背对稳固椅子，肩下沉、肘屈到 90°",q:[10,15,20]},
+{id:"superman",n:"俯卧超人",en:"Superman",c:"pull",lv:"入门",u:"个",m:"竖脊肌 / 臀 / 后肩",g:"无",s:"3组 × 12 个",t:"四肢同时离地，顶端停顿 2 秒",q:[10,12,15]},
 {id:"superman-hold",n:"超人保持",en:"Superman Hold",c:"pull",lv:"入门",u:"秒",m:"竖脊肌 / 后链",g:"无",s:"3组 × 20–30 秒",t:"保持俯卧伸展，正常呼吸不憋气",q:[20,30,45]},
-{id:"doorframe-row",n:"门框划船",en:"Doorframe Row",c:"pull",lv:"入门",u:"次",m:"背阔肌 / 二头",g:"门框",s:"3组 × 15 次",t:"抓稳门框后仰，胸口拉向门框",q:[10,15,20]},
-{id:"inverted-row",n:"反向划船",en:"Inverted Row",c:"pull",lv:"进阶",u:"次",m:"上背 / 二头",g:"桌子",s:"3组 × 10–12 次",t:"身体绷直，用背部把胸口拉向桌沿",q:[10,12,15]},
-{id:"pullup",n:"引体向上",en:"Pull-up",c:"pull",lv:"高阶",u:"次",m:"背阔肌 / 二头 / 握力",g:"单杠",s:"3组 × 5–8 次",t:"正握，背部发力、缓慢下放不借力",q:[5,8,10]},
-{id:"chinup",n:"反手引体",en:"Chin-up",c:"pull",lv:"高阶",u:"次",m:"二头 / 背阔肌",g:"单杠",s:"3组 × 5–8 次",t:"反握略窄于肩，通常比正握更易上手",q:[5,8,10]},
-{id:"squat",n:"自重深蹲",en:"Bodyweight Squat",c:"legs",lv:"入门",u:"次",m:"股四头 / 臀 / 核心",g:"无",s:"3组 × 15–20 次",t:"向后坐、膝盖朝脚尖方向不内扣",q:[15,20,30]},
+{id:"doorframe-row",n:"门框划船",en:"Doorframe Row",c:"pull",lv:"入门",u:"个",m:"背阔肌 / 二头",g:"门框",s:"3组 × 15 个",t:"抓稳门框后仰，胸口拉向门框",q:[10,15,20]},
+{id:"inverted-row",n:"反向划船",en:"Inverted Row",c:"pull",lv:"进阶",u:"个",m:"上背 / 二头",g:"桌子",s:"3组 × 10–12 个",t:"身体绷直，用背部把胸口拉向桌沿",q:[10,12,15]},
+{id:"pullup",n:"引体向上",en:"Pull-up",c:"pull",lv:"高阶",u:"个",m:"背阔肌 / 二头 / 握力",g:"单杠",s:"3组 × 5–8 个",t:"正握，背部发力、缓慢下放不借力",q:[5,8,10]},
+{id:"chinup",n:"反手引体",en:"Chin-up",c:"pull",lv:"高阶",u:"个",m:"二头 / 背阔肌",g:"单杠",s:"3组 × 5–8 个",t:"反握略窄于肩，通常比正握更易上手",q:[5,8,10]},
+{id:"squat",n:"自重深蹲",en:"Bodyweight Squat",c:"legs",lv:"入门",u:"个",m:"股四头 / 臀 / 核心",g:"无",s:"3组 × 15–20 个",t:"向后坐、膝盖朝脚尖方向不内扣",q:[15,20,30]},
 {id:"glute-bridge",n:"臀桥",en:"Glute Bridge",c:"legs",lv:"入门",u:"秒",m:"臀大肌 / 腘绳肌",g:"无",s:"3组 × 30–60 秒",t:"脚跟发力顶髋，肩髋膝成直线静态保持",q:[30,60,120,180],fav:true},
-{id:"single-leg-bridge",n:"单腿臀桥",en:"Single-leg Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀大肌 / 骨盆稳定",g:"无",s:"3组 × 8–10 次/侧",t:"一腿伸直悬空，骨盆保持不倾斜",q:[8,10,12]},
-{id:"marching-bridge",n:"行进臀桥",en:"Marching Glute Bridge",c:"legs",lv:"进阶",u:"次",m:"臀 / 核心抗旋",g:"无",s:"3组 × 10 次",t:"顶峰交替抬脚，髋部始终不下沉",q:[10,12,16]},
+{id:"single-leg-bridge",n:"单腿臀桥",en:"Single-leg Glute Bridge",c:"legs",lv:"进阶",u:"个",m:"臀大肌 / 骨盆稳定",g:"无",s:"3组 × 8–10 个/侧",t:"一腿伸直悬空，骨盆保持不倾斜",q:[8,10,12]},
+{id:"marching-bridge",n:"行进臀桥",en:"Marching Glute Bridge",c:"legs",lv:"进阶",u:"个",m:"臀 / 核心抗旋",g:"无",s:"3组 × 10 个",t:"顶峰交替抬脚，髋部始终不下沉",q:[10,12,16]},
 {id:"bridge-hold",n:"臀桥保持",en:"Glute Bridge Hold",c:"legs",lv:"入门",u:"秒",m:"臀大肌 / 后链",g:"无",s:"3组 × 30–60 秒",t:"顶髋静止保持，夹紧臀部不塌腰",q:[30,60,120]},
-{id:"reverse-lunge",n:"反向弓步",en:"Reverse Lunge",c:"legs",lv:"入门",u:"次",m:"臀 / 股四头 / 平衡",g:"无",s:"3组 × 10–12 次/侧",t:"向后跨步，双膝成 90°，前脚跟蹬回",q:[10,12,15]},
-{id:"side-lunge",n:"侧弓步",en:"Side Lunge",c:"legs",lv:"入门",u:"次",m:"大腿内侧 / 臀",g:"无",s:"3组 × 10 次/侧",t:"向侧面大步下蹲，胸口保持抬起",q:[10,12,15]},
-{id:"bulgarian-squat",n:"保加利亚分腿蹲",en:"Bulgarian Split Squat",c:"legs",lv:"进阶",u:"次",m:"臀 / 股四头 / 平衡",g:"椅子",s:"3组 × 8–10 次/侧",t:"后脚垫高，重心压在前腿",q:[8,10,12]},
+{id:"reverse-lunge",n:"反向弓步",en:"Reverse Lunge",c:"legs",lv:"入门",u:"个",m:"臀 / 股四头 / 平衡",g:"无",s:"3组 × 10–12 个/侧",t:"向后跨步，双膝成 90°，前脚跟蹬回",q:[10,12,15]},
+{id:"side-lunge",n:"侧弓步",en:"Side Lunge",c:"legs",lv:"入门",u:"个",m:"大腿内侧 / 臀",g:"无",s:"3组 × 10 个/侧",t:"向侧面大步下蹲，胸口保持抬起",q:[10,12,15]},
+{id:"bulgarian-squat",n:"保加利亚分腿蹲",en:"Bulgarian Split Squat",c:"legs",lv:"进阶",u:"个",m:"臀 / 股四头 / 平衡",g:"椅子",s:"3组 × 8–10 个/侧",t:"后脚垫高，重心压在前腿",q:[8,10,12]},
 {id:"wall-sit",n:"靠墙静蹲",en:"Wall Sit",c:"legs",lv:"入门",u:"秒",m:"股四头 / 耐力",g:"墙面",s:"3组 × 30–60 秒",t:"背贴墙、大腿平行地面，膝不超脚尖",q:[30,45,60]},
-{id:"jump-squat",n:"深蹲跳",en:"Jump Squat",c:"legs",lv:"高阶",u:"次",m:"爆发力 / 臀腿",g:"无",s:"3组 × 8–12 次",t:"落地缓冲再下蹲，膝盖不要内扣",q:[8,10,15]},
-{id:"calf-raise",n:"站姿提踵",en:"Calf Raise",c:"legs",lv:"入门",u:"次",m:"小腿三头肌",g:"无",s:"3组 × 15–20 次",t:"顶端停 1 秒，缓慢下落",q:[15,20,30]},
-{id:"lateral-leg-raise",n:"侧卧抬腿",en:"Lateral Leg Raise",c:"legs",lv:"入门",u:"次",m:"臀中肌 / 髋外侧",g:"无",s:"3组 × 15 次/侧",t:"侧躺腿伸直上抬约 45°，慢落",q:[12,15,20]},
+{id:"jump-squat",n:"深蹲跳",en:"Jump Squat",c:"legs",lv:"高阶",u:"个",m:"爆发力 / 臀腿",g:"无",s:"3组 × 8–12 个",t:"落地缓冲再下蹲，膝盖不要内扣",q:[8,10,15]},
+{id:"calf-raise",n:"站姿提踵",en:"Calf Raise",c:"legs",lv:"入门",u:"个",m:"小腿三头肌",g:"无",s:"3组 × 15–20 个",t:"顶端停 1 秒，缓慢下落",q:[15,20,30]},
+{id:"lateral-leg-raise",n:"侧卧抬腿",en:"Lateral Leg Raise",c:"legs",lv:"入门",u:"个",m:"臀中肌 / 髋外侧",g:"无",s:"3组 × 15 个/侧",t:"侧躺腿伸直上抬约 45°，慢落",q:[12,15,20]},
 {id:"plank",n:"平板支撑",en:"Forearm Plank",c:"core",lv:"入门",u:"秒",m:"腹横肌 / 核心 / 肩",g:"无",s:"3组 × 30–60 秒",t:"肘在肩正下方，收腹夹臀不塌腰",q:[30,60,90],fav:true},
 {id:"knee-plank",n:"跪姿平板",en:"Knee Plank",c:"core",lv:"入门",u:"秒",m:"核心（退阶）",g:"无",s:"3组 × 20–30 秒",t:"膝盖着地缩短力臂，髋部不弯折",q:[20,30,45]},
 {id:"high-plank",n:"直臂平板",en:"High Plank",c:"core",lv:"入门",u:"秒",m:"核心 / 肩 / 三头",g:"无",s:"3组 × 30–60 秒",t:"手掌撑地，肩在腕正上方",q:[30,45,60]},
 {id:"side-plank",n:"侧平板支撑",en:"Side Plank",c:"core",lv:"进阶",u:"秒",m:"腹斜肌 / 侧链",g:"无",s:"3组 × 30–60 秒/侧",t:"身体成一条直线，髋部主动上顶",q:[30,45,60]},
-{id:"plank-tap",n:"平板触肩",en:"Plank Shoulder Taps",c:"core",lv:"进阶",u:"次",m:"核心抗旋转",g:"无",s:"3组 × 20 次",t:"交替触摸对侧肩，髋部尽量不动",q:[16,20,30]},
-{id:"plank-jack",n:"平板开合",en:"Plank Jacks",c:"core",lv:"进阶",u:"次",m:"核心 / 心肺",g:"无",s:"3组 × 20 次",t:"平板姿势双脚开合跳，核心收紧",q:[16,20,30]},
+{id:"plank-tap",n:"平板触肩",en:"Plank Shoulder Taps",c:"core",lv:"进阶",u:"个",m:"核心抗旋转",g:"无",s:"3组 × 20 个",t:"交替触摸对侧肩，髋部尽量不动",q:[16,20,30]},
+{id:"plank-jack",n:"平板开合",en:"Plank Jacks",c:"core",lv:"进阶",u:"个",m:"核心 / 心肺",g:"无",s:"3组 × 20 个",t:"平板姿势双脚开合跳，核心收紧",q:[16,20,30]},
 {id:"reverse-plank",n:"反向平板",en:"Reverse Plank",c:"core",lv:"进阶",u:"秒",m:"后链 / 肩后侧",g:"无",s:"3组 × 20–30 秒",t:"仰面撑起，髋部推高不塌陷",q:[20,30,45]},
-{id:"dead-bug",n:"死虫式",en:"Dead Bug",c:"core",lv:"入门",u:"次",m:"深层核心 / 腰椎稳定",g:"无",s:"3组 × 8–10 次/侧",t:"对侧手脚缓慢伸展，腰背始终贴地",q:[8,10,12]},
-{id:"bird-dog",n:"鸟狗式",en:"Bird Dog",c:"core",lv:"入门",u:"次",m:"核心 / 多裂肌 / 臀",g:"无",s:"3组 × 8–10 次/侧",t:"四点跪姿伸对侧手脚，骨盆不晃",q:[8,10,12]},
-{id:"crunch",n:"卷腹",en:"Crunch",c:"core",lv:"入门",u:"次",m:"腹直肌上部",g:"无",s:"3组 × 15 次",t:"肩胛微离地即可，别用脖子发力",q:[15,20,30]},
-{id:"bicycle-crunch",n:"自行车卷腹",en:"Bicycle Crunch",c:"core",lv:"入门",u:"次",m:"腹斜肌 / 腹直肌",g:"无",s:"3组 × 20 次",t:"肘碰对侧膝，控制速度不甩头",q:[20,30,40]},
-{id:"lying-leg-raise",n:"仰卧举腿",en:"Lying Leg Raise",c:"core",lv:"入门",u:"次",m:"下腹 / 髋屈肌",g:"无",s:"3组 × 12–15 次",t:"腰背贴地，双腿缓慢下放不触地",q:[12,15,20]},
-{id:"russian-twist",n:"俄罗斯转体",en:"Russian Twist",c:"core",lv:"入门",u:"次",m:"腹斜肌",g:"无",s:"3组 × 20 次",t:"坐姿后倾，转体时保持脊柱挺直",q:[20,30,40],fav:true},
+{id:"dead-bug",n:"死虫式",en:"Dead Bug",c:"core",lv:"入门",u:"个",m:"深层核心 / 腰椎稳定",g:"无",s:"3组 × 8–10 个/侧",t:"对侧手脚缓慢伸展，腰背始终贴地",q:[8,10,12]},
+{id:"bird-dog",n:"鸟狗式",en:"Bird Dog",c:"core",lv:"入门",u:"个",m:"核心 / 多裂肌 / 臀",g:"无",s:"3组 × 8–10 个/侧",t:"四点跪姿伸对侧手脚，骨盆不晃",q:[8,10,12]},
+{id:"crunch",n:"卷腹",en:"Crunch",c:"core",lv:"入门",u:"个",m:"腹直肌上部",g:"无",s:"3组 × 15 个",t:"肩胛微离地即可，别用脖子发力",q:[15,20,30]},
+{id:"bicycle-crunch",n:"自行车卷腹",en:"Bicycle Crunch",c:"core",lv:"入门",u:"个",m:"腹斜肌 / 腹直肌",g:"无",s:"3组 × 20 个",t:"肘碰对侧膝，控制速度不甩头",q:[20,30,40]},
+{id:"lying-leg-raise",n:"仰卧举腿",en:"Lying Leg Raise",c:"core",lv:"入门",u:"个",m:"下腹 / 髋屈肌",g:"无",s:"3组 × 12–15 个",t:"腰背贴地，双腿缓慢下放不触地",q:[12,15,20]},
+{id:"russian-twist",n:"俄罗斯转体",en:"Russian Twist",c:"core",lv:"入门",u:"个",m:"腹斜肌",g:"无",s:"3组 × 20 个",t:"坐姿后倾，转体时保持脊柱挺直",q:[20,30,40],fav:true},
 {id:"hollow-hold",n:"空心支撑",en:"Hollow Body Hold",c:"core",lv:"高阶",u:"秒",m:"全核心 / 体操基础",g:"无",s:"3组 × 20–30 秒",t:"下背压紧地面，四肢离地保持",q:[20,30,45]},
-{id:"mountain-climber",n:"登山者",en:"Mountain Climber",c:"full",lv:"入门",u:"次",m:"核心 / 肩 / 心肺",g:"无",s:"3组 × 20 次",t:"平板姿势交替提膝，髋部保持稳定",q:[20,30,40]},
-{id:"jumping-jacks",n:"开合跳",en:"Jumping Jacks",c:"full",lv:"入门",u:"次",m:"全身热身 / 心肺",g:"无",s:"3组 × 30 次",t:"轻量落地，常用作热身",q:[30,50,100]},
+{id:"mountain-climber",n:"登山者",en:"Mountain Climber",c:"full",lv:"入门",u:"个",m:"核心 / 肩 / 心肺",g:"无",s:"3组 × 20 个",t:"平板姿势交替提膝，髋部保持稳定",q:[20,30,40]},
+{id:"jumping-jacks",n:"开合跳",en:"Jumping Jacks",c:"full",lv:"入门",u:"个",m:"全身热身 / 心肺",g:"无",s:"3组 × 30 个",t:"轻量落地，常用作热身",q:[30,50,100]},
 {id:"high-knees",n:"高抬腿",en:"High Knees",c:"full",lv:"入门",u:"秒",m:"心肺 / 髋屈肌",g:"无",s:"3组 × 30 秒",t:"原地跑，膝盖抬到髋部高度",q:[30,45,60]},
-{id:"burpee",n:"波比跳",en:"Burpee",c:"full",lv:"进阶",u:"次",m:"全身 / 心肺",g:"无",s:"3组 × 8–15 次",t:"下蹲→平板→俯卧撑→收腿跳起",q:[8,10,15]},
-{id:"step-burpee",n:"简化波比",en:"Step-back Burpee",c:"full",lv:"入门",u:"次",m:"全身 / 心肺（退阶）",g:"无",s:"3组 × 10 次",t:"用走步代替跳跃，去掉俯卧撑",q:[10,15,20]},
+{id:"burpee",n:"波比跳",en:"Burpee",c:"full",lv:"进阶",u:"个",m:"全身 / 心肺",g:"无",s:"3组 × 8–15 个",t:"下蹲→平板→俯卧撑→收腿跳起",q:[8,10,15]},
+{id:"step-burpee",n:"简化波比",en:"Step-back Burpee",c:"full",lv:"入门",u:"个",m:"全身 / 心肺（退阶）",g:"无",s:"3组 × 10 个",t:"用走步代替跳跃，去掉俯卧撑",q:[10,15,20]},
 {id:"bear-crawl",n:"熊爬",en:"Bear Crawl",c:"full",lv:"入门",u:"秒",m:"全身协调 / 肩髋",g:"无",s:"3组 × 30 秒",t:"膝离地几厘米，对侧手脚交替前行",q:[20,30,45]},
-{id:"skater-hops",n:"滑冰跳",en:"Skater Hops",c:"full",lv:"入门",u:"次",m:"臀腿 / 侧向爆发",g:"无",s:"3组 × 20 次",t:"左右横向跳跃，落地轻、单脚稳定",q:[16,20,30]}
+{id:"skater-hops",n:"滑冰跳",en:"Skater Hops",c:"full",lv:"入门",u:"个",m:"臀腿 / 侧向爆发",g:"无",s:"3组 × 20 个",t:"左右横向跳跃，落地轻、单脚稳定",q:[16,20,30]}
 ];
 let CUSTOM=[];
 let EX=BASE_EX.slice();
-const EX_FALLBACK={n:"已删除的动作",en:"Custom",c:"push",lv:"入门",u:"次",m:"自定义",g:"无",s:"—",t:"",q:[]};
+const EX_FALLBACK={n:"已删除的动作",en:"Custom",c:"push",lv:"入门",u:"个",m:"自定义",g:"无",s:"—",t:"",q:[]};
 const exById=id=>EX.find(x=>x.id===id)||EX_FALLBACK;
 const catOf=k=>CATS.find(c=>c.k===k)||{k:k,n:"其他",c:"#8B9099"};
 const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.1";
+const APP_VERSION="v1.2";
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
   "https://api.github.com/repos/simplejuzi/PUSHUP/releases/latest",
@@ -822,6 +928,17 @@ const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03",
 let DATA,FAVS,THEME;
 /* 逐条剔除旧版出厂演示记录：只删「和演示数据一模一样」的条目；
    用户录入过的新日期、或改动过数值 / 加过明细的那条，一律保留。 */
+/* v1.2：旧版把「次」存进了记录明细 / 自定义动作，读取时统一迁移成「个」，数值不动 */
+function normUnit(u){return u==="次"?"个":u;}
+function normalizeRows(arr){
+  let changed=false;
+  if(!Array.isArray(arr))return false;
+  arr.forEach(function(r){
+    if(!r||!Array.isArray(r.items))return;
+    r.items.forEach(function(i){if(i&&i.u==="次"){i.u="个";changed=true;}});
+  });
+  return changed;
+}
 function isLegacyRow(r){
   if(!r||typeof r!=="object")return false;
   const i=LEGACY_SEED.findIndex(s=>s.d===r.d);
@@ -835,7 +952,8 @@ function loadData(){
   let arr=null;if(raw){try{arr=JSON.parse(raw);}catch(e){arr=null;}}
   if(!Array.isArray(arr))return [];                 // 全新安装 / 已清空 → 空白
   const kept=arr.filter(r=>!isLegacyRow(r));
-  if(kept.length!==arr.length){                    // 一次性迁移，把清理结果写回去
+  const unitFixed=normalizeRows(kept);           // v1.2：旧单位「次」->「个」
+  if(kept.length!==arr.length||unitFixed){       // 一次性迁移，把清理结果写回去
     try{kept.length?localStorage.setItem(KEY,JSON.stringify(kept)):localStorage.removeItem(KEY);}catch(e){}
   }
   return kept;
@@ -846,6 +964,26 @@ try{THEME=localStorage.getItem(TKEY)||"light";}catch(e){THEME="light";}
 try{PALETTE=localStorage.getItem(PKEY)||"default";}catch(e){PALETTE="default";}
 try{CUSTOM=JSON.parse(localStorage.getItem(CKEY))||[];}catch(e){CUSTOM=[];}
 try{const cc=JSON.parse(localStorage.getItem(CATKEY))||[];CATS=BASE_CATS.concat(cc);}catch(e){}
+/* v1.2：旧自定义动作里也可能存了「次」 */
+if(Array.isArray(CUSTOM)&&normalizeUnits(CUSTOM)){
+  try{localStorage.setItem(CKEY,JSON.stringify(CUSTOM));}catch(e){}
+}
+
+/* ============ v1.2：个人资料（头像 + 昵称） ============ */
+const AKEY="fitness_avatar_v1",NKEY="fitness_nickname_v1";
+const DEFAULT_NICKNAME="卷卷大人";
+/* 内置默认头像：健身房里做俯卧撑的熊猫（用户指定），320×320 JPEG 内联，离线可用。
+   源文件 icons/default-avatar.jpg：原图裁 640×640 正方形后缩放压缩。 */
+const DEFAULT_AVATAR="data:image/jpeg;base64,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";
+function normalizeUnits(list){
+  let changed=false;
+  if(!Array.isArray(list))return false;
+  list.forEach(function(e){if(e&&e.u==="次"){e.u="个";changed=true;}});
+  return changed;
+}
+let AVATAR,NICKNAME,pendingAvatar=null,keepDateOnce=false;
+try{AVATAR=localStorage.getItem(AKEY)||DEFAULT_AVATAR;}catch(e){AVATAR=DEFAULT_AVATAR;}
+try{NICKNAME=localStorage.getItem(NKEY)||DEFAULT_NICKNAME;}catch(e){NICKNAME=DEFAULT_NICKNAME;}
 EX=BASE_EX.concat(CUSTOM);
 const NOW=new Date();
 const TODAY=NOW.getFullYear()+"-"+String(NOW.getMonth()+1).padStart(2,"0")+"-"+String(NOW.getDate()).padStart(2,"0");
@@ -867,7 +1005,8 @@ function saveAll(){
   try{localStorage.setItem(KEY,JSON.stringify(DATA));localStorage.setItem(FKEY,JSON.stringify(FAVS));localStorage.setItem(TKEY,THEME);
     localStorage.setItem(CKEY,JSON.stringify(CUSTOM));
     localStorage.setItem(CATKEY,JSON.stringify(CATS.filter(c=>c.k.indexOf("cc-")===0)));
-    localStorage.setItem(PKEY,PALETTE);}catch(e){}
+    localStorage.setItem(PKEY,PALETTE);
+    localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);}catch(e){}
 }
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);}
 function switchTab(name){
@@ -880,9 +1019,18 @@ function switchTab(name){
   if(name==="history")renderHistory();
   if(name==="stats")renderStats();
   if(name==="library")renderLibrary();
-  if(name==="record")renderToday();
+  if(name==="record"){
+    /* v1.2 A：从历史 / 数据页主动跳到某天时保留目标日期（keepDateOnce），
+       其它任何一次切回记录页都自动恢复到当天 */
+    if(keepDateOnce){keepDateOnce=false;}
+    else{curDate=todayStr();}
+    fillRecord();
+  }
   if(name==="profile")renderProfile();
 }
+/* v1.2：动态取当天，避免 App 跨天挂后台时「回今天」回到昨天 */
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function backToToday(){curDate=todayStr();fillRecord();toast("已回到今天");}
 function renderAll(){fillRecord();renderStats();renderHistory();renderLibrary();renderProfile();}
 
 /* ============ 记录页 ============ */
@@ -896,12 +1044,20 @@ function metricTrend(id,val,key,unit,digits){
   }else{const last=lastBefore(key,curDate);t.className="trend flat";t.textContent=last?("今天没测 · 上次 "+last[key].toFixed(digits)+" "+unit):"选填 · 今天没测";}
 }
 function shiftDate(delta){
+  const td=todayStr();
+  if(delta>0&&curDate>=td)return;                 // 已经在今天，不再往右
   const x=parseD(curDate);x.setDate(x.getDate()+delta);
-  curDate=x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  const next=x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  if(next>td)return;                               // 双保险：绝不落到未来
+  curDate=next;
   fillRecord();
 }
 function fillRecord(){
-  const r=byDate(curDate),isToday=curDate===TODAY;
+  const r=byDate(curDate),isToday=curDate===todayStr();
+  const backBtn=document.getElementById("backTodayBtn");
+  if(backBtn)backBtn.hidden=isToday;
+  const nextBtn=document.getElementById("nextDateBtn");
+  if(nextBtn)nextBtn.disabled=isToday;             // 今天时右翻按钮灰掉
   document.getElementById("recEyebrow").textContent=fmtMD(curDate)+" "+wdOf(curDate);
   document.getElementById("dateLabel").innerHTML=(isToday?"今天":"补录")+" · "+fmtMD(curDate)+"<small>"+(r?"已有记录，可直接修改":"还没有记录，填完保存即可")+"</small>";
   if(r)todayRows=(r.items&&r.items.length)?r.items.map(i=>({id:i.id,v:i.v})):[{id:"pushup",v:r.p}];
@@ -921,8 +1077,8 @@ function stepCfg(u){
 function sumText(){
   const filled=todayRows.filter(x=>x.v!=null&&x.v>0);
   let reps=0,secs=0;
-  filled.forEach(x=>{const u=(exById(x.id)||{}).u;if(u==="次")reps+=Number(x.v);else if(u==="秒")secs+=Number(x.v);});
-  const parts=[];if(reps)parts.push(reps+" 次");if(secs)parts.push(secs+" 秒");
+  filled.forEach(x=>{const u=normUnit((exById(x.id)||{}).u);if(u==="个")reps+=Number(x.v);else if(u==="秒")secs+=Number(x.v);});
+  const parts=[];if(reps)parts.push(reps+" 个");if(secs)parts.push(secs+" 秒");
   return "已填 "+filled.length+" 项"+(parts.length?" · "+parts.join(" · "):"");
 }
 function renderToday(){
@@ -968,20 +1124,35 @@ function saveRecord(){
   if(i>=0)DATA[i]=obj;else DATA.push(obj);
   DATA.sort((x,y)=>x.d.localeCompare(y.d));
   saveAll();toast("已保存 · "+fmtMD(curDate)+" "+items.length+" 个动作");
+  checkBreakthrough();
 }
 
 /* ============ 历史页 ============ */
-function shiftMonth(delta){let[y,m]=curMonth;m+=delta;if(m<1){m=12;y--;}if(m>12){m=1;y++;}curMonth=[y,m];renderHistory();}
+function shiftMonth(delta){
+  let[y,m]=curMonth;m+=delta;if(m<1){m=12;y--;}if(m>12){m=1;y++;}
+  const nd=new Date(),cy=nd.getFullYear(),cm=nd.getMonth()+1;
+  if(y>cy||(y===cy&&m>cm))return;                 // 不翻到未来月份
+  curMonth=[y,m];renderHistory();
+}
 function renderHistory(){
-  const[y,m]=curMonth;
+  let[y,m]=curMonth;
+  const nd=new Date(),cy=nd.getFullYear(),cm=nd.getMonth()+1,td=todayStr();
+  if(y>cy||(y===cy&&m>cm)){curMonth=[cy,cm];return renderHistory();}
+  const nextM=document.getElementById("nextMonthBtn");
+  if(nextM)nextM.disabled=(y===cy&&m===cm);       // 本月时右翻月份灰掉
   document.getElementById("monthLabel").textContent=y+"年 "+m+"月";
   document.getElementById("countBadge").textContent=DATA.length+" 条记录";
   const first=new Date(y,m-1,1),days=new Date(y,m,0).getDate(),lead=(first.getDay()+6)%7;
   let html="";for(let i=0;i<lead;i++)html+='<div class="cell empty"></div>';
   for(let d=1;d<=days;d++){
     const ds=y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"),r=byDate(ds);
-    const cls=["cell",r?"has":"",ds===TODAY?"today":"",ds===selDate?"sel":"",ds>TODAY?"future":""].join(" ");
-    html+='<div class="'+cls+'" onclick="pickDate(\''+ds+'\')"><span class="dn">'+d+'</span>'+(r?'<span class="cv">'+r.p+'</span>':'')+'</div>';
+    const future=ds>td;
+    const cls=["cell",r?"has":"",ds===td?"today":"",(!future&&ds===selDate)?"sel":"",future?"future":""].join(" ");
+    if(future){
+      html+='<div class="'+cls+'" aria-disabled="true"><span class="dn">'+d+'</span></div>';
+    }else{
+      html+='<div class="'+cls+'" onclick="pickDate(\''+ds+'\')"><span class="dn">'+d+'</span>'+(r?'<span class="cv">'+r.p+'</span>':'')+'</div>';
+    }
   }
   document.getElementById("calendar").innerHTML=html;
   const monthRows=DATA.filter(r=>r.d.startsWith(y+"-"+String(m).padStart(2,"0")));
@@ -1002,17 +1173,22 @@ function renderHistory(){
       '<div class="pv">'+r.p+'<small>个</small></div><div class="tags">'+extra+tags.join("")+'</div><div class="arrow">›</div></div>';
   }).join(""):'<div class="muted" style="text-align:center;padding:24px">这个月还没有记录</div>';
 }
-function pickDate(ds){selDate=ds;renderHistory();document.getElementById("dayDetail").scrollIntoView({behavior:"smooth",block:"nearest"});}
+function pickDate(ds){if(ds>todayStr())return;selDate=ds;renderHistory();document.getElementById("dayDetail").scrollIntoView({behavior:"smooth",block:"nearest"});}
 function renderDayDetail(){
   const r=byDate(selDate),box=document.getElementById("dayDetail");
+  if(selDate>todayStr()){
+    box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+'</span><span>未到</span></div>'+
+      '<div style="font-size:12.5px;color:var(--sub2);line-height:1.6;padding:6px 0">还没到这一天，不能提前记录。</div>';
+    return;
+  }
   if(!r){box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><span>无记录</span></div><div style="font-size:12.5px;color:#9BA0A8;line-height:1.6">这天休息了。想补录的话，点下面的按钮。</div><div style="margin-top:12px"><button class="edit" onclick="editFrom(\''+selDate+'\')">＋ 补录这天</button></div>';return;}
-  const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"次"}];
-  let cards=items.slice(0,6).map(i=>{const e=exById(i.id);return '<div class="di"><div class="k">'+(i.n||e.n)+'</div><div class="v">'+i.v+'<small>'+(i.u||e.u)+'</small></div></div>';}).join("");
+  const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"个"}];
+  let cards=items.slice(0,6).map(i=>{const e=exById(i.id);return '<div class="di"><div class="k">'+(i.n||e.n)+'</div><div class="v">'+i.v+'<small>'+normUnit(i.u||e.u)+'</small></div></div>';}).join("");
   if(r.w!=null)cards+='<div class="di"><div class="k">体重</div><div class="v">'+r.w.toFixed(2)+'<small>kg</small></div></div>';
   if(r.a!=null)cards+='<div class="di"><div class="k">臂围</div><div class="v">'+r.a+'<small>cm</small></div></div>';
   box.innerHTML='<div class="dh"><span>'+fmtMD(selDate)+' '+wdOf(selDate)+'</span><button class="edit" onclick="editFrom(\''+selDate+'\')">编辑</button></div><div class="dg">'+cards+'</div>'+(r.note?'<div style="font-size:11.5px;color:#9BA0A8;margin-top:12px">备注：'+r.note+'</div>':'');
 }
-function editFrom(ds){curDate=ds;fillRecord();switchTab("record");toast("已载入 "+fmtMD(ds));}
+function editFrom(ds){curDate=ds>todayStr()?todayStr():ds;keepDateOnce=true;switchTab("record");toast("已载入 "+fmtMD(curDate));}
 
 /* ============ 数据页（本轮未改动，仅网格线变量化） ============ */
 function renderStats(){
@@ -1154,8 +1330,8 @@ function renderInspect(){
   const r=byDate(statDate),box=document.getElementById("inspect");
   const head='<div class="ins-head"><button onclick="shiftStatDate(-1)">‹</button><div class="ins-d"><b>'+fmtMD(statDate)+'</b> '+wdOf(statDate)+'<small>当天详细记录 · 可左右切换</small></div><button onclick="shiftStatDate(1)">›</button></div>';
   if(!r){box.innerHTML=head+'<div class="ins-empty">这天没有记录 · 休息日</div>';return;}
-  const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"次",n:"标准俯卧撑"}];
-  const irs=items.map(i=>{const e=exById(i.id);return '<div class="ins-row"><span class="ins-nm">'+(i.n||e.n)+'</span><span class="ins-v">'+i.v+' <small>'+(i.u||e.u)+'</small></span></div>';}).join("");
+  const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"个",n:"标准俯卧撑"}];
+  const irs=items.map(i=>{const e=exById(i.id);return '<div class="ins-row"><span class="ins-nm">'+(i.n||e.n)+'</span><span class="ins-v">'+i.v+' <small>'+normUnit(i.u||e.u)+'</small></span></div>';}).join("");
   const met=[];
   if(r.w!=null)met.push('<span>体重 '+r.w.toFixed(2)+' kg</span>');
   if(r.a!=null)met.push('<span>臂围 '+r.a+' cm</span>');
@@ -1259,7 +1435,7 @@ function saveCustom(){
   const u=document.getElementById("cfUnit").value;
   const qs=document.getElementById("cfQuick").value.trim();
   let q=qs?qs.split(/[,，\s]+/).map(Number).filter(x=>!isNaN(x)&&x>0):[];
-  if(!q.length)q=u==="次"?[10,20,30]:[30,60,90];
+  if(!q.length)q=u==="个"?[10,20,30]:[30,60,90];
   const e={id:"cf-"+Date.now(),n:n,en:document.getElementById("cfEn").value.trim()||"Custom",c:c,
     lv:document.getElementById("cfLv").value,u:u,
     m:document.getElementById("cfMuscle").value.trim()||"自定义",
@@ -1280,6 +1456,10 @@ function delCustom(id){
 
 /* ============ 我的页 ============ */
 function renderProfile(){
+  const pAv=document.getElementById("profileAvatar");if(pAv)pAv.src=AVATAR||DEFAULT_AVATAR;
+  setTxt("profileName",NICKNAME);
+  const pTotal=DATA.reduce((a,r)=>a+(r.p||0),0);
+  setTxt("profileSub",DATA.length?("已记录 "+DATA.length+" 天 · 累计 "+pTotal.toLocaleString()+" 个"):"还没有记录 · 从今天开始");
   document.getElementById("profileStats").innerHTML=
     '<div class="it"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
     '<div class="it"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
@@ -1388,14 +1568,14 @@ function showExportResult(name,path,native){
 function closeExport(){document.getElementById("exportModal").classList.remove("on");}
 function shareAgain(){if(!lastExport)return;closeExport();setTimeout(()=>saveOut(lastExport.name,lastExport.text,lastExport.mime),180);}
 function exportJSON(){
-  const payload={app:"PUSHUP",version:APP_VERSION,exportedAt:new Date().toISOString(),data:DATA,favs:FAVS,theme:THEME,palette:PALETTE,custom:CUSTOM,cats:CATS.filter(c=>c.k.indexOf("cc-")===0)};
+  const payload={app:"PUSHUP",version:APP_VERSION,exportedAt:new Date().toISOString(),nickname:NICKNAME,avatar:AVATAR,data:DATA,favs:FAVS,theme:THEME,palette:PALETTE,custom:CUSTOM,cats:CATS.filter(c=>c.k.indexOf("cc-")===0)};
   saveOut("PUSHUP-备份-"+TODAY+".json",JSON.stringify(payload,null,2),"application/json");
 }
 function exportCSV(){
   const lines=["日期,类型,名称,数值,单位"];
   DATA.forEach(r=>{
-    const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"次"}];
-    items.forEach(i=>{const e=exById(i.id)||{n:"俯卧撑"};lines.push([r.d,"动作",e.n,i.v,i.u].join(","));});
+    const items=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p,u:"个"}];
+    items.forEach(i=>{const e=exById(i.id)||{n:"俯卧撑"};lines.push([r.d,"动作",e.n,i.v,normUnit(i.u)].join(","));});
     if(r.w!=null)lines.push([r.d,"指标","体重",r.w.toFixed(2),"kg"].join(","));
     if(r.a!=null)lines.push([r.d,"指标","臂围",r.a,"cm"].join(","));
     if(r.note)lines.push([r.d,"备注",'"'+r.note.replace(/"/g,'""')+'"',"",""].join(","));
@@ -1404,6 +1584,46 @@ function exportCSV(){
 }
 function openImport(){document.getElementById("importModal").classList.add("on");}
 function closeImport(){document.getElementById("importModal").classList.remove("on");}
+
+/* ============ v1.2：编辑个人资料 ============ */
+function openProfileEdit(){
+  pendingAvatar=AVATAR||DEFAULT_AVATAR;
+  document.getElementById("peAvatar").src=pendingAvatar;
+  document.getElementById("peName").value=NICKNAME;
+  document.getElementById("profileModal").classList.add("on");
+}
+function closeProfileEdit(){document.getElementById("profileModal").classList.remove("on");}
+function pickAvatar(){const el=document.getElementById("avatarFile");if(el)el.click();}
+function resetAvatar(){pendingAvatar=DEFAULT_AVATAR;document.getElementById("peAvatar").src=DEFAULT_AVATAR;}
+function onAvatarFile(ev){
+  const f=ev.target.files&&ev.target.files[0];if(!f)return;
+  try{
+    const rd=new FileReader();
+    rd.onload=function(){
+      const img=new Image();
+      img.onload=function(){
+        try{
+          const c=document.createElement("canvas");c.width=c.height=256;
+          const ctx=c.getContext("2d"),side=Math.min(img.width,img.height);
+          ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,256,256);
+          pendingAvatar=c.toDataURL("image/jpeg",0.85);
+          document.getElementById("peAvatar").src=pendingAvatar;
+        }catch(e){toast("这张图片读不了，换一张试试");}
+      };
+      img.onerror=function(){toast("这张图片读不了，换一张试试");};
+      img.src=String(rd.result||"");
+    };
+    rd.onerror=function(){toast("这张图片读不了，换一张试试");};
+    rd.readAsDataURL(f);
+  }catch(e){}
+  ev.target.value="";
+}
+function saveProfileEdit(){
+  const el=document.getElementById("peName");
+  NICKNAME=((el&&el.value)||"").trim().slice(0,12)||DEFAULT_NICKNAME;
+  AVATAR=pendingAvatar||DEFAULT_AVATAR;
+  saveAll();closeProfileEdit();renderProfile();toast("资料已保存");
+}
 
 /* ============ 清空数据：清完自动刷新页面 ============ */
 function openClearData(){document.getElementById("clearModal").classList.add("on");}
@@ -1434,8 +1654,11 @@ function doImport(){
   if(!txt){toast("先粘贴内容");return;}
   let rows=[];
   if(txt.charAt(0)==="{"){
-    try{const j=JSON.parse(txt);rows=j.data||[];if(Array.isArray(j.favs)&&j.favs.length)FAVS=j.favs;if(j.theme)THEME=j.theme;if(j.palette)PALETTE=j.palette;
-      if(Array.isArray(j.custom)){CUSTOM=j.custom;EX=BASE_EX.concat(CUSTOM);}
+    try{const j=JSON.parse(txt);rows=j.data||[];normalizeRows(rows);
+      if(typeof j.nickname==="string")NICKNAME=j.nickname.trim().slice(0,12)||DEFAULT_NICKNAME;
+      if(typeof j.avatar==="string"&&j.avatar.indexOf("data:image")===0)AVATAR=j.avatar;
+      if(Array.isArray(j.favs)&&j.favs.length)FAVS=j.favs;if(j.theme)THEME=j.theme;if(j.palette)PALETTE=j.palette;
+      if(Array.isArray(j.custom)){CUSTOM=j.custom;normalizeUnits(CUSTOM);EX=BASE_EX.concat(CUSTOM);}
       if(Array.isArray(j.cats))CATS=BASE_CATS.concat(j.cats);
     }catch(e){toast("JSON 格式不对");return;}
   }else if(isCSVTemplate(txt))rows=parseTemplate(txt);
@@ -1570,7 +1793,7 @@ function onImportFile(ev){
 }
 function openTemplate(){
   tplSel=new Set(FAVS);
-  const d=document.getElementById("tplDate");if(d)d.value=TODAY;
+  const d=document.getElementById("tplDate");if(d){d.value=TODAY;d.max=todayStr();}
   const q=document.getElementById("tplSearch");if(q)q.value="";
   renderTemplate();
   document.getElementById("templateModal").classList.add("on");
@@ -1711,12 +1934,127 @@ async function startUpdate(){
   document.getElementById("updateModal").classList.add("on");
 }
 
+/* ============ v1.2：记录页标题激励短句（每 10 秒随机换一条，不连续重复） ============ */
+const MOTTOS=[
+  "今天也撑一下","一组就开始了","别停，再来一个","撑住就是进步","比昨天多一个",
+  "先做第一个","慢慢来，别断","练了就算数","手臂会记住的","十秒也算训练",
+  "别和别人比","现在就开始","一次一个，稳住","今天赢了昨天","汗水不会骗人",
+  "起来，撑住，落下","坚持是攒出来的","不必做到力竭","打开就赢一半","明天会感谢你"
+];
+let mottoIdx=-1,mottoFadeTimer=null;
+function rotateMotto(instant){
+  let i;do{i=Math.floor(Math.random()*MOTTOS.length);}while(i===mottoIdx&&MOTTOS.length>1);
+  mottoIdx=i;
+  const el=document.getElementById("recMotto");if(!el)return;
+  if(instant){el.textContent=MOTTOS[i];el.style.opacity="1";return;}
+  el.style.opacity="0";
+  clearTimeout(mottoFadeTimer);
+  mottoFadeTimer=setTimeout(function(){el.textContent=MOTTOS[i];el.style.opacity="1";},220);
+}
+function initMotto(){rotateMotto(true);setInterval(function(){rotateMotto(false);},10000);}
+
+/* ============ v1.2：突破奖励（今天比昨天；没有昨天就比最近一次） ============ */
+const PRAISE_WORDS=[
+  "这个进步，值得记一笔。","一组一组攒出来的，别停。","身体在偷偷变强，你看得见。",
+  "昨天做不到的，今天做到了。","这才是坚持的样子。","再稳住几天，就是新的起点。",
+  "不用跟谁比，你赢过了自己。","每一次撑起都算数。","把今天记下来，明天接着来。"
+];
+function prevRecordOf(date){
+  const arr=DATA.filter(r=>r.d<date&&typeof r.p==="number").sort((a,b)=>b.d.localeCompare(a.d));
+  return arr[0]||null;
+}
+/* 只在「保存今天且确实突破」时触发；同一天只弹一次 */
+function checkBreakthrough(){
+  if(curDate!==todayStr())return false;
+  const t=byDate(todayStr());if(!t||typeof t.p!=="number")return false;
+  const prev=prevRecordOf(todayStr());if(!prev)return false;
+  const diff=t.p-prev.p;if(diff<=10)return false;
+  const key="pushup_praise_"+todayStr();
+  try{if(localStorage.getItem(key)==="1")return false;localStorage.setItem(key,"1");}catch(e){}
+  showBreakthrough(diff,prev.p,t.p);
+  return true;
+}
+function showBreakthrough(diff,prev,now){
+  const box=document.getElementById("breakModal");if(!box)return;
+  document.getElementById("celGain").textContent=diff;
+  document.getElementById("celTitle").textContent="比上次多做了 "+diff+" 个！";
+  document.getElementById("celWord").textContent=PRAISE_WORDS[Math.floor(Math.random()*PRAISE_WORDS.length)];
+  document.getElementById("celPrev").textContent=prev;
+  document.getElementById("celNow").textContent=now;
+  const wrap=document.getElementById("celConfetti");
+  if(wrap){
+    wrap.innerHTML="";
+    const colors=["var(--accent)","var(--green)","var(--blue)","var(--purple)","var(--amber)","var(--accent-mid)"];
+    for(let i=0;i<44;i++){
+      const p=document.createElement("i");
+      p.className="cel-piece";
+      p.style.left=(Math.random()*100)+"%";
+      p.style.background=colors[i%colors.length];
+      p.style.setProperty("--delay",(Math.random()*1.1).toFixed(2)+"s");
+      p.style.setProperty("--dur",(2.2+Math.random()*1.6).toFixed(2)+"s");
+      p.style.setProperty("--dx",(Math.random()*160-80).toFixed(0)+"px");
+      p.style.setProperty("--rot",(360+Math.random()*720).toFixed(0)+"deg");
+      p.style.width=(5+Math.random()*6).toFixed(0)+"px";
+      p.style.height=(9+Math.random()*9).toFixed(0)+"px";
+      wrap.appendChild(p);
+    }
+  }
+  box.classList.add("on");
+  celebrateSound();
+}
+function closeBreakthrough(){const b=document.getElementById("breakModal");if(b)b.classList.remove("on");}
+
+/* ============ v1.2：点击音效（Web Audio 合成，离线可用、零外部音频文件） ============ */
+let AC=null;
+function audioCtx(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+    if(!AC)AC=new C();
+    if(AC.state==="suspended"&&AC.resume)AC.resume();
+    return AC;
+  }catch(e){return null;}
+}
+function tone(freq,dur,vol,delay){
+  const ac=audioCtx();if(!ac)return;
+  try{
+    const t=ac.currentTime+(delay||0),o=ac.createOscillator(),g=ac.createGain();
+    o.type="sine";o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol,t+0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g);g.connect(ac.destination);
+    o.start(t);o.stop(t+dur+0.02);
+  }catch(e){}
+}
+/* 简约通透：一声极轻的高频正弦「叮」，无低频、无方波，不刺耳 */
+function clickSound(){tone(1180,0.055,0.020,0);tone(1770,0.030,0.007,0.006);}
+/* 奖励特效：C5-E5-G5-C6 上行琶音 + 一个轻高音收尾 */
+function celebrateSound(){
+  [523.25,659.25,783.99,1046.50].forEach(function(f,i){tone(f,0.28,0.030,i*0.095);});
+  tone(1567.98,0.40,0.014,0.40);
+}
+/* 只在真的点按钮 / 带 onclick 的可点控件时响；
+   输入框、禁用按钮、未来格子、开屏空白处、弹窗遮罩一律不响 */
+function bindClickSound(){
+  if(!document.addEventListener)return;
+  document.addEventListener("click",function(e){
+    const t=e.target;if(!t||!t.closest)return;
+    if(t.closest("input,textarea,select,label"))return;
+    const el=t.closest("button,[onclick]");
+    if(!el||el.disabled)return;
+    if(el.classList&&(el.classList.contains("cel-mask")||el.classList.contains("splash")))return;
+    clickSound();
+  },true);
+}
+
 /* ============ 初始化 ============ */
 applyTheme();
 try{localStorage.removeItem("pushup_logo_v1");}catch(e){}
 renderAll();
 bindWeightChart();
 initSplash();
+initMotto();
+bindClickSound();
 /* 清空数据并刷新后给一次明确反馈（开屏层会盖住 toast，先跳过开屏） */
 try{
   if(sessionStorage.getItem("pushup_cleared_toast")==="1"){
