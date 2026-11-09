@@ -1105,9 +1105,26 @@ function renderProfile(){
   document.getElementById("themeAuto").className=THEME==="auto"?"on":"";
 }
 const MQ=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
+
+/* ============ APK：状态栏配色融合（网页 / PWA 由浏览器管理，自动跳过） ============ */
+function statusBar(){
+  return (window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.StatusBar)||null;
+}
+function sbCall(method,args){
+  const SB=statusBar();if(!SB||typeof SB[method]!=="function")return;
+  try{const p=SB[method](args);if(p&&typeof p.catch==="function")p.catch(()=>{});}catch(e){}
+}
+function isDark(){return THEME==="dark"||(THEME==="auto"&&MQ&&MQ.matches);}
+function syncStatusBar(mode){
+  const SB=statusBar();if(!SB)return;
+  const splash=mode==="splash",dark=splash||isDark();
+  sbCall("setOverlaysWebView",{overlay:false});
+  sbCall("setBackgroundColor",{color:splash?"#1B1C22":(dark?"#15171A":"#FAFAF8")});
+  sbCall("setStyle",{style:(splash||dark)?"LIGHT":"DARK"});
+}
 function applyTheme(){
-  const dark=THEME==="dark"||(THEME==="auto"&&MQ&&MQ.matches);
-  document.body.classList.toggle("dark",!!dark);
+  document.body.classList.toggle("dark",!!isDark());
+  syncStatusBar();
 }
 if(MQ&&MQ.addEventListener)MQ.addEventListener("change",()=>{if(THEME==="auto"){applyTheme();toast("已跟随系统切换外观");}});
 function setTheme(t){
@@ -1224,10 +1241,12 @@ function initSplash(){
   ];
   document.getElementById("splashStat").textContent=STATS[i%STATS.length];
   document.getElementById("splash").style.display="flex";
+  syncStatusBar("splash");
   if(!params.has("hold"))splashTimer=setTimeout(skipSplash,2600);
 }
 function skipSplash(){
   clearTimeout(splashTimer);
+  syncStatusBar();
   const el=document.getElementById("splash");if(!el)return;
   el.classList.add("out");setTimeout(()=>{el.style.display="none";},450);
 }
@@ -1251,6 +1270,8 @@ try{
     setTimeout(()=>toast("数据已清空 · 页面已自动刷新"),600);
   }
 }catch(e){}
+/* Capacitor 桥接就绪后再同步一次，避免主题色与系统状态栏不同步 */
+window.addEventListener("load",()=>syncStatusBar());
 </script>
 </body>
 </html>
