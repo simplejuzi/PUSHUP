@@ -649,7 +649,9 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒"||u==="分钟";
 
 /* ============ 记录数据 ============ */
-const SEED=[
+/* 下面这份数组仅用于识别并清除「旧版本出厂时预置的演示记录」，
+   全新安装不会再拿它填充任何数据，App 打开就是空白的。 */
+const LEGACY_SEED=[
   {d:"2026-10-07",p:110},{d:"2026-10-08",p:110},{d:"2026-10-09",p:60},
   {d:"2026-10-24",p:100,w:53.75},{d:"2026-10-25",p:100,w:54.20},
   {d:"2026-10-27",p:100,w:54.75},{d:"2026-10-28",p:50,w:54.45,a:28},
@@ -662,13 +664,29 @@ const SEED=[
   {d:"2026-11-09",p:40}
 ];
 const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03",
-      CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04",
-      CLEARED="fitness_cleared_v1";
+      CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04";
 let DATA,FAVS,THEME;
-/* 清空数据后不能重新灌入演示记录，因此用 CLEARED 标志记住「用户主动清空过」 */
-function seedData(){let cleared=false;try{cleared=localStorage.getItem(CLEARED)==="1";}catch(e){}
-  return cleared?[]:SEED.map(x=>({...x}));}
-try{DATA=JSON.parse(localStorage.getItem(KEY))||seedData();}catch(e){DATA=seedData();}
+/* 只清除「和出厂演示数据一模一样、用户从没动过」的旧数据；
+   只要用户录入 / 修改过任何一条，就整份保留，绝不误删真实记录。 */
+function isLegacySeed(arr){
+  if(!Array.isArray(arr)||arr.length!==LEGACY_SEED.length)return false;
+  return arr.every((r,i)=>{
+    const s=LEGACY_SEED[i];if(!r||typeof r!=="object")return false;
+    if(Object.keys(r).some(k=>["d","p","w","a"].indexOf(k)<0))return false;
+    return r.d===s.d&&r.p===s.p&&r.w===s.w&&r.a===s.a;
+  });
+}
+function loadData(){
+  let raw=null;try{raw=localStorage.getItem(KEY);}catch(e){}
+  let arr=null;if(raw){try{arr=JSON.parse(raw);}catch(e){arr=null;}}
+  if(!Array.isArray(arr))return [];                 // 全新安装 / 已清空 → 空白
+  if(isLegacySeed(arr)){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    return [];                                     // 旧版遗留的演示数据 → 清掉
+  }
+  return arr;                                       // 用户自己的数据 → 原样保留
+}
+DATA=loadData();
 try{FAVS=JSON.parse(localStorage.getItem(FKEY))||EX.filter(x=>x.fav).map(x=>x.id);}catch(e){FAVS=EX.filter(x=>x.fav).map(x=>x.id);}
 try{THEME=localStorage.getItem(TKEY)||"light";}catch(e){THEME="light";}
 try{CUSTOM=JSON.parse(localStorage.getItem(CKEY))||[];}catch(e){CUSTOM=[];}
@@ -683,7 +701,7 @@ const fmtMD=s=>{const x=parseD(s);return (x.getMonth()+1)+"月"+x.getDate()+"日
 const fmtSlash=s=>{const x=parseD(s);return (x.getMonth()+1)+"/"+x.getDate();};
 const wdOf=s=>WD[parseD(s).getDay()];
 let curDate=TODAY,curMonth=[NOW.getFullYear(),NOW.getMonth()+1],selDate=TODAY;
-let todayRows=[{id:"pushup",v:40}];
+let todayRows=[];   // 不预置任何数值，fillRecord() 会按当天真实记录填充
 let fCat="all",fLv="all";
 let statDate=TODAY;
 let weightTipIdx=-1,weightPts=[],weightRows=[],libDirty=false;
@@ -884,23 +902,30 @@ function renderStats(){
     if(r.d===statDate)marks+='<circle cx="'+(i*colW+colW/2).toFixed(1)+'" cy="122" r="2.8" fill="#FF6A3D"/>';
   });
   document.getElementById("barChart").innerHTML='<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><line class="gridline" x1="0" y1="112" x2="'+W+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W+'" y2="60" stroke-dasharray="3 4"/>'+bars+hits+marks+'</svg>';
-  const wr=rows.filter(r=>r.w!=null),min=53.4,max=55.7,W2=LC_W,H2=LC_H;
+  const wr=rows.filter(r=>r.w!=null),W2=LC_W,H2=LC_H;
   weightRows=wr;
-  if(wr.length){
+  if(!wr.length){
+    /* 全新安装 / 只记了俯卧撑没填体重：没有数据点，直接给空状态，避免折线代码崩掉 */
+    weightPts=[];weightTipIdx=-1;
+    document.getElementById("lineChart").innerHTML='<div class="muted" style="text-align:center;padding:34px 10px;font-size:12.5px">还没有体重记录 · 在「记录」页填写后这里会出现曲线</div>';
+  }else{
     const w1=document.getElementById("axW1"),w2=document.getElementById("axW2");
     const f=d=>d.slice(5).replace("-","/");
     if(w1)w1.textContent=f(wr[0].d)+" · "+wr[0].w.toFixed(2);
     if(w2)w2.textContent=f(wr[wr.length-1].d)+" · "+wr[wr.length-1].w.toFixed(2);
+    /* 按真实体重动态取范围：旧版写死 53.4~55.7 只适配演示数据，单点还会除零 */
+    const vals=wr.map(r=>r.w),lo=Math.min(...vals),hi=Math.max(...vals);
+    const pad=Math.max(0.6,(hi-lo)*0.18),min=lo-pad,max=hi+pad,span=(max-min)||1;
+    const pts=wr.map((r,i)=>[wr.length===1?W2/2:10+i*((W2-20)/(wr.length-1)),112-((r.w-min)/span)*92]);
+    weightPts=pts;
+    const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+    const area=line+" L"+pts[pts.length-1][0].toFixed(1)+" 112 L"+pts[0][0].toFixed(1)+" 112 Z";
+    let dots="";pts.forEach((p,i)=>{
+      dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===pts.length-1?4:2.4)+'" fill="#FF6A3D" stroke="#fff" stroke-width="'+(i===pts.length-1?2:0)+'"/>';
+      dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="11" fill="transparent" style="cursor:pointer" onclick="pickWeightAt('+i+')"/>';
+    });
+    document.getElementById("lineChart").innerHTML='<svg class="chart" viewBox="0 0 '+W2+' '+H2+'" preserveAspectRatio="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6A3D" stop-opacity=".20"/><stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/></linearGradient></defs><line class="gridline" x1="0" y1="112" x2="'+W2+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W2+'" y2="60" stroke-dasharray="3 4"/><path d="'+area+'" fill="url(#wg)"/><path d="'+line+'" fill="none" stroke="#FF6A3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'<text x="'+(pts[pts.length-1][0]-4).toFixed(1)+'" y="'+(pts[pts.length-1][1]-12).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#FF6A3D">'+wr[wr.length-1].w.toFixed(2)+'</text></svg><div class="lc-overlay" id="lcOverlay" style="display:none"><div class="lc-line"></div><div class="lc-dot"></div><div class="lc-tip"></div></div>';
   }
-  const pts=wr.map((r,i)=>[10+i*((W2-20)/(wr.length-1)),112-((r.w-min)/(max-min))*92]);
-  weightPts=pts;
-  const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
-  const area=line+" L"+pts[pts.length-1][0].toFixed(1)+" 112 L"+pts[0][0].toFixed(1)+" 112 Z";
-  let dots="";pts.forEach((p,i)=>{
-    dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===pts.length-1?4:2.4)+'" fill="#FF6A3D" stroke="#fff" stroke-width="'+(i===pts.length-1?2:0)+'"/>';
-    dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="11" fill="transparent" style="cursor:pointer" onclick="pickWeightAt('+i+')"/>';
-  });
-  document.getElementById("lineChart").innerHTML='<svg class="chart" viewBox="0 0 '+W2+' '+H2+'" preserveAspectRatio="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6A3D" stop-opacity=".20"/><stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/></linearGradient></defs><line class="gridline" x1="0" y1="112" x2="'+W2+'" y2="112"/><line class="gridline dash" x1="0" y1="60" x2="'+W2+'" y2="60" stroke-dasharray="3 4"/><path d="'+area+'" fill="url(#wg)"/><path d="'+line+'" fill="none" stroke="#FF6A3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'<text x="'+(pts[pts.length-1][0]-4).toFixed(1)+'" y="'+(pts[pts.length-1][1]-12).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#FF6A3D">55.40</text></svg><div class="lc-overlay" id="lcOverlay" style="display:none"><div class="lc-line"></div><div class="lc-dot"></div><div class="lc-tip"></div></div>';
   renderInspect();
   renderWeightTip();
 }
@@ -1177,7 +1202,6 @@ function closeClearData(){document.getElementById("clearModal").classList.remove
 function doClearData(){
   try{
     localStorage.clear();
-    localStorage.setItem(CLEARED,"1");
     sessionStorage.setItem("pushup_cleared_toast","1");
   }catch(e){}
   location.reload();
@@ -1246,13 +1270,17 @@ function initSplash(){
   const dset=new Set(DATA.map(r=>r.d));let cur=parseD(TODAY),streak=0;
   const dkey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   while(dset.has(dkey(cur))){streak++;cur.setDate(cur.getDate()-1);}
-  const STATS=[
+  const STATS=DATA.length?[
     '已连续打卡 '+streak+' 天 · 加油，别断',
     '累计 '+total.toLocaleString()+' 个俯卧撑 · 继续冲',
     '已记录 '+DATA.length+' 天 · 每一次都算数',
     '单日最高 '+best+' 个 · 再破一次',
     '坚持 '+streak+' 天了 · 今天也别停',
     '体重 +'+gain.toFixed(2)+' kg · 稳稳在涨'
+  ]:[
+    '还没有记录 · 从第一个开始',
+    '空白的一天，等你来填',
+    '每一次记录，都算数'
   ];
   document.getElementById("splashStat").textContent=STATS[i%STATS.length];
   document.getElementById("splash").style.display="flex";
