@@ -79,6 +79,9 @@ jobs:
           npx cap add android
           npx cap sync android
           test -f android/app/src/main/assets/public/index.html && echo "网页资源已进 APK assets"
+          npm ls @capacitor/status-bar --depth=0 || true
+          echo "已注册的 Capacitor 插件："
+          find android -name "capacitor.plugins.json" -exec cat {} \; 2>/dev/null || true
 
       # Android 14 = API 34；显式锁定 compileSdk / targetSdk，保证在 14/15/16 上可装可跑
       - name: 适配 Android 14+（API 34）
@@ -94,6 +97,43 @@ jobs:
           p.write_text(s)
           print('SDK 配置：')
           print('\n'.join(l.strip() for l in s.splitlines() if 'SdkVersion' in l))
+          PY
+
+      # runner 每次全新，Gradle 会自动生成随机的 ~/.android/debug.keystore，
+      # 导致每个包签名不同、无法覆盖安装。统一使用仓库里的固定密钥。
+      - name: 固定签名密钥与递增版本号
+        run: |
+          mkdir -p "$HOME/.android"
+          cp signing/debug.keystore "$HOME/.android/debug.keystore"
+          echo "已固定 debug.keystore："
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android | grep -i "PrivateKeyEntry" || true
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          # versionCode 用构建号，保证覆盖安装被识别为「升级」
+          p = Path('android/app/build.gradle')
+          s = p.read_text()
+          s2 = re.sub(r'versionCode\s+\d+', 'versionCode ${{ github.run_number }}', s, count=1)
+          if s2 == s:
+              print('未找到 versionCode，跳过（不影响签名一致性）')
+          else:
+              p.write_text(s2)
+              print('versionCode 已设为 ${{ github.run_number }}')
+          # 启动瞬间由原生主题画状态栏，先统一成深色配开屏页；
+          # 页面加载后 StatusBar 插件按浅色 / 深色 / 跟随系统接管。
+          q = Path('android/app/src/main/res/values/styles.xml')
+          if q.exists():
+              t = q.read_text()
+              m = re.search(r'(<style name="AppTheme\.NoActionBar"[^>]*>)', t)
+              if m and 'android:statusBarColor' not in t:
+                  t = t[:m.end()] + ('\n        <item name="android:statusBarColor">#1B1C22</item>'
+                                    '\n        <item name="android:windowLightStatusBar">false</item>') + t[m.end():]
+                  q.write_text(t)
+                  print('启动状态栏已设为深色（配开屏页）')
+              else:
+                  print('styles.xml 未改动（已配置或样式名不同，插件会接管）')
+          else:
+              print('styles.xml 不存在，跳过')
           PY
 
       - name: 换成默认橙色 P 桌面图标
@@ -125,6 +165,9 @@ jobs:
           else
             echo "aapt 不可用，跳过包信息打印"
           fi
+          echo "=== 签名证书指纹（APK 应与仓库 keystore 完全一致）==="
+          keytool -printcert -jarfile PUSHUP-v1.0.apk 2>/dev/null | grep -i "SHA256:" | head -2 || true
+          keytool -list -v -keystore signing/debug.keystore -storepass android 2>/dev/null | grep -i "SHA256:" | head -1 || true
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
