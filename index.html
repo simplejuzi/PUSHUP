@@ -462,7 +462,50 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .sh-btns button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:13px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .sh-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 .sh-btns button.danger{background:#E5484D;color:#fff;border-color:#E5484D}
+/* v1.9：服务器地址输入 */
+.srv-inp{width:100%;margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:13px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;outline:0}
+.srv-inp::placeholder{color:var(--sub2)}
+.srv-hint{font-size:11.5px;color:var(--sub);line-height:1.7;margin-top:9px}
+.srv-hint b{color:var(--accent);font-weight:700}
+/* v1.9：云端连不上时的提示条（App 原本会静默失败，看起来像正常） */
+.netbar{display:flex;gap:8px;align-items:flex-start;margin:10px 0 0;padding:12px 14px;border-radius:14px;
+  background:rgba(229,72,77,.10);border:1px solid rgba(229,72,77,.32);color:var(--ink);
+  font-size:12px;line-height:1.65;cursor:pointer}
+.netbar.hide{display:none}
+.netbar .nb-ic{flex:none;font-size:13px;line-height:1.3}
+.netbar b{font-weight:750}
+.netbar .nb-go{color:var(--accent);font-weight:750}
+/* v1.9：登录 / 注册表单 */
+.sheet.auth-sheet{max-height:90%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.auth-seg{display:flex;gap:6px;background:var(--soft);border-radius:14px;padding:4px;margin:4px 0 2px}
+.auth-seg button{flex:1;border:0;background:transparent;color:var(--sub);border-radius:11px;padding:10px;
+  font-size:13px;font-weight:750;font-family:inherit;cursor:pointer;transition:.16s}
+.auth-seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.auth-err{display:flex;align-items:flex-start;gap:8px;margin-top:12px;padding:11px 13px;border-radius:12px;
+  background:rgba(229,72,77,.10);border:1px solid rgba(229,72,77,.32);color:var(--ink);
+  font-size:12px;line-height:1.6}
+.auth-err.hide{display:none}
+.auth-err-go{margin-left:auto;flex:none;border:0;background:transparent;color:var(--accent);
+  font-weight:800;font-size:12px;font-family:inherit;cursor:pointer;padding:0}
+.auth-err-go.hide{display:none}
+.auth-switch{margin-top:12px;text-align:center;font-size:12px;color:var(--sub);cursor:pointer}
+.auth-switch b{color:var(--accent);font-weight:750}
+.au-note{margin-top:8px;text-align:center;font-size:11px}
+#auSubmit:disabled{opacity:.6;cursor:not-allowed}
 .sh-note{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:13px;background:var(--soft);border-radius:13px;padding:11px 13px}
+/* v1.9：清空数据的两个选项 */
+.clear-opt{display:block;width:100%;text-align:left;margin-top:11px;padding:14px 15px;border-radius:15px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);font-family:inherit;cursor:pointer;transition:.15s}
+.clear-opt:active{transform:translateY(1px)}
+.clear-opt b{display:block;font-size:13.5px;font-weight:800;letter-spacing:.2px}
+.clear-opt span{display:block;margin-top:5px;font-size:11.5px;color:var(--sub);line-height:1.65}
+.clear-opt span b{display:inline;font-size:11.5px;font-weight:750}
+.clear-opt span b.ok{color:var(--accent)}
+.clear-opt span b.bad{color:#E5484D}
+.clear-opt.danger{border-color:rgba(229,72,77,.34);background:rgba(229,72,77,.06)}
+.clear-opt.danger b{color:#E5484D}
+.clear-opt.armed{border-color:#E5484D;background:rgba(229,72,77,.16)}
+.clear-opt.hide{display:none}
 .sh-link{color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline}
 .sitem.danger{color:#E5484D}
 
@@ -820,6 +863,10 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
           <button class="btn-primary sm" id="feedPostBtn" onclick="openPost()">登录后发布</button>
         </div>
+        <div class="netbar hide" onclick="openServerAddr()">
+          <span class="nb-ic">⚠️</span>
+          <span><b>连不上服务器</b>：动态、聊天、云同步现在都没生效（本机记录不受影响）。<span class="nb-go">点这里设置代理地址 ›</span></span>
+        </div>
         <div class="feed-me" id="feedMeBar" onclick="feedMeClick()">
           <div class="feed-me-av off" id="feedMeAv"><span class="me-ph">?</span></div>
           <div class="feed-me-txt"><b id="feedMeName">未登录</b><small id="feedMeHint">登录后即可发布动态、看好友训练</small></div>
@@ -870,6 +917,10 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">MESSAGES</div><h1 class="title">消息</h1></div>
           <div class="badge">打开 App 可收发</div>
+        </div>
+        <div class="netbar hide" onclick="openServerAddr()">
+          <span class="nb-ic">⚠️</span>
+          <span><b>连不上服务器</b>：消息发不出去也收不到。<span class="nb-go">点这里设置代理地址 ›</span></span>
         </div>
         <div class="muted" style="margin:10px 3px">最简单的好友私聊，App 关闭时不会推送通知</div>
         <div id="chatList"></div>
@@ -931,7 +982,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
-          <div class="badge" id="profileVersion">v1.8</div>
+          <div class="badge" id="profileVersion">v1.9</div>
         </div>
 
         <div class="sec-title">外观</div>
@@ -955,20 +1006,26 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="openImport()">导入数据<span class="r">支持备份文件 / 文本粘贴 <span class="ar">›</span></span></div>
-          <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
+          <div class="sitem danger" onclick="openClearData()">清空数据<span class="r" id="clearSub">可选只清本机 <span class="ar">›</span></span></div>
+          <div class="sitem" id="undoClearItem" style="display:none" onclick="restoreTrash()">恢复上次清空<span class="r" id="undoClearTag">— <span class="ar">›</span></span></div>
+        </div>
+
+        <div class="sec-title">服务器<span>连不上时换成自建代理地址</span></div>
+        <div class="settings">
+          <div class="sitem" onclick="openServerAddr()">服务器地址<span class="r" id="sbAddrTag">官方直连 <span class="ar">›</span></span></div>
         </div>
 
         <div class="sec-title">软件更新<span>新版本直接覆盖安装即可</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.8</span> <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.8</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.9</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.9</span> <span class="ar">›</span></span></div>
         </div>
 
         <div class="sec-title">关于</div>
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.7 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.9 · 正式版</div>
           <div class="app-ds">
             <div class="ds-lead">以俯卧撑为核心的自重训练记录工具：不用器械、不占地方，每天几十秒就能记完。</div>
             <div class="ds-h">记录</div>
@@ -1017,17 +1074,24 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
 
     <!-- ===== v1.6 注册 / 登录（名称 + 邮箱 + 密码，无验证码） ===== -->
+    <!-- ===== v1.9 登录 / 注册：两种模式分开，逐条给出准确错因 ===== -->
     <div class="modal" id="authModal" onclick="modalBackdropClose(event,'authModal')">
-      <div class="sheet form">
-        <div class="ins-head"><b id="auTitle">加入 PUSHUP</b><button class="tx" onclick="closeAuth()">✕</button></div>
-        <label id="auNameLb">名称<input id="auName" maxlength="12" placeholder="朋友看到的名字，不能重复"></label>
-        <label>邮箱<input id="auEmail" type="email" inputmode="email" maxlength="60" autocomplete="email" placeholder="当账号用，如 name@qq.com"></label>
-        <label>密码<input id="auPass" type="password" maxlength="32" placeholder="随便设，记住就行"></label>
-        <div class="muted" style="margin-top:8px">名称 / 邮箱 / 密码，不需要验证码；名称和邮箱都不能和别人重复</div>
-        <div class="btn-row">
-          <button class="btn-primary" onclick="submitAuth('reg')">注册</button>
-          <button class="btn-ghost" onclick="submitAuth('login')">登录</button>
+      <div class="sheet form auth-sheet">
+        <div class="ins-head"><b id="auTitle">登录 PUSHUP</b><button class="tx" onclick="closeAuth()">✕</button></div>
+        <div class="auth-seg">
+          <button id="auTabLogin" class="on" onclick="setAuthMode('login')">登录</button>
+          <button id="auTabReg" onclick="setAuthMode('reg')">注册</button>
         </div>
+        <label id="auNameLb">名称<input id="auName" maxlength="12" autocomplete="nickname" placeholder="朋友看到的名字，不能重复" onkeydown="authEnter(event)"></label>
+        <label>邮箱<input id="auEmail" type="email" inputmode="email" maxlength="60" autocomplete="email" placeholder="当账号用，如 name@qq.com" onkeydown="authEnter(event)"></label>
+        <label>密码<input id="auPass" type="password" maxlength="64" autocomplete="current-password" placeholder="记住就行" onkeydown="authEnter(event)"></label>
+        <div class="auth-err hide" id="auErr">
+          <span id="auErrTx"></span>
+          <button class="auth-err-go hide" id="auErrGo" onclick="authErrGo()">去注册 ›</button>
+        </div>
+        <div class="btn-row"><button class="btn-primary" id="auSubmit" onclick="submitAuth()">登录</button></div>
+        <div class="auth-switch" id="auSwitch" onclick="swapAuthMode()">还没有账号？<b>去注册</b></div>
+        <div class="muted au-note" id="auNote">名称 / 邮箱 / 密码，不需要验证码</div>
         <button class="btn-ghost wide" id="auLogout" style="display:none" onclick="doLogout()">退出当前账号</button>
       </div>
     </div>
@@ -1102,6 +1166,18 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sh-btns"><button onclick="closeImport()">取消</button><button class="primary" onclick="doImport()">导入</button></div>
       </div>
     </div>
+
+    <!-- v1.9：服务器地址（官方直连 / 自建反代） -->
+    <div class="modal" id="serverModal" onclick="modalBackdropClose(event,'serverModal')">
+      <div class="sheet">
+        <div class="sh-t">服务器地址</div>
+        <div class="sh-s">App 通过这个地址访问云端。中国大陆直连 Supabase 的 API 域名经常被阻断，这时改成你自己的反代地址即可。</div>
+        <input class="srv-inp" id="srvInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://xxxx.scf.tencentcs.com">
+        <div class="srv-hint" id="srvHint">当前使用：<b id="srvCur">—</b><br>留空或点「恢复官方」就回到默认直连</div>
+        <div class="sh-btns"><button onclick="resetServerAddr()">恢复官方</button><button class="primary" onclick="applyServerAddr()">保存并重启</button></div>
+        <div class="sh-btns" style="margin-top:8px"><button onclick="testServerAddr()">测一下这个地址</button></div>
+      </div>
+    </div>
     <!-- v1.1：按动作生成导入模板 -->
     <div class="modal" id="templateModal">
       <div class="sheet sheet-tall">
@@ -1145,7 +1221,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     <!-- v1.5：应用内更新日志 -->
     <div class="modal" id="logModal">
       <div class="sheet scroll-sheet">
-        <div class="ins-head"><b>更新日志 <span class="log-v" id="logVer">v1.8</span></b>
+        <div class="ins-head"><b>更新日志 <span class="log-v" id="logVer">v1.9</span></b>
           <button class="tx" onclick="closeChangelog()">✕</button></div>
         <ul class="log-list" id="logList"></ul>
         <div class="sh-note">新版本直接覆盖安装即可，账号与训练记录都会保留。</div>
@@ -1197,10 +1273,24 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     </div>
     <div class="modal" id="clearModal">
       <div class="sheet">
-        <div class="sh-t">清空全部数据？</div>
-        <div class="sh-s">会删除所有训练记录、自定义动作、常用动作、外观设置和个人资料（头像与昵称恢复默认），操作无法撤销。确认后页面会自动刷新，回到空白状态。</div>
-        <div class="sh-note">建议先 <span class="sh-link" onclick="exportJSON()">导出一份 JSON 备份</span>，以后还能用「导入数据」还原。</div>
-        <div class="sh-btns"><button onclick="closeClearData()">取消</button><button class="danger" onclick="doClearData()">确认清空并刷新</button></div>
+        <div class="sh-t">清空数据</div>
+        <div class="sh-s">会清掉训练记录、自定义动作、常用动作、外观设置和个人资料（头像与昵称恢复默认）。选一种方式：</div>
+
+        <button class="clear-opt" id="clearLocalBtn" onclick="doClearData('local')">
+          <b>只清空本机</b>
+          <span>云端备份<b class="ok">原样保留</b>，以后重新登录就能拉回来。清空后会退出登录，避免记录马上又被同步回来。</span>
+        </button>
+
+        <button class="clear-opt danger" id="clearCloudBtn" onclick="doClearData('cloud')">
+          <b>本机和云端一起清空</b>
+          <span>账号里的备份也会删掉，<b class="bad">无法恢复</b>。要连点两次确认。</span>
+        </button>
+
+        <div class="sh-note" id="clearNote">
+          两个选项都会先把当前数据在本机留一份快照，清空后一段时间内可以在设置里点「恢复上次清空」。
+          想更保险就先 <span class="sh-link" onclick="exportJSON()">导出一份 JSON 备份</span>。
+        </div>
+        <div class="sh-btns"><button onclick="closeClearData()">取消</button></div>
       </div>
     </div>
     <div class="modal" id="customModal">
@@ -1306,13 +1396,21 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.8";
+const APP_VERSION="v1.9";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "注册 / 登录这类弹窗里点注册，提示不再被面板挡住：提示条层级提到最上，并且会自动抬到面板上方",
-  "注册 / 登录面板支持点空白处关闭（点面板内部不会误关）",
-  "底栏五个页面支持左右滑动切换，滑一下就到旁边那一页",
-  "数据页的「数据统计 / 历史日历」也纳入滑动，而且优先级比底栏高：在历史日历左滑先进数据统计，再左滑才去动态；反过来也一样"
+  "注册 / 登录拆成两个模式：登录只要邮箱 + 密码，名称只在注册时填",
+  "提交时按钮变成「注册中…/登录中…」并禁用，连点不会重复注册；失败后 1 秒内也点不了",
+  "出错直接在表单里写清原因：邮箱已注册、名称重复、密码不对、查不到账号、密码太短、太频繁、需要验证邮箱、网络不通",
+  "注册成功自动登录（项目若开了邮箱验证，会提示先去邮箱点确认链接）",
+  "设置页新增「服务器地址」：默认官方直连，网络被阻断时可改成自建反代地址，随时能一键恢复",
+  "新增真实的云端连接状态：连不上时动态页与消息页顶部直接提示，发动态也会如实告诉你有没有发到云端",
+  "动态 / 私聊一次拉取的条数收小，避免超过云函数 6MB 上限导致列表加载失败",
+  "清空数据改成二选一：只清本机（云端备份保留，重新登录可恢复）/ 本机与云端一起清（要连点两次确认）",
+  "修：以前只要还处于登录态，点清空就会顺手把云端备份一起删掉，之后登录回来当然是空的",
+  "清空前自动留一份本机快照，7 天内在「设置 → 数据管理」可以点「恢复上次清空」反悔",
+  "清空不再全清本地存储，服务器地址、邮箱记忆、账号信息都不会被误删",
+  "登录后会明确告诉你和云端的对比结果：从云端恢复几天 / 本机独有几天已上传 / 两边一致 / 云端没拉到"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1320,6 +1418,79 @@ const UPDATE_ENDPOINTS=[
   "https://raw.githubusercontent.com/simplejuzi/PUSHUP/main/version.json"
 ];
 const PKEY="fitness_palette_v1";
+/* v1.9：服务器地址（官方直连 / 自建反代） */
+function serverTagText(){
+  const cur=sbUrlSaved();
+  if(!cur)return "官方直连";
+  /* 不依赖 URL 对象，老 WebView 也能用 */
+  const m=cur.match(/^https?:\/\/([^\/]+)/i);
+  return m?("代理 · "+m[1]):"自定义";
+}
+function syncServerAddrUI(){
+  const tag=document.getElementById("sbAddrTag");
+  if(tag)tag.innerHTML=serverTagText()+' <span class="ar">›</span>';
+  const cur=document.getElementById("srvCur");
+  if(cur)cur.textContent=SB_URL.replace(/^https?:\/\//,"");
+}
+function openServerAddr(){
+  const inp=document.getElementById("srvInput");
+  if(inp)inp.value=(sbUrlSaved()||SB_URL_DEFAULT);
+  syncServerAddrUI();
+  document.getElementById("serverModal").classList.add("on");
+}
+function appReload(){try{if(typeof location!=="undefined"&&location&&location.reload)location.reload();}catch(e){}}
+function closeServerAddr(){
+  const m=document.getElementById("serverModal");
+  if(m)m.classList.remove("on");
+}
+function resetServerAddr(){
+  try{localStorage.removeItem(SB_URL_KEY);}catch(e){}
+  if(sbUrlSaved()){toast("没能清掉，再试一次");return;}
+  toast("已恢复官方地址，正在重启…");
+  setTimeout(appReload,700);
+}
+function applyServerAddr(){
+  const inp=document.getElementById("srvInput");
+  const v=sbUrlNorm(inp?inp.value:"");
+  if(!v){toast("地址是空的；想回官方就点左边「恢复官方」");return;}
+  if(!/^https:\/\//i.test(v)){toast("要 https:// 开头，http 会被系统当混合内容拦掉");return;}
+  try{
+    if(v===sbUrlNorm(SB_URL_DEFAULT))localStorage.removeItem(SB_URL_KEY);
+    else localStorage.setItem(SB_URL_KEY,v);
+  }catch(e){toast("保存失败，检查手机存储空间");return;}
+  if((sbUrlSaved()||SB_URL_DEFAULT)!==v){toast("保存后校验不一致，再试一次");return;}
+  toast("已保存，正在重启…");
+  setTimeout(appReload,700);
+}
+function testServerAddr(){
+  const inp=document.getElementById("srvInput");
+  const v=sbUrlNorm(inp?inp.value:"")||SB_URL;
+  const host=v.replace(/^https?:\/\//,"");
+  const t0=Date.now();
+  toast("正在测 "+host+" …");
+  const run=(url,withKey)=>fetch(url,{headers:withKey?{"apikey":SB_ANON,"Accept":"application/json"}:{"Accept":"application/json"},cache:"no-store"});
+  run(v+"/rest/v1/",true).then(function(r){
+    return r.text().then(function(t){
+      const ms=Date.now()-t0;
+      if(t.indexOf("No API key found")>=0||r.ok){
+        toast((sbUrlNorm(v)===sbUrlNorm(SB_URL)?"地址可用":"地址可用（还没保存）")+" · "+ms+"ms");
+      }else if(r.status===404){
+        toast("通到了但 404：地址后面别带路径，只要 https://域名");
+      }else if(r.status===401||r.status===403){
+        toast("通到了但没权限（"+r.status+"）：key 不对或被行级权限挡住");
+      }else{
+        toast("有响应但不对（"+r.status+"）："+String(t).slice(0,40));
+      }
+    });
+  }).catch(function(){
+    /* 失败时再裸测一次连通性，区分「跨域被挡」还是「根本连不上」 */
+    run(v+"/rest/v1/",false).then(function(r){
+      toast("能连上但跨域没放开（"+r.status+"）· 反代要返回 Access-Control-Allow-Origin");
+    }).catch(function(){
+      toast("连不上 "+host+" —— 网络不通，或云函数没起来 / 地域选错");
+    });
+  });
+}
 function openChangelog(){
   const ul=document.getElementById("logList"),v=document.getElementById("logVer"),
         iv=document.getElementById("logVersionInline");
@@ -1484,6 +1655,7 @@ const BACK_MODALS=[
   ["postModal",closePost],
   ["chatPickerModal",function(){const m=document.getElementById("chatPickerModal");if(m)m.classList.remove("on");}],
   ["importModal",closeImport],
+  ["serverModal",closeServerAddr],
   ["templateModal",closeTemplate],
   ["exportModal",closeExport],
   ["profileModal",closeProfileEdit],
@@ -2194,6 +2366,8 @@ function delCustom(id){
 
 /* ============ 我的页 ============ */
 function renderProfile(){
+  syncServerAddrUI();
+  syncTrashUI();
   const pAv=document.getElementById("profileAvatar");if(pAv)pAv.src=AVATAR||DEFAULT_AVATAR;
   setTxt("profileName",NICKNAME);
   const pTotal=DATA.reduce((a,r)=>a+(r.p||0),0);
@@ -2388,27 +2562,143 @@ function saveProfileEdit(){
   }
 }
 
-/* ============ 清空数据：清完自动刷新页面 ============ */
-function openClearData(){document.getElementById("clearModal").classList.add("on");}
-function closeClearData(){document.getElementById("clearModal").classList.remove("on");}
-function doClearData(){
-  let fired=false;
-  const done=function(){
-    if(fired)return;fired=true;
-    try{
-      const soc=localStorage.getItem(SOC_KEY);
-      localStorage.clear();
-      /* 只清训练数据，账号登录态保留，否则清完还要重新登录 */
-      if(soc)localStorage.setItem(SOC_KEY,soc);
-      sessionStorage.setItem("pushup_cleared_toast","1");
-    }catch(e){}
+/* ============ 清空数据 ============
+   v1.9：原来只要「当前是登录态」就顺手把云端也删了，退出登录后点清空
+   只要有一处没退干净，云端备份就跟着没了，登录回来当然是空的。
+   现在改成显式二选一：
+     local → 只清本机，云端备份保留；清完自动退出登录，免得马上又被拉回来
+     cloud → 本机 + 云端一起清，必须连点两次确认
+   两种都会先在 sh 快照里留一份，可「恢复上次清空」。 */
+const TRASH_KEY = "pushup_trash_v1";
+/* 延迟取键：TMAP_KEY 在文件更后面才定义，直接写数组会踩 TDZ */
+function clearKeys(){return [KEY, TMAP_KEY, FKEY, CKEY, CATKEY, SKEY, FABKEY, PKEY, AKEY, NKEY];}
+let CLEAR_ARMED = 0;
+
+function openClearData(){
+  CLEAR_ARMED = 0;
+  const cloudReady = syncEnabled();               /* 云端登录且有 token 才能清云端 */
+  const btn = document.getElementById("clearCloudBtn");
+  if (btn) {
+    btn.classList.remove("armed");
+    btn.classList.toggle("hide", !cloudReady);
+    btn.innerHTML = '<b>本机和云端一起清空</b><span>账号里的备份也会删掉，<b class="bad">无法恢复</b>。要连点两次确认。</span>';
+  }
+  const localBtn = document.getElementById("clearLocalBtn");
+  if (localBtn) {
+    localBtn.innerHTML = cloudReady
+      ? '<b>只清空本机</b><span>账号里的云端备份<b class="ok">原样保留</b>，以后重新登录就能拉回来。清空后会退出登录，避免记录马上又被同步回来。</span>'
+      : '<b>只清空本机</b><span>现在没有可用的云端备份，记录清掉就没了（下面那份快照可以先反悔）。</span>';
+  }
+  const sub = document.getElementById("clearSub");
+  if (sub) sub.innerHTML = (cloudReady ? "本机 / 云端可选" : "只清本机") + ' <span class="ar">›</span>';
+  syncTrashUI();
+  document.getElementById("clearModal").classList.add("on");
+}
+function closeClearData(){
+  CLEAR_ARMED = 0;
+  document.getElementById("clearModal").classList.remove("on");
+}
+
+/* 清空前留一份快照（本机，格式和导出 JSON 一致），可反悔 */
+function snapshotBeforeClear(){
+  try {
+    const snap = {
+      at: Date.now(),
+      data: JSON.parse(JSON.stringify(DATA || [])),
+      favs: (typeof FAVS !== "undefined" ? FAVS : []),
+      custom: (typeof CUSTOM !== "undefined" ? CUSTOM : []),
+      cats: (typeof CATS !== "undefined" ? CATS.slice(BASE_CATS.length) : []),
+      avatar: (typeof AVATAR !== "undefined" ? AVATAR : ""),
+      nickname: (typeof NICKNAME !== "undefined" ? NICKNAME : ""),
+      theme: (typeof THEME !== "undefined" ? THEME : ""),
+      palette: (typeof PALETTE !== "undefined" ? PALETTE : "")
+    };
+    localStorage.setItem(TRASH_KEY, JSON.stringify(snap));
+    return true;
+  } catch (e) { return false; }
+}
+function trashInfo(){
+  try {
+    const t = JSON.parse(localStorage.getItem(TRASH_KEY) || "null");
+    if (!t || !Array.isArray(t.data)) return null;
+    if (Date.now() - (t.at || 0) > 7 * 864e5) { localStorage.removeItem(TRASH_KEY); return null; }  /* 7 天自动过期 */
+    return t;
+  } catch (e) { return null; }
+}
+function syncTrashUI(){
+  const item = document.getElementById("undoClearItem"), tag = document.getElementById("undoClearTag");
+  const t = trashInfo();
+  if (!item) return;
+  item.style.display = t ? "" : "none";
+  if (t && tag) {
+    const d = new Date(t.at), p = x => String(x).padStart(2, "0");
+    tag.innerHTML = p(d.getMonth() + 1) + "/" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes()) +
+      " · " + t.data.length + " 天 <span class=\"ar\">›</span>";
+  }
+}
+function dropTrash(){ try { localStorage.removeItem(TRASH_KEY); } catch (e) {} syncTrashUI(); }
+function restoreTrash(){
+  const t = trashInfo();
+  if (!t) { toast("没有可恢复的快照"); return; }
+  const n = t.data.length;
+  DATA = t.data.slice();
+  if (Array.isArray(t.favs) && t.favs.length) FAVS = t.favs;
+  if (Array.isArray(t.custom)) { CUSTOM = t.custom; normalizeUnits(CUSTOM); EX = BASE_EX.concat(CUSTOM); }
+  if (Array.isArray(t.cats) && t.cats.length) CATS = BASE_CATS.concat(t.cats);
+  if (typeof t.avatar === "string" && t.avatar.indexOf("data:image") === 0) AVATAR = t.avatar;
+  if (typeof t.nickname === "string" && t.nickname) NICKNAME = t.nickname;
+  if (t.theme) THEME = t.theme;
+  if (t.palette) PALETTE = t.palette;
+  saveLocalRaw(); saveLocalPrefs();
+  try { applyTheme(); } catch (e) {}
+  renderAll(); syncTrashUI();
+  toast("已恢复上次清空的 " + n + " 天记录");
+  if (syncEnabled()) { REMOTE = {}; pushAllRecords().catch(function () {}); }
+}
+
+function doClearData(scope){
+  scope = (scope === "cloud") ? "cloud" : "local";
+  const cloud = scope === "cloud";
+  if (cloud && !syncEnabled()) { toast("现在没登录，云端没有可清的数据"); return; }
+  if (cloud && CLEAR_ARMED !== 1) {          /* 云端不可恢复，要连点两次 */
+    CLEAR_ARMED = 1;
+    const btn = document.getElementById("clearCloudBtn");
+    if (btn) {
+      btn.classList.add("armed");
+      btn.innerHTML = '<b>再点一次，确认删掉云端备份</b><span>这一步之后账号里就什么都没有了，别人换设备登录也拉不回来。</span>';
+    }
+    return;
+  }
+  CLEAR_ARMED = 0;
+  snapshotBeforeClear();
+  let fired = false;
+  const done = function () {
+    if (fired) return;
+    fired = true;
+    try {
+      /* v1.9：不再 localStorage.clear() 全清 —— 那样会把服务器地址、邮箱记忆也一起清掉，
+         清空数据后如果用户配的是代理地址，连云端都连不上了 */
+      clearKeys().forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+      if (!cloud && syncEnabled()) {
+        /* 云端登录下只清本机必须退出登录，否则下一次 pull 会把云端记录原样拉回来 */
+        const s = sLoad();
+        s.session = null; s.token = ""; SB_TOKEN = ""; sSave();
+      }
+      sessionStorage.setItem("pushup_cleared_toast", cloud ? "cloud" : "local");
+    } catch (e) {}
     location.reload();
   };
-  if(syncEnabled()){
+  closeClearData();
+  if (cloud) {
     setSyncState("syncing");
-    clearCloudData().then(done).catch(done);
-    setTimeout(done,2600);   /* 网络卡住也要能刷新 */
-  }else done();
+    clearCloudData().then(function (ok) {
+      if (!ok) toast("云端没清干净，检查网络或删除权限");
+      done();
+    }).catch(done);
+    setTimeout(done, 3000);
+  } else {
+    done();
+  }
 }
 function parseLegacy(txt){
   const out=[];
@@ -2987,8 +3277,20 @@ function feedMeClick(){if(sMe())openPost();else openAuth();}
    双模式：SB_URL + SB_ANON 留空 → 本地模式（localStorage，可完整点动）
            填好后 → Supabase Auth + REST（轮询，无需 SDK、不改构建脚本）
    ================================================================== */
-const SB_URL="https://zqrlolyntlcewrwfhumd.supabase.co";
+const SB_URL_DEFAULT="https://zqrlolyntlcewrwfhumd.supabase.co";
 const SB_ANON="sb_publishable_O7AmNzcRHCKtWThXB9_8tg_xWaMoRQU";
+/* v1.9：服务器地址可在「设置 → 服务器」里改（默认官方直连）。
+   国内直连 supabase 的 API 域名常被阻断，改成自建反代地址即可，不用重新打包。 */
+const SB_URL_KEY="pushup_sb_url";
+function sbUrlNorm(v){
+  let u=String(v||"").trim().replace(/^["'\s]+|["'\s]+$/g,"");
+  if(!u)return "";
+  if(!/^https?:\/\//i.test(u))u="https://"+u.replace(/^\/+/,"");
+  u=u.replace(/\/+(rest|auth|storage|realtime)\/v1.*$/i,"");   /* 误贴接口路径时截掉 */
+  return u.replace(/\/+$/,"");
+}
+function sbUrlSaved(){try{return sbUrlNorm(localStorage.getItem(SB_URL_KEY)||"");}catch(e){return "";}}
+const SB_URL=(sbUrlSaved()||SB_URL_DEFAULT);
 /* v1.6：邮箱当账号。只做格式校验，不发验证码、不做邮箱确认 */
 const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 const SOC_KEY="pushup_social_v1";
@@ -3066,12 +3368,61 @@ function sFollowingIds(id){return sLoad().follows.filter(f=>f.a===id).map(f=>f.b
 function sbH(){return {"apikey":SB_ANON,"Content-Type":"application/json",
   "Authorization":"Bearer "+(SB_TOKEN||SB_ANON),"Prefer":"return=representation"};}
 function sbFetch(p,o){return fetch(SB_URL+p,Object.assign({headers:sbH()},o||{}))
-  .then(r=>r.ok?r.json():null).catch(()=>null);}
-function sbPush(t,row){if(!CLOUD())return;sbFetch("/rest/v1/"+t,{method:"POST",body:JSON.stringify(row)});}
+  .then(r=>{noteNet(true);return r.ok?r.json():null;})
+  .catch(()=>{noteNet(false);return null;});}
+/* v1.9：真实的云端连接状态 —— 之前的实现只按「常量填了没有」显示「已连接」，
+   网络全挂时也显示已连接，看起来一切正常，其实一条都没上传 */
+let NET_OK=null,NET_AT=0,_netToastDone=false;
+function syncNetUI(){
+  const bad=CLOUD()&&NET_OK===false;
+  [].forEach.call(document.querySelectorAll(".netbar"),function(el){
+    el.classList.toggle("hide",!bad);
+  });
+  const t=document.getElementById("socialModeTag");
+  if(t)t.textContent=!CLOUD()?"本地模式":(NET_OK===null?"检测中…":(NET_OK?"已连接 · 云端同步":"连不上服务器"));
+}
+function noteNet(ok){
+  NET_AT=Date.now();
+  if(ok){NET_OK=true;syncNetUI();return;}
+  NET_OK=false;syncNetUI();
+  if(!_netToastDone){
+    _netToastDone=true;
+    toast("连不上服务器 · 动态和同步没生效（本机记录还在）");
+  }
+}
+/* 主动探一次：只要能拿到 HTTP 响应就算通（401/404 也算通，说明网络没问题） */
+function netProbe(force){
+  if(!CLOUD())return Promise.resolve(false);
+  if(!force&&Date.now()-NET_AT<30000)return Promise.resolve(NET_OK);
+  const ctl=(typeof AbortController!=="undefined")?new AbortController():null;
+  const timer=ctl?setTimeout(function(){try{ctl.abort();}catch(e){}},6000):null;
+  const opt={headers:{"apikey":SB_ANON,"Accept":"application/json"},cache:"no-store"};
+  if(ctl)opt.signal=ctl.signal;
+  return fetch(SB_URL+"/rest/v1/",opt).then(function(r){
+    if(timer)clearTimeout(timer);noteNet(true);return true;
+  }).catch(function(){
+    if(timer)clearTimeout(timer);noteNet(false);return false;
+  });
+}
+function sbPush(t,row){if(!CLOUD())return Promise.resolve(null);
+  return fetch(SB_URL+"/rest/v1/"+t,{method:"POST",headers:sbH(),body:JSON.stringify(row)})
+    .then(function(r){noteNet(true);return r.ok;})
+    .catch(function(){noteNet(false);return false;});}
 function sbDel(t,q){if(!CLOUD())return;sbFetch("/rest/v1/"+t+"?"+q,{method:"DELETE"});}
-function sbAuth(p,b){return fetch(SB_URL+"/auth/v1/"+p,{method:"POST",
-  headers:{"apikey":SB_ANON,"Content-Type":"application/json"},body:JSON.stringify(b)})
-  .then(r=>r.json()).catch(()=>null);}
+/* v1.9：把 HTTP 状态也带回来，才能分清「网络没通」和「服务器说不对」 */
+function sbAuth(p,b){
+  return fetch(SB_URL+"/auth/v1/"+p,{method:"POST",
+    headers:{"apikey":SB_ANON,"Content-Type":"application/json"},body:JSON.stringify(b)})
+    .then(function(r){
+      return r.text().then(function(t){
+        var j={};
+        try{j=t?JSON.parse(t):{};}catch(e){j={message:t};}
+        noteNet(true);                       /* 有响应就算网络通，400/422 是服务器在说话 */
+        return {status:r.status,ok:r.ok,body:j};
+      });
+    })
+    .catch(function(){noteNet(false);return {status:0,ok:false,body:{},net:true};});
+}
 /* 云端消息列用 from_id / to_id（避开 SQL 保留字）；拉回后统一映射成本地 from / to */
 function normMsg(m){
   return {id:m.id,from:m.from||m.from_id,to:m.to||m.to_id,
@@ -3099,39 +3450,61 @@ function cloudApplySession(d,email,fallbackName){
   syncCloud();
   onLoginMerge();return true;
 }
+/* 把 Supabase Auth 的报错翻译成具体原因 */
+function authErrWhy(body,status,stage,email){
+  const b=body||{};
+  const raw=String(b.error_description||b.msg||b.message||b.error_code||b.code||b.error||"").toLowerCase();
+  if(status===429||/rate|security purposes|too many|only request this/.test(raw))return "rate";
+  if(/email_not_confirmed|not confirmed|confirm your email|email not confirmed/.test(raw))return "confirm";
+  if(/weak|at least \d+|password.{0,14}short|password_too_short|password should be/.test(raw))return "pass_weak";
+  if(/already|exists|registered|duplicate|user_already_exists/.test(raw))return "email_taken";
+  if(/invalid.{0,24}email|unable to validate email|email address .{0,10}invalid/.test(raw))return "email_bad";
+  if(/invalid login credentials|invalid_credentials|invalid grant|user not found|no user/.test(raw)){
+    return knownMail(email)?"wrong_pass":"no_account";
+  }
+  if(status>=500)return "server";
+  if(/signup.*disabled|signups not allowed/.test(raw))return "signup_off";
+  return "fail";
+}
 function cloudRegister(name,email,pass){
   email=String(email||"").trim();
-  if(!EMAIL_RE.test(email))return Promise.resolve({ok:false,why:"email"});
+  if(!EMAIL_RE.test(email))return Promise.resolve({ok:false,why:"email_bad"});
   /* 先查云端有没有同名，避免注册成功但昵称撞车 */
   return cloudNameTaken(name).then(function(taken){
-    if(taken)return {ok:false,why:"name"};
-    /* v1.6：邮箱直接当账号，不再拼一个假的内部邮箱地址 */
-    return sbAuth("signup",{email:email,password:pass,data:{name:name}}).then(function(d){
-        if(!d||d.error){
-          const msg=String((d&&d.error&&(d.error.message||d.error.code))||"");
-          if(/already|exists|registered|duplicate/i.test(msg))return {ok:false,why:"email"};
-          if(/email/i.test(msg)&&/invalid/i.test(msg))return {ok:false,why:"email"};
-          return {ok:false,why:"fail"};
-        }
-        const go=d.access_token?cloudApplySession(d,email,name):cloudLogin(email,pass);
-        return Promise.resolve(go).then(function(r){
-          return (r===true||(r&&r.ok))?{ok:true}:{ok:false,why:"fail"};});
-      }).catch(function(){return {ok:false,why:"net"};});
+    if(taken)return {ok:false,why:"name_taken"};
+    return sbAuth("signup",{email:email,password:pass,data:{name:name}}).then(function(r){
+      if(r.net)return {ok:false,why:"net"};
+      const d=r.body||{};
+      if(d.access_token){                       /* 没开邮箱确认时会直接给会话 → 自动登录 */
+        rememberMail(email);
+        return cloudApplySession(d,email,name)?{ok:true,auto:true}:{ok:false,why:"fail"};
+      }
+      if(r.ok&&d.user&&!d.access_token)return {ok:false,why:"confirm"};
+      return {ok:false,why:authErrWhy(d,r.status,"reg",email)};
+    });
   }).catch(function(){return {ok:false,why:"net"};});
 }
 function cloudLogin(email,pass){
   email=String(email||"").trim();
-  return sbAuth("token?grant_type=password",{email:email,password:pass})
-    .then(function(d){return cloudApplySession(d,email,email);})
-    .catch(()=>false);
+  if(!EMAIL_RE.test(email))return Promise.resolve({ok:false,why:"email_bad"});
+  return sbAuth("token?grant_type=password",{email:email,password:pass}).then(function(r){
+    if(r.net)return {ok:false,why:"net"};
+    const d=r.body||{};
+    if(r.ok&&d.access_token){
+      const ok=cloudApplySession(d,email,email);
+      if(ok){rememberMail(email);return {ok:true};}
+      return {ok:false,why:"fail"};
+    }
+    return {ok:false,why:authErrWhy(d,r.status,"login",email)};
+  });
 }
 function syncCloud(){
   if(!CLOUD())return;
   Promise.all([
     sbFetch("/rest/v1/profiles?select=*&limit=200"),
     sbFetch("/rest/v1/follows?select=*&limit=500"),
-    sbFetch("/rest/v1/posts?select=*&order=ts.desc&limit=100"),
-    sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=300"),
+    sbFetch("/rest/v1/posts?select=*&order=ts.desc&limit=40")   /* v1.9：图片是 base64，条数收小以适配云函数 6MB 上限 */,
+    sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=150"),
     sbFetch("/rest/v1/post_likes?select=*&limit=2000"),
     sbFetch("/rest/v1/post_comments?select=*&order=ts.asc&limit=2000")
   ]).then(function(a){
@@ -3153,7 +3526,7 @@ function syncCloud(){
 }
 function pullChat(){
   if(!CLOUD()||!SB_TOKEN)return;
-  sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=300").then(function(ms){
+  sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=150").then(function(ms){
     if(!ms)return;const s=sLoad();let n=0;
     ms.forEach(m=>{const x=normMsg(m);
       if(!s.messages.some(y=>y.id===x.id)){s.messages.push(x);n++;}});
@@ -3174,59 +3547,177 @@ function startPolling(){
 /* ---- 注册 / 登录：本地与云端统一入口 ---- */
 function localRegister(name,email,pass){
   email=String(email||"").trim();
-  if(!EMAIL_RE.test(email)){toast("邮箱格式不对，比如 name@qq.com");return false;}
+  if(!EMAIL_RE.test(email))return {ok:false,why:"email_bad"};
   const s=sLoad(),k=email.toLowerCase();
-  if(s.users.some(u=>String(u.email||"").toLowerCase()===k)){toast("这个邮箱已经注册过了");return false;}
-  if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return false;}
+  if(s.users.some(u=>String(u.email||"").toLowerCase()===k))
+    return {ok:false,why:"email_taken",go:"login"};
+  if(nameTaken(name))return {ok:false,why:"name_taken"};
   const u={id:sUid(),name:name,email:email,pass:pass,
     avatar:(typeof AVATAR!=="undefined"?AVATAR:""),emoji:"💪"};
-  s.users.push(u);s.session=u.id;sSave();toast("注册成功 · 欢迎 "+u.name);return true;
+  s.users.push(u);s.session=u.id;sSave();
+  rememberMail(email);onLoginMerge();
+  return {ok:true};
 }
 function localLogin(email,pass){
   const s=sLoad(),k=String(email||"").trim().toLowerCase();
-  const u=s.users.find(x=>String(x.email||"").toLowerCase()===k&&x.pass===pass);
-  if(!u){toast("邮箱或密码不对");return false;}
-  s.session=u.id;sSave();onLoginMerge();toast("欢迎回来 "+u.name);return true;
+  const byMail=s.users.find(x=>String(x.email||"").toLowerCase()===k);
+  if(!byMail)return {ok:false,why:"no_account",go:"reg"};
+  if(String(byMail.pass||"")!==String(pass))return {ok:false,why:"wrong_pass"};
+  s.session=byMail.id;sSave();
+  rememberMail(email);onLoginMerge();
+  return {ok:true};
 }
-function submitAuth(mode){
-  const name=(document.getElementById("auName").value||"").trim();
-  const email=(document.getElementById("auEmail").value||"").trim();
-  const pass=(document.getElementById("auPass").value||"");
-  if(!email||!pass){toast("邮箱和密码填一下");return;}
-  if(mode==="reg"&&!name){toast("给自己起个名称");return;}
-  if(!EMAIL_RE.test(email)){toast("邮箱格式不对，比如 name@qq.com");return;}
-  if(mode==="reg"){
-    if(name.length>12){toast("名称最多 12 个字");return;}
-    if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return;}
+
+/* ============ v1.9 登录 / 注册 ============
+   1) 登录只要邮箱 + 密码；名称只在注册时出现
+   2) 提交中按钮禁用 + 900ms 冷却，连点不会重复发请求
+   3) 出错时在表单里直接写清原因（邮箱已注册 / 密码不对 / 网络不通…） */
+let AUTH_MODE="login",AUTH_BUSY=false,AUTH_UNTIL=0,AUTH_ERRGO="";
+const MAIL_KEY="pushup_mails_v1";
+
+function knownMails(){
+  try{const a=JSON.parse(localStorage.getItem(MAIL_KEY)||"[]");return Array.isArray(a)?a:[];}
+  catch(e){return [];}
+}
+function rememberMail(m){
+  m=String(m||"").trim().toLowerCase();if(!m)return;
+  try{const a=knownMails();if(a.indexOf(m)<0){a.push(m);localStorage.setItem(MAIL_KEY,JSON.stringify(a.slice(-30)));}}
+  catch(e){}
+}
+function knownMail(m){return knownMails().indexOf(String(m||"").trim().toLowerCase())>=0;}
+
+function authWhyText(why,reg){
+  const M={
+    net:"连不上服务器：检查手机网络，或在「设置 → 服务器」里换成代理地址",
+    email_bad:"邮箱格式不对，应该像 name@qq.com 这样",
+    email_taken:"这个邮箱已经注册过了，直接登录就行",
+    name_taken:"这个名称已经有人用了，换一个吧",
+    pass_weak:"密码太短了，服务器要求更长一些（一般至少 6 位）",
+    rate:"操作太频繁，等十几秒再试",
+    confirm:"注册成功了，但还要先去邮箱点确认链接才能登录",
+    no_account:"没查到账号：这个邮箱可能还没注册过，或者打错字了",
+    wrong_pass:"密码不对（这个邮箱在本机登录过）",
+    signup_off:"这个项目暂时关闭了注册，只能用已有账号登录",
+    server:"服务器出了点问题，稍后再试",
+    fail:reg?"注册没成功，稍后再试":"登录没成功，检查一下邮箱和密码"
+  };
+  return M[why]||M.fail;
+}
+
+function setAuthMode(m){
+  AUTH_MODE=(m==="reg")?"reg":"login";
+  const reg=AUTH_MODE==="reg";
+  const lb=document.getElementById("auNameLb"),nm=document.getElementById("auName");
+  if(lb)lb.style.display=reg?"":"none";
+  if(nm&&!reg)nm.value="";
+  const tl=document.getElementById("auTabLogin"),tr=document.getElementById("auTabReg");
+  if(tl)tl.classList.toggle("on",!reg);
+  if(tr)tr.classList.toggle("on",reg);
+  const t=document.getElementById("auTitle");
+  if(t)t.textContent=reg?"注册 PUSHUP":"登录 PUSHUP";
+  const sb=document.getElementById("auSubmit");
+  if(sb){sb.disabled=false;sb.textContent=reg?"注册":"登录";}
+  const sw=document.getElementById("auSwitch");
+  if(sw)sw.innerHTML=reg?'已有账号？<b>去登录</b>':'还没有账号？<b>去注册</b>';
+  const nt=document.getElementById("auNote");
+  if(nt)nt.textContent=reg?"名称和邮箱都不能和别人重复 · 不需要验证码 · 注册成功自动登录"
+                            :"登录后本机训练记录会自动同步到账号";
+  const pw=document.getElementById("auPass");
+  if(pw){
+    pw.setAttribute("autocomplete",reg?"new-password":"current-password");
+    pw.placeholder=reg?"自己设一个，记住就行":"你的登录密码";
   }
-  if(CLOUD()){
-    const p=mode==="reg"?cloudRegister(name,email,pass):cloudLogin(email,pass);
-    Promise.resolve(p).then(function(r){
-      if(r===true||(r&&r.ok)){closeAuth();refreshSocialUI();toast(mode==="reg"?"注册成功":"欢迎回来");return;}
-      const why=(r&&r.why)||"fail";
-      toast(why==="name"?"这个名称已经有人用了，换一个"
-          :why==="email"?"这个邮箱已经注册过了"
-          :why==="net"?"连不上云端，稍后再试"
-          :"没成功，检查邮箱或密码");
-    }).catch(function(){toast("连不上云端，稍后再试");});
-  }else{
-    const ok=mode==="reg"?localRegister(name,email,pass):localLogin(email,pass);
-    if(ok){closeAuth();refreshSocialUI();}
+  authClearErr();
+  AUTH_BUSY=false;
+}
+function swapAuthMode(){setAuthMode(AUTH_MODE==="reg"?"login":"reg");}
+function authClearErr(){
+  const b=document.getElementById("auErr");if(b)b.classList.add("hide");
+  const g=document.getElementById("auErrGo");if(g)g.classList.add("hide");
+  AUTH_ERRGO="";
+}
+function authShowErr(msg,go){
+  const t=document.getElementById("auErrTx");if(t)t.textContent=msg;
+  const g=document.getElementById("auErrGo");
+  if(g)g.classList.toggle("hide",!go||go===AUTH_MODE);
+  AUTH_ERRGO=go||"";
+  const b=document.getElementById("auErr");if(b)b.classList.remove("hide");
+}
+function authErrGo(){const m=AUTH_ERRGO;authClearErr();if(m&&m!==AUTH_MODE)setAuthMode(m);}
+function authBusy(on,txt){
+  AUTH_BUSY=!!on;
+  const b=document.getElementById("auSubmit");if(!b)return;
+  b.disabled=!!on;
+  b.textContent=on?txt:(AUTH_MODE==="reg"?"注册":"登录");
+}
+function authEnter(e){
+  if(!e)return;
+  if(e.isComposing||e.keyCode===229)return;      /* 中文输入法选词时的回车不算提交 */
+  if(e.key==="Enter"){e.preventDefault();submitAuth();}
+}
+
+function submitAuth(){
+  if(AUTH_BUSY)return;                              /* 连点直接忽略 */
+  if(Date.now()<AUTH_UNTIL){authShowErr("刚提交过一次，等 1 秒再试");return;}
+  const reg=AUTH_MODE==="reg";
+  const nameEl=document.getElementById("auName");
+  const name=((nameEl&&nameEl.value)||"").trim();
+  const emailEl=document.getElementById("auEmail"),passEl=document.getElementById("auPass");
+  const email=((emailEl&&emailEl.value)||"").trim();
+  const pass=((passEl&&passEl.value)||"");
+  authClearErr();
+  if(!email){authShowErr("请填邮箱（邮箱就是账号）");return;}
+  if(!EMAIL_RE.test(email)){authShowErr("邮箱格式不对，应该像 name@qq.com 这样");return;}
+  if(!pass){authShowErr("请填密码");return;}
+  if(reg){
+    if(!name){authShowErr("给自己起个名称，朋友看到的就是这个名字");return;}
+    if(name.length>12){authShowErr("名称最多 12 个字");return;}
+    if(nameTaken(name)){authShowErr("这个名称已经有人用了，换一个吧");return;}
   }
+  authBusy(true,reg?"注册中…":"登录中…");
+  const done=function(res){
+    AUTH_UNTIL=Date.now()+900;                      /* 冷却，防手快点两次 */
+    authBusy(false);
+    if(res&&res.ok){
+      rememberMail(email);
+      closeAuth();refreshSocialUI();
+      toast(reg?"注册成功 · 已自动登录":"欢迎回来");
+      /* v1.9：登录后把「云端和本机对比」的结果说清楚，不再让人猜数据去哪了 */
+      if(MERGE_P&&typeof MERGE_P.then==="function"){
+        MERGE_P.then(function(){
+          const t=mergeTipText();
+          if(t)setTimeout(function(){toast(t);},1300);
+        });
+      }
+      return;
+    }
+    const why=(res&&res.why)||"fail";
+    authShowErr(authWhyText(why,reg),(res&&res.go)||(why==="email_taken"?"login":why==="no_account"?"reg":""));
+  };
+  const p=CLOUD()
+    ? (reg?cloudRegister(name,email,pass):cloudLogin(email,pass))
+    : Promise.resolve(reg?localRegister(name,email,pass):localLogin(email,pass));
+  Promise.resolve(p).then(done).catch(function(){done({ok:false,why:"net"});});
 }
 function openAuth(){
   const m=document.getElementById("authModal"),me=sMe();
-  const nl=document.getElementById("auNameLb"),ni=document.getElementById("auName");
-  if(nl)nl.style.display=me?"none":"";
-  if(ni)ni.style.display=me?"none":"";
-  const t=document.getElementById("auTitle");if(t)t.textContent=me?("当前账号 · "+me.name):"加入 PUSHUP";
-  const lo=document.getElementById("auLogout");if(lo)lo.style.display=me?"":"none";
+  const lo=document.getElementById("auLogout");
+  if(lo)lo.style.display=me?"":"none";
+  setAuthMode(me?"login":(AUTH_MODE||"login"));
+  const t=document.getElementById("auTitle");
+  if(t&&me)t.textContent="当前账号 · "+me.name;
+  const em=document.getElementById("auEmail");
+  if(em&&me&&me.email)em.value=me.email;
   m.classList.add("on");
 }
-function closeAuth(){document.getElementById("authModal").classList.remove("on");}
+function closeAuth(){
+  document.getElementById("authModal").classList.remove("on");
+  AUTH_BUSY=false;AUTH_UNTIL=0;authClearErr();
+}
 function doLogout(){const s=sLoad();s.session=null;SB_TOKEN="";sSave();
   REMOTE={};_lastSet=null;SYNC_STATE="off";
-  closeAuth();closeLogout();refreshSocialUI();toast("已退出");}
+  closeAuth();closeLogout();refreshSocialUI();
+  toast("已退出 · 云端数据保留，重新登录可恢复");}
 
 /* ---- 好友 ---- */
 function setFriendTab(k){friendTab=k;document.querySelectorAll(".seg-f").forEach(function(b){
@@ -3395,8 +3886,12 @@ function submitPost(){
   const p={id:sUid(),uid:me.id,text:text,images:postImgs.slice(),
     workout:w,vis:postVis,ts:Date.now()};
   sLoad().posts.push(p);sSave();
-  sbPush("posts",{id:p.id,uid:p.uid,text:p.text,images:p.images,workout:p.workout,vis:p.vis,ts:p.ts});
-  closePost();renderFeed();renderMyPosts();toast("已发布");
+  const up=sbPush("posts",{id:p.id,uid:p.uid,text:p.text,images:p.images,workout:p.workout,vis:p.vis,ts:p.ts});
+  closePost();renderFeed();renderMyPosts();
+  Promise.resolve(up).then(function(ok){
+    if(ok===false)toast("已存在本机 · 但没发到云端，别人看不到");
+    else toast("已发布");
+  });
 }
 function delPost(id){
   const s=sLoad(),i=s.posts.findIndex(p=>p.id===id);
@@ -3695,19 +4190,44 @@ function pullSettings(){
     }).catch(function(){return false;});
 }
 /* ---- 登录后合并：先拉云端（新的覆盖本地），再把本地独有 / 较新的推上去 ---- */
+let MERGE_INFO=null, MERGE_P=null;
+function mergeTipText(){
+  const m=MERGE_INFO;
+  if(!m||!m.done)return "";
+  if(!m.pullOk)return "云端数据没拉到（网络或权限问题），稍后会自动再试";
+  if(m.pulled>0&&m.localOnly>0)return "已从云端恢复 "+m.pulled+" 天，本机独有 "+m.localOnly+" 天已上传";
+  if(m.pulled>0)return "已从云端恢复 "+m.pulled+" 天记录";
+  if(m.localOnly>0)return "本机 "+m.localOnly+" 天记录已上传到账号";
+  if(m.total===0)return "账号里还没有训练记录";
+  return "本机与云端一致（共 "+m.total+" 天）";
+}
 function onLoginMerge(){
   if(!syncEnabled()){renderSyncState();return Promise.resolve(false);}
   setSyncState("syncing");
-  return pullSettings()
+  MERGE_INFO={done:false};
+  const beforeN=DATA.length;
+  MERGE_P=pullSettings()
     .then(function(){return pullRecords();})
-    .then(function(){return pushAllRecords();})
-    .then(function(){return pushSettings(false);})
-    .then(function(){
+    .then(function(pullOk){
+      const pulled=Math.max(0,DATA.length-beforeN);
+      const localOnly=DATA.filter(function(r){return !REMOTE[r.d];}).length;
+      return pushAllRecords().then(function(){return {pullOk:pullOk!==false,pulled:pulled,localOnly:localOnly};});
+    })
+    .then(function(info){
+      return pushSettings(false).then(function(){return info;});
+    })
+    .then(function(info){
       _lastSyncAt=Date.now();setSyncState("ok");
+      MERGE_INFO={done:true,pullOk:info.pullOk,pulled:info.pulled,localOnly:info.localOnly,total:DATA.length};
       try{refreshSocialUI();}catch(e){}
       return true;
     })
-    .catch(function(){setSyncState("fail");return false;});
+    .catch(function(){
+      setSyncState("fail");
+      MERGE_INFO={done:true,pullOk:false,pulled:0,localOnly:0,total:DATA.length};
+      return false;
+    });
+  return MERGE_P;
 }
 /* ---- 导入 / 清空 ---- */
 function syncAllRecords(){
@@ -3720,11 +4240,19 @@ function syncAllRecords(){
 }
 function clearCloudData(){
   const me=sMe();
-  if(!syncEnabled()||!me)return Promise.resolve(true);
+  if(!syncEnabled()||!me)return Promise.resolve(false);
+  const q="uid=eq."+me.id;
   return Promise.all([
-    sbWrite("/rest/v1/records?uid=eq."+me.id,"DELETE"),
-    sbWrite("/rest/v1/settings?uid=eq."+me.id,"DELETE")
-  ]).then(function(){REMOTE={};_lastSet=null;return true;}).catch(function(){return false;});
+    sbWrite("/rest/v1/records?"+q,"DELETE"),
+    sbWrite("/rest/v1/settings?"+q,"DELETE")
+  ]).then(function(r){
+    REMOTE={};_lastSet=null;
+    if(!r[0]||!r[1])return false;
+    /* 删完再查一次：行级权限缺 delete 时 DELETE 会「成功但没删」，必须确认真的空了 */
+    return sbFetch("/rest/v1/records?select=d&"+q+"&limit=1").then(function(rows){
+      return !rows||!rows.length;
+    });
+  }).catch(function(){return false;});
 }
 function syncInitLocal(){
   try{
@@ -3751,6 +4279,7 @@ function socialOnEnter(name){
     if(name==="chat")renderChat();
     if(name==="profile"||name==="settings"){renderProfile();refreshSocialCounts();}
     if(name==="data")setDataView(dataView);
+    if(name==="feed"||name==="chats"||name==="myposts")netProbe();   /* 进社区页顺手探一次（30 秒内不重复探） */
   }catch(e){}
 }
 function refreshSocialCounts(){
@@ -3758,8 +4287,7 @@ function refreshSocialCounts(){
   const f=document.getElementById("myFollowing"),r=document.getElementById("myFollowers");
   if(f)f.textContent=me?sFollowingIds(me.id).length:0;
   if(r)r.textContent=me?sFollowers(me.id).length:0;
-  const t=document.getElementById("socialModeTag");
-  if(t)t.textContent=CLOUD()?"已连接 · 云端同步":"未连接";
+  syncNetUI();
   renderMeCard();renderFeedMe();
 }
 function refreshSocialUI(){
@@ -3794,16 +4322,21 @@ renderAll();
 bindWeightChart();
 initFab();
 bindSwipe();
+netProbe();                        /* v1.9：启动就探一次云端到底通不通 */
 initSplash();
 initMotto();
 bindClickSound();
 initSocial();
 /* 清空数据并刷新后给一次明确反馈（开屏层会盖住 toast，先跳过开屏） */
+try{ syncTrashUI(); }catch(e){}
 try{
-  if(sessionStorage.getItem("pushup_cleared_toast")==="1"){
+  const _cl=sessionStorage.getItem("pushup_cleared_toast");
+  if(_cl){
     sessionStorage.removeItem("pushup_cleared_toast");
     skipSplash();
-    setTimeout(()=>toast("数据已清空 · 页面已自动刷新"),600);
+    setTimeout(()=>toast(_cl==="cloud"
+      ? "本机与云端都已清空 · 7 天内还能用「恢复上次清空」撤回"
+      : "本机已清空 · 云端备份还在，重新登录可恢复（7 天内也能在设置里撤回）"),600);
   }
 }catch(e){}
 /* Capacitor 桥接可能晚于页面脚本，分几次补同步；开屏阶段保持开屏深色不被覆盖 */
