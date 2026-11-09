@@ -666,25 +666,25 @@ const LEGACY_SEED=[
 const KEY="fitness_proto_v03",FKEY="fitness_favs_v03",TKEY="fitness_theme_v03",
       CKEY="fitness_custom_v04",CATKEY="fitness_cats_v04",SKEY="fitness_splash_v04";
 let DATA,FAVS,THEME;
-/* 只清除「和出厂演示数据一模一样、用户从没动过」的旧数据；
-   只要用户录入 / 修改过任何一条，就整份保留，绝不误删真实记录。 */
-function isLegacySeed(arr){
-  if(!Array.isArray(arr)||arr.length!==LEGACY_SEED.length)return false;
-  return arr.every((r,i)=>{
-    const s=LEGACY_SEED[i];if(!r||typeof r!=="object")return false;
-    if(Object.keys(r).some(k=>["d","p","w","a"].indexOf(k)<0))return false;
-    return r.d===s.d&&r.p===s.p&&r.w===s.w&&r.a===s.a;
-  });
+/* 逐条剔除旧版出厂演示记录：只删「和演示数据一模一样」的条目；
+   用户录入过的新日期、或改动过数值 / 加过明细的那条，一律保留。 */
+function isLegacyRow(r){
+  if(!r||typeof r!=="object")return false;
+  const i=LEGACY_SEED.findIndex(s=>s.d===r.d);
+  if(i<0)return false;
+  const s=LEGACY_SEED[i];
+  if(Object.keys(r).some(k=>["d","p","w","a"].indexOf(k)<0))return false;
+  return r.p===s.p&&r.w===s.w&&r.a===s.a;
 }
 function loadData(){
   let raw=null;try{raw=localStorage.getItem(KEY);}catch(e){}
   let arr=null;if(raw){try{arr=JSON.parse(raw);}catch(e){arr=null;}}
   if(!Array.isArray(arr))return [];                 // 全新安装 / 已清空 → 空白
-  if(isLegacySeed(arr)){
-    try{localStorage.removeItem(KEY);}catch(e){}
-    return [];                                     // 旧版遗留的演示数据 → 清掉
+  const kept=arr.filter(r=>!isLegacyRow(r));
+  if(kept.length!==arr.length){                    // 一次性迁移，把清理结果写回去
+    try{kept.length?localStorage.setItem(KEY,JSON.stringify(kept)):localStorage.removeItem(KEY);}catch(e){}
   }
-  return arr;                                       // 用户自己的数据 → 原样保留
+  return kept;
 }
 DATA=loadData();
 try{FAVS=JSON.parse(localStorage.getItem(FKEY))||EX.filter(x=>x.fav).map(x=>x.id);}catch(e){FAVS=EX.filter(x=>x.fav).map(x=>x.id);}
