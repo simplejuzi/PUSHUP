@@ -415,8 +415,11 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub2);cursor:pointer;font-size:10px;font-weight:650;background:none;border:0;font-family:inherit}
 .tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tab.on{color:var(--accent)}
-.toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:11px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:88%;text-align:center}
+.toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:11px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:88%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+/* v1.7：弹窗打开时把提示抬到弹窗上方，别被注册/登录面板盖住 */
+.toast.mid{bottom:auto;top:36%;transform:translate(-50%,10px)}
+.toast.mid.show{transform:translate(-50%,0)}
 
 /* 导入弹层 */
 .modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
@@ -928,7 +931,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
-          <div class="badge" id="profileVersion">v1.7</div>
+          <div class="badge" id="profileVersion">v1.8</div>
         </div>
 
         <div class="sec-title">外观</div>
@@ -957,8 +960,8 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
         <div class="sec-title">软件更新<span>新版本直接覆盖安装即可</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.7</span> <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.7</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.8</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.8</span> <span class="ar">›</span></span></div>
         </div>
 
         <div class="sec-title">关于</div>
@@ -979,7 +982,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
             <div class="ds-h">和朋友一起</div>
             <div>动态可发图文并附带当天训练成果，可设公开或仅好友可见；好友是互相关注，支持点赞、评论与私聊。不登录也能完整记录，社区功能才需要账号。</div>
             <div class="ds-h">好用的细节</div>
-            <div>系统返回键与全面屏返回手势都做了适配；4 套配色 × 深浅色、点击音效、开屏励志语、App 内更新日志，都按主题变量走，不刺眼。</div>
+            <div>系统返回键与全面屏返回手势都做了适配，底栏与数据页都能左右滑动切页；4 套配色 × 深浅色、点击音效、开屏励志语、App 内更新日志，都按主题变量走，不刺眼。</div>
           </div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
@@ -1014,7 +1017,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
 
     <!-- ===== v1.6 注册 / 登录（名称 + 邮箱 + 密码，无验证码） ===== -->
-    <div class="modal" id="authModal">
+    <div class="modal" id="authModal" onclick="modalBackdropClose(event,'authModal')">
       <div class="sheet form">
         <div class="ins-head"><b id="auTitle">加入 PUSHUP</b><button class="tx" onclick="closeAuth()">✕</button></div>
         <label id="auNameLb">名称<input id="auName" maxlength="12" placeholder="朋友看到的名字，不能重复"></label>
@@ -1142,7 +1145,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     <!-- v1.5：应用内更新日志 -->
     <div class="modal" id="logModal">
       <div class="sheet scroll-sheet">
-        <div class="ins-head"><b>更新日志 <span class="log-v" id="logVer">v1.7</span></b>
+        <div class="ins-head"><b>更新日志 <span class="log-v" id="logVer">v1.8</span></b>
           <button class="tx" onclick="closeChangelog()">✕</button></div>
         <ul class="log-list" id="logList"></ul>
         <div class="sh-note">新版本直接覆盖安装即可，账号与训练记录都会保留。</div>
@@ -1303,19 +1306,13 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.7";
+const APP_VERSION="v1.8";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "记录页「添加动作」改成可展开收起的面板，默认收起，记录页一下子短了很多",
-  "保存记录改成悬浮球：可上下拖动，松手自动吸附屏幕左右侧边，不用再滑到最下面",
-  "悬浮球会记住上次停的位置；没填数值时点它会轻轻抖一下提醒，保存成功也会回一下「已保存」",
-  "历史日历里「今天」始终保留底色和描边，选中别的日期也不会把今天的底色弄丢",
-  "历史页汇总改成四个数字：训练天数（累计总天数）、连续天数、本月累计、日均",
-  "更新提示弹窗与更新日志内容太长时可以滑动，底部按钮不会再被挤出屏幕",
-  "新增系统返回键与全面屏返回手势：先关弹窗，再从子页面回上一级，在记录首页连按两次才退出",
-  "数据页把「数据统计」提到第一位并设为默认打开，历史日历排到第二个 Tab",
-  "关于页的软件介绍重写：按「记录 / 看得见进步 / 动作库 / 数据归你 / 和朋友一起 / 好用的细节」分段讲清功能和特点",
-  "悬浮保存球改成「有改动才出现」：没动过时不挡视线，改完自动浮出来，保存完成后自动收起"
+  "注册 / 登录这类弹窗里点注册，提示不再被面板挡住：提示条层级提到最上，并且会自动抬到面板上方",
+  "注册 / 登录面板支持点空白处关闭（点面板内部不会误关）",
+  "底栏五个页面支持左右滑动切换，滑一下就到旁边那一页",
+  "数据页的「数据统计 / 历史日历」也纳入滑动，而且优先级比底栏高：在历史日历左滑先进数据统计，再左滑才去动态；反过来也一样"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1421,7 +1418,26 @@ function saveAll(){
     localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);}catch(e){}
   try{scheduleSettingsSync();}catch(e){}
 }
-function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);}
+function toast(msg){
+  const el=document.getElementById("toast");
+  if(!el)return;
+  el.textContent=msg;
+  /* v1.7：有弹窗时抬到上面，避免被注册 / 登录面板挡住 */
+  let open=false;
+  try{open=!!document.querySelector(".modal.on");}catch(e){}
+  el.classList.toggle("mid",open);
+  el.classList.add("show");
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);
+}
+/* v1.7：点弹窗外的空白处关闭（只处理遮罩本身，点面板内部不受影响） */
+function modalBackdropClose(e,id){
+  if(!e||e.target!==e.currentTarget)return;
+  const m=document.getElementById(id);
+  if(!m)return;
+  if(id==="authModal")closeAuth();
+  else if(id==="logoutModal")closeLogout();
+  else m.classList.remove("on");
+}
 function switchTab(name){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
@@ -1523,6 +1539,72 @@ function handleAppBack(){
   return true;
 }
 window.__pushupBack=handleAppBack;
+
+/* ============ v1.7：左右滑动切换页面 ============
+   数据页的两个子视图也算在序列里、而且优先于底栏：
+   「历史日历」左滑先到「数据统计」，再左滑才去「动态」；
+   反过来在「数据统计」右滑先回记录页。 */
+const SWIPE_SEQ=["record","data:stats","data:history","feed","chats","profile"];
+function swipeIndexAt(page,view){
+  if(page==="data")return (view==="history")?2:1;
+  return SWIPE_SEQ.indexOf(page);
+}
+function swipeIndex(){
+  return swipeIndexAt(currentPageName(),(typeof dataView!=="undefined"?dataView:""));
+}
+function swipeIgnore(t){
+  let n=t;
+  for(let i=0;n&&i<8;i++){
+    if(n===document.body)break;
+    const tag=String(n.tagName||"").toUpperCase();
+    if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT")return true;
+    if(n.isContentEditable)return true;
+    const id=n.id||"";
+    if(id==="lineChart"||id==="barChart")return true;          /* 图表自己有横向手势 */
+    if(n.classList&&(n.classList.contains("filters")||n.classList.contains("ex-results")))return true;
+    n=n.parentElement;
+  }
+  return false;
+}
+function goSwipe(dir){
+  const i=swipeIndex();
+  if(i<0)return;
+  const j=i+dir;
+  if(j<0||j>=SWIPE_SEQ.length)return;
+  const target=SWIPE_SEQ[j];
+  if(target==="data:stats"){switchTab("data");setDataView("stats");}
+  else if(target==="data:history"){switchTab("data");setDataView("history");}
+  else switchTab(target);
+}
+function bindSwipe(){
+  const sc=document.getElementById("screen");
+  if(!sc||sc._swipeReady)return;
+  sc._swipeReady=true;
+  let x0=0,y0=0,t0=0,lock=null,active=false;
+  sc.addEventListener("touchstart",function(e){
+    if(e.touches.length!==1||swipeIgnore(e.target)){active=false;return;}
+    const t=e.touches[0];
+    x0=t.clientX;y0=t.clientY;t0=Date.now();lock=null;active=true;
+  },{passive:true});
+  sc.addEventListener("touchmove",function(e){
+    if(!active||e.touches.length!==1)return;
+    const t=e.touches[0],dx=t.clientX-x0,dy=t.clientY-y0;
+    if(lock===null&&(Math.abs(dx)>9||Math.abs(dy)>9)){
+      lock=(Math.abs(dx)>Math.abs(dy)*1.4)?"x":"y";
+      if(lock==="y")active=false;
+    }
+    if(lock==="x"&&e.cancelable)e.preventDefault();   /* 明确是横滑，别再竖着滚 */
+  },{passive:false});
+  sc.addEventListener("touchend",function(e){
+    if(!active||lock!=="x"){active=false;return;}
+    active=false;
+    const t=e.changedTouches&&e.changedTouches[0];
+    if(!t)return;
+    const dx=t.clientX-x0,dy=t.clientY-y0;
+    if(Math.abs(dx)<56||Math.abs(dx)<Math.abs(dy)*1.4)return;
+    goSwipe(dx<0?1:-1);
+  },{passive:true});
+}
 
 /* ============ 记录页 ============ */
 function firstOf(key){return [...DATA].filter(x=>x[key]!=null).sort((a,b)=>a.d.localeCompare(b.d))[0];}
@@ -3711,6 +3793,7 @@ try{localStorage.removeItem("pushup_logo_v1");}catch(e){}
 renderAll();
 bindWeightChart();
 initFab();
+bindSwipe();
 initSplash();
 initMotto();
 bindClickSound();
