@@ -865,7 +865,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="netbar hide" onclick="openServerAddr()">
           <span class="nb-ic">⚠️</span>
-          <span><b>连不上服务器</b>：动态、聊天、云同步现在都没生效（本机记录不受影响）。<span class="nb-go">点这里设置代理地址 ›</span></span>
+          <span id="netbarFeed"><b>连不上服务器</b>：动态、聊天、云同步现在都没生效（本机记录不受影响）。<span class="nb-go">点这里换服务器地址 ›</span></span>
         </div>
         <div class="feed-me" id="feedMeBar" onclick="feedMeClick()">
           <div class="feed-me-av off" id="feedMeAv"><span class="me-ph">?</span></div>
@@ -920,7 +920,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div class="netbar hide" onclick="openServerAddr()">
           <span class="nb-ic">⚠️</span>
-          <span><b>连不上服务器</b>：消息发不出去也收不到。<span class="nb-go">点这里设置代理地址 ›</span></span>
+          <span id="netbarChat"><b>连不上服务器</b>：消息发不出去也收不到。<span class="nb-go">点这里换服务器地址 ›</span></span>
         </div>
         <div class="muted" style="margin:10px 3px">最简单的好友私聊，App 关闭时不会推送通知</div>
         <div id="chatList"></div>
@@ -1025,7 +1025,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.9 · 正式版</div>
+          <div class="app-vr" id="aboutVersion">v1.10 · 正式版</div>
           <div class="app-ds">
             <div class="ds-lead">以俯卧撑为核心的自重训练记录工具：不用器械、不占地方，每天几十秒就能记完。</div>
             <div class="ds-h">记录</div>
@@ -1173,9 +1173,9 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sh-t">服务器地址</div>
         <div class="sh-s">App 通过这个地址访问云端。中国大陆直连 Supabase 的 API 域名经常被阻断，这时改成你自己的反代地址即可。</div>
         <input class="srv-inp" id="srvInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://xxxx.scf.tencentcs.com">
-        <div class="srv-hint" id="srvHint">当前使用：<b id="srvCur">—</b><br>留空或点「恢复官方」就回到默认直连</div>
-        <div class="sh-btns"><button onclick="resetServerAddr()">恢复官方</button><button class="primary" onclick="applyServerAddr()">保存并重启</button></div>
-        <div class="sh-btns" style="margin-top:8px"><button onclick="testServerAddr()">测一下这个地址</button></div>
+        <div class="srv-hint" id="srvHint">当前使用：<b id="srvCur">—</b><br>默认走自建代理（国内直连 Supabase 会被阻断）；点「恢复默认」回到代理，点「改用官方直连」切回官方</div>
+        <div class="sh-btns"><button onclick="resetServerAddr()">恢复默认</button><button class="primary" onclick="applyServerAddr()">保存并重启</button></div>
+        <div class="sh-btns" style="margin-top:8px"><button onclick="testServerAddr()">测一下这个地址</button><button onclick="useOfficialAddr()">改用官方直连</button></div>
       </div>
     </div>
     <!-- v1.1：按动作生成导入模板 -->
@@ -1396,21 +1396,13 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.9";
+const APP_VERSION="v1.10";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "注册 / 登录拆成两个模式：登录只要邮箱 + 密码，名称只在注册时填",
-  "提交时按钮变成「注册中…/登录中…」并禁用，连点不会重复注册；失败后 1 秒内也点不了",
-  "出错直接在表单里写清原因：邮箱已注册、名称重复、密码不对、查不到账号、密码太短、太频繁、需要验证邮箱、网络不通",
-  "注册成功自动登录（项目若开了邮箱验证，会提示先去邮箱点确认链接）",
-  "设置页新增「服务器地址」：默认官方直连，网络被阻断时可改成自建反代地址，随时能一键恢复",
-  "新增真实的云端连接状态：连不上时动态页与消息页顶部直接提示，发动态也会如实告诉你有没有发到云端",
-  "动态 / 私聊一次拉取的条数收小，避免超过云函数 6MB 上限导致列表加载失败",
-  "清空数据改成二选一：只清本机（云端备份保留，重新登录可恢复）/ 本机与云端一起清（要连点两次确认）",
-  "修：以前只要还处于登录态，点清空就会顺手把云端备份一起删掉，之后登录回来当然是空的",
-  "清空前自动留一份本机快照，7 天内在「设置 → 数据管理」可以点「恢复上次清空」反悔",
-  "清空不再全清本地存储，服务器地址、邮箱记忆、账号信息都不会被误删",
-  "登录后会明确告诉你和云端的对比结果：从云端恢复几天 / 本机独有几天已上传 / 两边一致 / 云端没拉到"
+  "默认服务器地址改成自建反代：国内直连 Supabase 的域名会被阻断，现在装完直接就能连上，不用手动填",
+  "连不上服务器时，提示条会显示当前用的是哪个地址，点一下就能换",
+  "设置 → 服务器 里新增「改用官方直连」，换个网络环境想直连时随时能切回",
+  "自检与诊断区分「官方直连 / 自建代理 / 自定义」三种状态"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1421,10 +1413,15 @@ const PKEY="fitness_palette_v1";
 /* v1.9：服务器地址（官方直连 / 自建反代） */
 function serverTagText(){
   const cur=sbUrlSaved();
-  if(!cur)return "官方直连";
+  if(!cur)return "自建代理（默认）";
+  if(sbUrlNorm(cur)===sbUrlNorm(SB_URL_DEFAULT))return "官方直连";
   /* 不依赖 URL 对象，老 WebView 也能用 */
   const m=cur.match(/^https?:\/\/([^\/]+)/i);
   return m?("代理 · "+m[1]):"自定义";
+}
+function serverHost(){
+  const m=String(SB_URL||"").match(/^https?:\/\/([^\/]+)/i);
+  return m?m[1]:String(SB_URL||"");
 }
 function syncServerAddrUI(){
   const tag=document.getElementById("sbAddrTag");
@@ -1434,7 +1431,7 @@ function syncServerAddrUI(){
 }
 function openServerAddr(){
   const inp=document.getElementById("srvInput");
-  if(inp)inp.value=(sbUrlSaved()||SB_URL_DEFAULT);
+  if(inp)inp.value=SB_URL;          /* 预填当前真正在用的地址 */
   syncServerAddrUI();
   document.getElementById("serverModal").classList.add("on");
 }
@@ -1446,19 +1443,25 @@ function closeServerAddr(){
 function resetServerAddr(){
   try{localStorage.removeItem(SB_URL_KEY);}catch(e){}
   if(sbUrlSaved()){toast("没能清掉，再试一次");return;}
-  toast("已恢复官方地址，正在重启…");
+  toast("已恢复默认（自建代理），正在重启…");
+  setTimeout(appReload,700);
+}
+/* v1.10：想直连官方时用这个（国内网络一般连不上，留着给换个网络环境的人） */
+function useOfficialAddr(){
+  try{localStorage.setItem(SB_URL_KEY,sbUrlNorm(SB_URL_DEFAULT));}catch(e){toast("保存失败");return;}
+  toast("已改用官方直连，正在重启…");
   setTimeout(appReload,700);
 }
 function applyServerAddr(){
   const inp=document.getElementById("srvInput");
   const v=sbUrlNorm(inp?inp.value:"");
-  if(!v){toast("地址是空的；想回官方就点左边「恢复官方」");return;}
+  if(!v){toast("地址是空的；想回默认就点「恢复默认」");return;}
   if(!/^https:\/\//i.test(v)){toast("要 https:// 开头，http 会被系统当混合内容拦掉");return;}
   try{
     if(v===sbUrlNorm(SB_URL_DEFAULT))localStorage.removeItem(SB_URL_KEY);
     else localStorage.setItem(SB_URL_KEY,v);
   }catch(e){toast("保存失败，检查手机存储空间");return;}
-  if((sbUrlSaved()||SB_URL_DEFAULT)!==v){toast("保存后校验不一致，再试一次");return;}
+  if((sbUrlSaved()||SB_URL_RELAY)!==v){toast("保存后校验不一致，再试一次");return;}
   toast("已保存，正在重启…");
   setTimeout(appReload,700);
 }
@@ -3279,8 +3282,11 @@ function feedMeClick(){if(sMe())openPost();else openAuth();}
    ================================================================== */
 const SB_URL_DEFAULT="https://zqrlolyntlcewrwfhumd.supabase.co";
 const SB_ANON="sb_publishable_O7AmNzcRHCKtWThXB9_8tg_xWaMoRQU";
-/* v1.9：服务器地址可在「设置 → 服务器」里改（默认官方直连）。
-   国内直连 supabase 的 API 域名常被阻断，改成自建反代地址即可，不用重新打包。 */
+/* v1.9：服务器地址可在「设置 → 服务器」里改，不用重新打包。
+   v1.10：国内直连 *.supabase.co 会被 TLS 阻断，所以**默认走自建反代**
+   （腾讯云云函数，代码见仓库 supabase-proxy/），装完直接能用；
+   想直连官方可以在同一页点「改用官方直连」。 */
+const SB_URL_RELAY="https://1301392226-ickz22vd03.ap-guangzhou.tencentscf.com";
 const SB_URL_KEY="pushup_sb_url";
 function sbUrlNorm(v){
   let u=String(v||"").trim().replace(/^["'\s]+|["'\s]+$/g,"");
@@ -3290,7 +3296,8 @@ function sbUrlNorm(v){
   return u.replace(/\/+$/,"");
 }
 function sbUrlSaved(){try{return sbUrlNorm(localStorage.getItem(SB_URL_KEY)||"");}catch(e){return "";}}
-const SB_URL=(sbUrlSaved()||SB_URL_DEFAULT);
+/* 没手动设过就用反代；设过就用设的（包括"官方直连"） */
+const SB_URL=(sbUrlSaved()||SB_URL_RELAY);
 /* v1.6：邮箱当账号。只做格式校验，不发验证码、不做邮箱确认 */
 const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 const SOC_KEY="pushup_social_v1";
@@ -3380,6 +3387,14 @@ function syncNetUI(){
   });
   const t=document.getElementById("socialModeTag");
   if(t)t.textContent=!CLOUD()?"本地模式":(NET_OK===null?"检测中…":(NET_OK?"已连接 · 云端同步":"连不上服务器"));
+  /* v1.10：把当前用的服务器地址摆出来，不然只能干瞪眼 */
+  if(bad){
+    const host=serverHost();
+    const f=document.getElementById("netbarFeed");
+    if(f)f.innerHTML='<b>连不上服务器</b>（当前：'+sEsc(host)+'）：动态、聊天、云同步没生效，本机记录不受影响。<span class="nb-go">点这里换服务器地址 ›</span>';
+    const c=document.getElementById("netbarChat");
+    if(c)c.innerHTML='<b>连不上服务器</b>（当前：'+sEsc(host)+'）：消息发不出去也收不到。<span class="nb-go">点这里换服务器地址 ›</span>';
+  }
 }
 function noteNet(ok){
   NET_AT=Date.now();
