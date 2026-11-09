@@ -146,6 +146,16 @@ body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
 /* 不再绘制模拟状态栏：手机上直接使用系统真实状态栏，全屏时用安全区留白 */
 .screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(14px + env(safe-area-inset-top)) 20px 118px;scrollbar-width:none}
 .screen::-webkit-scrollbar{display:none}
+/* v1.23：动态页 / 详情页头部固定、内容区独立滚动（避免整页滚） */
+body.feed-lock .screen{overflow:hidden}
+#page-feed.on{display:flex;flex-direction:column;height:100%;overflow:hidden}
+#page-feed .feed-head{flex:none}
+#page-feed .feed-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px;scrollbar-width:none}
+#page-feed .feed-scroll::-webkit-scrollbar{display:none}
+#page-post.on{display:flex;flex-direction:column;height:100%;overflow:hidden}
+#page-post .pd-head{flex:none}
+#page-post .pd-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none}
+#page-post .pd-scroll::-webkit-scrollbar{display:none}
 .page{display:none;animation:fade .22s ease}
 .page.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -158,7 +168,7 @@ h1.title.motto{font-size:20px;line-height:1.35;letter-spacing:-.4px;max-width:21
 .badge.ok{background:var(--green-soft);color:var(--green)}
 .badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:14px}
-.card-label{font-size:12px;color:var(--sub);font-weight:600;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
+.card-label{font-size:13px;color:var(--ink);font-weight:750;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
 .card-label .en{font-size:10px;color:var(--sub2);letter-spacing:1.2px;font-weight:600}
 .sec-title{font-size:15px;font-weight:720;margin:22px 2px 10px;letter-spacing:-.2px}
 .sec-title span{font-size:12px;color:var(--sub);font-weight:500;margin-left:6px}
@@ -810,9 +820,19 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .chat-body{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 90px;scrollbar-width:none}
 .chat-body::-webkit-scrollbar{display:none}
 /* v1.17：聊天页微信风格 —— 顶部居中标题栏 */
-.chat-top{display:flex;align-items:center;justify-content:center;
+.chat-top{display:flex;align-items:center;justify-content:center;position:relative;
   height:52px;padding-top:env(safe-area-inset-top);
   background:var(--tabbar);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);flex:none}
+/* v1.22：聊天页/详情页顶部返回按钮（PWA 环境也能返回） */
+.back-btn{position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border:0;background:transparent;color:var(--ink);
+  font-size:22px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:4}
+.back-btn:active{background:var(--soft)}
+.pd-top{display:flex;align-items:center;position:relative;
+  height:52px;padding-top:env(safe-area-inset-top);
+  background:var(--tabbar);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);flex:none}
+.pd-top-name{font-size:16px;font-weight:750;color:var(--ink);margin:0 auto;
+  max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chat-top-name{font-size:16px;font-weight:750;color:var(--ink);letter-spacing:-.2px;
   max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bubble-row{display:flex;align-items:flex-end;gap:7px;margin-top:12px}
@@ -1048,30 +1068,38 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.5 动态 ===== -->
       <div class="page" id="page-feed">
-        <div class="head-row" style="margin-top:10px">
-          <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
+        <div class="feed-head">
+          <div class="head-row" style="margin-top:10px">
+            <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
+          </div>
+          <div class="netbar hide">
+            <span class="nb-ic">⚠️</span>
+            <span id="netbarFeed"><b>连不上服务器</b>：动态、聊天、云同步现在都没生效（本机记录不受影响）。</span>
+          </div>
+          <div class="feed-me" id="feedMeBar" onclick="feedMeClick()">
+            <div class="feed-me-av off" id="feedMeAv"><span class="me-ph">?</span></div>
+            <div class="feed-me-txt"><b id="feedMeName">未登录</b><small id="feedMeHint">登录后即可发布动态、看好友训练</small></div>
+            <span class="feed-me-go" id="feedMeGo">去登录</span>
+          </div>
+          <div class="seg-row segbar">
+            <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all',1)">全部</button>
+            <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends',1)">朋友</button>
+          </div>
+          <div class="pullhint" id="pullHint"></div>
         </div>
-        <div class="netbar hide" onclick="openServerAddr()">
-          <span class="nb-ic">⚠️</span>
-          <span id="netbarFeed"><b>连不上服务器</b>：动态、聊天、云同步现在都没生效（本机记录不受影响）。<span class="nb-go">点这里换服务器地址 ›</span></span>
+        <div class="feed-scroll">
+          <div id="feedList"></div>
         </div>
-        <div class="feed-me" id="feedMeBar" onclick="feedMeClick()">
-          <div class="feed-me-av off" id="feedMeAv"><span class="me-ph">?</span></div>
-          <div class="feed-me-txt"><b id="feedMeName">未登录</b><small id="feedMeHint">登录后即可发布动态、看好友训练</small></div>
-          <span class="feed-me-go" id="feedMeGo">去登录</span>
-        </div>
-        <div class="seg-row segbar">
-          <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all',1)">全部</button>
-          <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends',1)">朋友</button>
-        </div>
-        <div class="pullhint" id="pullHint"></div>
-        <div id="feedList"></div>
-        <div style="height:80px"></div>
       </div>
 
       <!-- ===== v1.13：动态详情（图文 + 谁点赞 + 谁评论，评论只能在这里发） ===== -->
       <div class="page" id="page-post">
-        <div id="pdBody"></div>
+        <div class="pd-top">
+          <button class="back-btn" onclick="closePostDetail()" aria-label="返回">‹</button>
+          <div class="pd-top-name">动态详情</div>
+        </div>
+        <div id="pdHead"></div>
+        <div id="pdComments" class="pd-scroll"></div>
         <div style="height:92px"></div>
       </div>
 
@@ -1131,11 +1159,14 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="page" id="page-chats">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">MESSAGES</div><h1 class="title">消息</h1></div>
-          <button class="btn-ghost sm" onclick="openFriends('following')">好友</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost sm" onclick="openChatPicker()">发起</button>
+            <button class="btn-ghost sm" onclick="openFriends('following')">好友</button>
+          </div>
         </div>
-        <div class="netbar hide" onclick="openServerAddr()">
+        <div class="netbar hide">
           <span class="nb-ic">⚠️</span>
-          <span id="netbarChat"><b>连不上服务器</b>：消息发不出去也收不到。<span class="nb-go">点这里换服务器地址 ›</span></span>
+          <span id="netbarChat"><b>连不上服务器</b>：消息发不出去也收不到。</span>
         </div>
         <div class="muted" style="margin:10px 3px">最简单的好友私聊，App 关闭时不会推送通知</div>
         <div id="notifEntry"></div>
@@ -1150,9 +1181,9 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div><div class="eyebrow">NOTIFICATIONS</div><h1 class="title">通知</h1></div>
           <div class="badge" id="notifCount">0 条</div>
         </div>
-        <div class="netbar hide" onclick="openServerAddr()">
+        <div class="netbar hide">
           <span class="nb-ic">⚠️</span>
-          <span id="netbarNotif"><b>连不上服务器</b>：通知可能不完整。<span class="nb-go">点这里换服务器地址 ›</span></span>
+          <span id="netbarNotif"><b>连不上服务器</b>：通知可能不完整。</span>
         </div>
         <div id="notifList"></div>
         <div style="height:80px"></div>
@@ -1161,6 +1192,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <!-- ===== v1.5 聊天（v1.17 微信风格：顶部居中标题 + 固定输入条 + 我方头像） ===== -->
       <div class="page" id="page-chat">
         <div class="chat-top">
+          <button class="back-btn" onclick="chatBack()" aria-label="返回">‹</button>
           <div class="chat-top-name" id="chatTitle">聊天</div>
         </div>
         <div id="chatBody" class="chat-body"></div>
@@ -1192,7 +1224,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="sec-title">快捷入口</div>
         <div class="settings">
           <div class="sitem" onclick="openMyPosts()">我的动态<span class="r">只看自己发的 <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="switchTab('friends')">好友<span class="r">关注 / 粉丝 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openFriends('following')">好友<span class="r">关注 / 粉丝 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="switchTab('settings')">设置<span class="r">外观 / 配色 / 数据 / 关于 <span class="ar">›</span></span></div>
         </div>
         <div style="height:80px"></div>
@@ -1241,15 +1273,10 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="sitem" id="undoClearItem" style="display:none" onclick="restoreTrash()">恢复上次清空<span class="r" id="undoClearTag">— <span class="ar">›</span></span></div>
         </div>
 
-        <div class="sec-title">服务器<span>连不上时换成自建代理地址</span></div>
-        <div class="settings">
-          <div class="sitem" onclick="openServerAddr()">服务器地址<span class="r" id="sbAddrTag">官方直连 <span class="ar">›</span></span></div>
-        </div>
-
         <div class="sec-title">软件更新<span>新版本直接覆盖安装即可</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.9</span> <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.9</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">检查是否有新版本 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openChangelog()">更新日志<span class="ar">›</span></div>
         </div>
 
         <div class="sec-title">关于</div>
@@ -1676,12 +1703,19 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.22";
+const APP_VERSION="v1.23";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "新增用户主页：点任意用户头像/名字即可进入，看 TA 的头像、名字、健身天数、关注/粉丝、训练记录和动态",
-  "用户主页可一键私聊、关注/取消关注；训练记录与动态用「训练记录 / TA 的动态」两段式切换条分开，可左右滑动切换",
-  "通知点进去即视为已读：消息页「通知」入口的红点数字读完后消失，之后有新点赞/评论再亮起",
+  "修：聊天页返回错乱——从哪进聊天就回哪（消息页/好友页/用户主页各自正确返回）",
+  "修：用户主页「训练记录」会泄露他人「仅好友可见」动态的训练数据，已加权限过滤",
+  "修：赞旧动态不亮通知红点，改为用点赞真实时间判断未读",
+  "聊天页和动态详情页加了顶部返回按钮，纯网页/PWA 环境也能正常返回",
+  "好友页/动作库从不同入口进入时，返回目标按来源正确记录",
+  "对方清空头像后本机能正确同步，不再残留旧头像",
+  "消息页加了「发起」按钮，可直接选好友开聊",
+  "动态页/详情页改为头部固定、内容区独立滚动，不再整页乱滚",
+  "记录页「今日训练/体重/臂围/备注」标签加深加粗，更清晰",
+  "设置页隐藏服务器地址入口，更新日志右侧不再显示版本号",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1908,6 +1942,8 @@ function switchTab(name){
   const barless=(name==="post"||name==="chat");
   if(tb)tb.classList.toggle("hide-bar",barless);
   if(phone)phone.classList.toggle("bar-less",barless);
+  /* v1.23：动态页 / 详情页锁住外层滚动，内容区内部独立滚动 */
+  document.body.classList.toggle("feed-lock",(name==="feed"||name==="post"));
   if(name!=="post")hidePdBar();          /* v1.15：评论条只在详情页出现 */
   /* v1.17：聊天输入条只在聊天页出现 */
   const cb=document.getElementById("chatBar");
@@ -2146,7 +2182,7 @@ function renderToday(){
   const cntEl=document.getElementById("addCnt");
   if(cntEl)cntEl.textContent=favList.length?("常用 "+favList.length+" 个"):"搜索动作";
   document.getElementById("quickAdd").innerHTML=shown.map(id=>'<button class="achip" onclick="addRow(\''+id+'\')">＋ '+exById(id).n+'</button>').join("")+
-    '<button class="achip more" onclick="switchTab(\'library\')">浏览动作库 →</button>';
+    '<button class="achip more" onclick="openLibrary()">浏览动作库 →</button>';
 }
 /* v1.7：常用动作面板展开 / 收起 */
 function setAddBox(open){
@@ -2717,7 +2753,7 @@ function renderProfile(){
   /* v1.14：这三项都能点，但外观保持以前的灰色，不额外暗示可点 */
   document.getElementById("profileStats").innerHTML=
     '<div class="it" onclick="openRecords()"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
-    '<div class="it" onclick="switchTab(\'library\')"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
+    '<div class="it" onclick="openLibrary()"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
     '<div class="it" onclick="switchTab(\'data\')"><div class="v">'+DATA.length+'</div><div class="k">健身天数</div></div>';
   document.getElementById("themeLight").className=THEME==="light"?"on":"";
   document.getElementById("themeDark").className=THEME==="dark"?"on":"";
@@ -2754,6 +2790,7 @@ function openUserProfile(uid){
   USER_BACK=(from==="user")?"feed":(from||"feed");
   SUB_PARENT.user=USER_BACK;
   USER_UID=uid;
+  USER_VIEW="recs";   /* v1.22：进入新用户主页，默认回到「训练记录」段 */
   renderUserProfile();
   switchTab("user");
 }
@@ -2762,6 +2799,8 @@ function userWorkoutDays(uid){
   const seen={};
   sLoad().posts.forEach(function(p){
     if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
+    /* v1.22：非好友看不到「仅好友可见」的动态，健身天数也不能计入 */
+    if(p.vis==="friends"&&!sFriend(uid))return;
     const d=tsDate(p.ts);if(d)seen[d]=1;
   });
   return Object.keys(seen).length;
@@ -2855,9 +2894,8 @@ function toggleFollowFromUser(uid){
     if(btn){btn.className="ua-follow"+(f?" on":"");btn.textContent=f?"已关注":"＋ 关注";}
   }
 }
-/* 从用户主页点私聊：返回时回到用户主页而不是消息页 */
+/* 从用户主页点私聊：openChat 会自动按当前页（user）记录返回目标 */
 function chatFromUser(uid){
-  SUB_PARENT.chat="user";
   openChat(uid);
 }
 
@@ -2881,6 +2919,8 @@ function recsRows(uid){
   const seen={},rows=[];
   sLoad().posts.forEach(function(p){
     if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
+    /* v1.22：非好友看不到「仅好友可见」的动态，训练记录也不能泄露 */
+    if(p.vis==="friends"&&!sFriend(uid))return;
     const d=tsDate(p.ts);if(!d||seen[d])return;
     seen[d]=1;
     rows.push({d:d,self:false,
@@ -3565,7 +3605,7 @@ async function checkUpdate(manual){
   const info=await fetchLatest();
   if(!info||!info.version)return;                       // 没网 / 失败 → 零提示
   if(!verNewer(info.version,APP_VERSION)){
-    if(manual)toast("已是最新版 "+APP_VERSION);
+    if(manual)toast("已是最新版本 "+APP_VERSION);
     return;
   }
   curUpdate=info;
@@ -3843,7 +3883,17 @@ function openLogout(){
   document.getElementById("logoutModal").classList.add("on");
 }
 function closeLogout(){document.getElementById("logoutModal").classList.remove("on");}
-function openFriends(k){if(!sMe()){openAuth();return;}setFriendTab(k);switchTab("friends");}
+function openFriends(k){if(!sMe()){openAuth();return;}
+  /* v1.22：返回目标按来源动态记录（消息页/我的页/通知页都能正确返回） */
+  const from=(typeof currentPageName==="function")?currentPageName():"profile";
+  SUB_PARENT.friends=(from==="chats"||from==="notifs"||from==="profile")?from:"profile";
+  setFriendTab(k);switchTab("friends");}
+/* v1.22：动作库返回目标按来源记录（记录页 / 我的页） */
+function openLibrary(){
+  const from=(typeof currentPageName==="function")?currentPageName():"record";
+  SUB_PARENT.library=(from==="profile")?"profile":"record";
+  switchTab("library");
+}
 function openMyPosts(){if(!sMe()){openAuth();return;}switchTab("myposts");}
 function renderFeedMe(){
   const me=sMe(),av=document.getElementById("feedMeAv"),n=document.getElementById("feedMeName"),
@@ -3968,13 +4018,12 @@ function syncNetUI(){
   });
   const t=document.getElementById("socialModeTag");
   if(t)t.textContent=!CLOUD()?"本地模式":(NET_OK===null?"检测中…":(NET_OK?"已连接 · 云端同步":"连不上服务器"));
-  /* v1.10：把当前用的服务器地址摆出来，不然只能干瞪眼 */
+  /* v1.23：服务器地址入口已隐藏，连不上时只提示，不暴露技术细节 */
   if(bad){
-    const host=serverHost();
     const f=document.getElementById("netbarFeed");
-    if(f)f.innerHTML='<b>连不上服务器</b>（当前：'+sEsc(host)+'）：动态、聊天、云同步没生效，本机记录不受影响。<span class="nb-go">点这里换服务器地址 ›</span>';
+    if(f)f.innerHTML='<b>连不上服务器</b>：动态、聊天、云同步没生效，本机记录不受影响。';
     const c=document.getElementById("netbarChat");
-    if(c)c.innerHTML='<b>连不上服务器</b>（当前：'+sEsc(host)+'）：消息发不出去也收不到。<span class="nb-go">点这里换服务器地址 ›</span>';
+    if(c)c.innerHTML='<b>连不上服务器</b>：消息发不出去也收不到。';
   }
 }
 function noteNet(ok){
@@ -4043,7 +4092,9 @@ function applyAccountProfile(name,avatar,force){
   const nm=String(name||"").trim().slice(0,12);
   if(nm&&(force||NICKNAME!==nm)){NICKNAME=nm;changed=true;}
   const av=String(avatar||"");
-  if(/^(data:image\/|https?:\/\/)/.test(av)&&AVATAR!==av){AVATAR=av;changed=true;}
+  /* v1.22：头像被清空也要同步（force 或本地有旧头像时，清成本地空值） */
+  if(/^(data:image\/|https?:\/\/)/.test(av)){if(AVATAR!==av){AVATAR=av;changed=true;}}
+  else if(force&&AVATAR){AVATAR="";changed=true;}
   if(!changed)return false;
   try{localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);}catch(e){}
   try{
@@ -4154,10 +4205,11 @@ function syncCloud(){
     const s=sLoad(),ps=a[0],fs=a[1],po=a[2],ms=a[3],lk=a[4],cm=a[5];
     if(ps)ps.forEach(p=>{
       /* v1.20：已存在的用户也要更新 name/avatar，否则对方改头像/昵称后，
-         本机旧记录不刷新，一直显示默认 💪 头像和旧名字（头像对不上） */
+         本机旧记录不刷新，一直显示默认 💪 头像和旧名字（头像对不上）
+         v1.22：avatar 无条件同步，清空头像也要清掉本地旧头像 */
       let u=s.users.find(x=>x.id===p.id);
       if(!u){s.users.push({id:p.id,name:p.name,pass:"",avatar:p.avatar||"",emoji:"💪"});}
-      else{ if(p.name)u.name=p.name; if(p.avatar)u.avatar=p.avatar; }
+      else{ if(p.name)u.name=p.name; u.avatar=p.avatar||""; }
     });
     if(fs)fs.forEach(f=>{if(!s.follows.some(x=>x.a===f.a&&x.b===f.b))s.follows.push({a:f.a,b:f.b});});
     if(po)po.forEach(p=>{if(!s.posts.some(x=>x.id===p.id))s.posts.push(p);});
@@ -4165,7 +4217,7 @@ function syncCloud(){
       if(!s.messages.some(y=>y.id===x.id))s.messages.push(x);});
     if(lk)lk.forEach(function(x){
       if(!s.likes.some(function(y){return y.a===x.post_id&&y.b===x.uid;}))
-        s.likes.push({a:x.post_id,b:x.uid});});
+        s.likes.push({a:x.post_id,b:x.uid,ts:x.ts||0});});
     if(cm)cm.forEach(function(x){
       if(!s.comments.some(function(y){return y.id===x.id;}))
         s.comments.push({id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts});});
@@ -4415,7 +4467,7 @@ function setFeedFilter(k,manual){
     b.className="seg-feed"+((b.getAttribute("data-k")||"")===k?" on":"");});
   renderFeed();
   /* v1.13：点「全部 / 好友」都回到最上面；再点当前这个也算一次「回到顶部」 */
-  const sc=document.getElementById("screen");
+  const sc=document.querySelector("#page-feed .feed-scroll")||document.getElementById("screen");
   if(sc)sc.scrollTop=0;
   if(same)toast("已回到顶部");
 }
@@ -4439,7 +4491,7 @@ function toggleLike(id){
   const me=sMe();if(!me){openAuth();return;}
   const s=sLoad(),i=s.likes.findIndex(function(l){return l.a===id&&l.b===me.id;});
   if(i>=0){s.likes.splice(i,1);sSave();sbDel("post_likes","post_id=eq."+id+"&uid=eq."+me.id);}
-  else{s.likes.push({a:id,b:me.id});sSave();sbPush("post_likes",{post_id:id,uid:me.id});}
+  else{s.likes.push({a:id,b:me.id,ts:Date.now()});sSave();sbPush("post_likes",{post_id:id,uid:me.id});}
   refreshPostViews();
 }
 function toggleComments(id){openCm[id]=!openCm[id];refreshPostViews();}
@@ -4565,20 +4617,23 @@ function openPostDetail(pid,from){
 }
 function closePostDetail(){hidePdBar();switchTab(PD_BACK||"feed");}
 function renderPostDetail(){
-  const box=document.getElementById("pdBody");if(!box)return;
+  const head=document.getElementById("pdHead");
+  const cmt=document.getElementById("pdComments");
+  if(!head||!cmt)return;
   const s=sLoad(),me=sMe(),p=s.posts.find(function(x){return x.id===PD_ID;});
   if(!p){
-    box.innerHTML='<div class="empty-hint">这条动态已经被删除了</div>';
+    head.innerHTML='';
+    cmt.innerHTML='<div class="empty-hint">这条动态已经被删除了</div>';
     hidePdBar();
     return;
   }
   const u=sUser(p.uid),mine=me&&p.uid===me.id;
   const likes=s.likes.filter(function(l){return l.a===p.id;});
   const cs=commentsOf(p.id),lk=postLiked(p.id);
-  let h='<div class="fcard" style="margin-top:14px;cursor:default">'+
+  /* 固定区：帖子正文 + 点赞 + 操作行 */
+  let h='<div class="fcard" style="margin-top:14px;cursor:default;margin-bottom:0">'+
     '<div class="fhead"><div class="fav fav-click" onclick="openUserProfile(\''+p.uid+'\')">'+sAv(u)+'</div>'+
     '<div class="fmeta"><div class="fname fav-click" onclick="openUserProfile(\''+p.uid+'\')">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
-    /* v1.20：可见性标签只有自己能看到 */
     (mine?'<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span>':'')+'</div>';
   if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
   if(p.images&&p.images.length)h+='<div class="fimgs" style="grid-template-columns:repeat(2,1fr)">'+
@@ -4587,7 +4642,6 @@ function renderPostDetail(){
   if(p.workout&&p.workout.length)h+='<div class="workout-box">'+p.workout.map(function(x){
     return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+
     '<span class="wb-more" onclick="openRecords(\''+p.uid+'\')">'+(mine?"看我的记录 ›":"看 TA 的记录 ›")+'</span></div>';
-  /* v1.17：上面单独显示「谁点赞 + 人数」；下面一行放「评论 N 条」+ 最右边的「[爱心] 点赞」按钮 */
   h+='<div class="pd-like">'+
     '<span class="lb">👍 '+likes.length+' 人点赞</span>';
   if(likes.length){
@@ -4597,23 +4651,22 @@ function renderPostDetail(){
     }).join("");
   }
   h+='</div>';
-  /* 操作行：评论数在左，点赞按钮在最右（爱心图标 + 点赞，不显示数字） */
   h+='<div class="pd-actbar">'+
     '<span class="pd-act-comment">💬 评论 '+cs.length+'</span>'+
     '<button class="pd-likebtn'+(lk?" on":"")+'" onclick="toggleLike(\''+p.id+'\')">'+
     '<span class="pd-thumb">❤️</span>'+(lk?"已赞":"点赞")+'</button>'+
-    '</div>';
-  /* 评论 */
-  h+='<div class="sec-title" style="margin-top:16px">评论 <span>共 '+cs.length+' 条</span></div><div class="pd-cm">';
-  h+=cs.length?cs.map(function(c){
+    '</div></div>';
+  head.innerHTML=h;
+  /* 滚动区：评论列表 */
+  let ch='<div class="sec-title" style="margin-top:14px">评论 <span>共 '+cs.length+' 条</span></div>';
+  ch+=cs.length?cs.map(function(c){
     const cu=sUser(c.uid);
     return '<div class="fcm"><div class="fcm-av fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sAv(cu)+'</div><div class="fcm-body">'+
       '<div class="fcm-name"><span class="fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sEsc(cu.name)+'</span><span>'+sTime(c.ts)+'</span>'+
       (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
       '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
   }).join(""):'<div class="pd-empty">还没有评论，来说一句</div>';
-  h+='</div>';
-  box.innerHTML=h;
+  cmt.innerHTML=ch;
   renderPdBar(p,me);
 }
 /* v1.15：评论输入条是固定条，单独渲染 —— 和内容分开，滚动时不会穿模盖住评论。
@@ -4751,15 +4804,21 @@ function bindFeedPull(){
   const sc=document.getElementById("screen");
   if(!sc||sc._pfReady)return;
   sc._pfReady=1;
+  /* v1.23：动态页内部滚动后，下拉刷新改监听 .feed-scroll 容器 */
+  function scrollEl(){
+    return document.querySelector("#page-feed .feed-scroll")||sc;
+  }
   sc.addEventListener("touchstart",function(e){
     const pg=document.getElementById("page-feed");
     if(e.touches.length!==1||!pg||!pg.classList.contains("on")){PF.on=false;return;}
-    PF.on=(sc.scrollTop<=0);PF.y=e.touches[0].clientY;PF.dy=0;
+    const el=scrollEl();
+    PF.on=(el.scrollTop<=0);PF.y=e.touches[0].clientY;PF.dy=0;
   },{passive:true});
   sc.addEventListener("touchmove",function(e){
     if(!PF.on||e.touches.length!==1)return;
+    const el=scrollEl();
     const dy=e.touches[0].clientY-PF.y;
-    if(dy<=0||sc.scrollTop>0){PF.dy=0;setPullHint(0);return;}
+    if(dy<=0||el.scrollTop>0){PF.dy=0;setPullHint(0);return;}
     PF.dy=Math.min(dy,110);
     setPullHint(PF.dy);
   },{passive:true});
@@ -4784,7 +4843,8 @@ function refreshFeedNow(){
       if(p.vis==="friends"&&p.uid!==s.session&&!sFriend(p.uid))return false;
       return true;}).length;
     if(h){h.className="pullhint";h.textContent="";}
-    const sc=document.getElementById("screen");if(sc)sc.scrollTop=0;
+    const sc=document.querySelector("#page-feed .feed-scroll")||document.getElementById("screen");
+    if(sc)sc.scrollTop=0;
     toast(got?("有 "+got+" 条新动态"):"已经是最新的了");
   };
   let pr=null;
@@ -4937,7 +4997,12 @@ function openChat(id){chatWith=id;
   const m=document.getElementById("chatPickerModal");if(m)m.classList.remove("on");
   document.getElementById("emojiPanel").classList.remove("on");
   markPeerRead(id);          /* v1.21：进入会话即视为已读，清掉该好友的未读角标和红点 */
+  /* v1.22：返回目标按「从哪进来回哪去」动态记录，避免 SUB_PARENT.chat 被上一次污染 */
+  const from=(typeof currentPageName==="function")?currentPageName():"chats";
+  SUB_PARENT.chat=(from==="user"||from==="friends"||from==="chats")?from:"chats";
   switchTab("chat");}
+/* v1.22：聊天页顶部返回按钮，回来源页 */
+function chatBack(){switchTab(SUB_PARENT.chat||"chats");}
 function openChatPicker(){
   const me=sMe(),el=document.getElementById("chatPickerList");if(!el)return;
   const ids=me?sFollowingIds(me.id).concat(sFollowers(me.id)):[];
@@ -5042,7 +5107,8 @@ function buildNotifications(){
     if(l.b===me.id)return;                       /* 自己点的赞不算 */
     const p=s.posts.find(function(x){return x.id===l.a;});
     if(p&&p.uid===me.id){
-      list.push({type:"like",uid:l.b,ts:p.ts,text:"赞了你的动态",post:l.a});
+      /* v1.22：用点赞真实时间（l.ts），旧的本地赞没有 ts 就退回帖子时间 */
+      list.push({type:"like",uid:l.b,ts:(l.ts||p.ts),text:"赞了你的动态",post:l.a});
     }
   });
   /* 评论：别人评论了我的动态 */
@@ -5108,7 +5174,7 @@ function renderNotifEntry(){
 }
 /* 点通知跳转 */
 function notifTap(type,postId){
-  if(type==="follow"){switchTab("friends");setFriendTab("followers");return;}
+  if(type==="follow"){openFriends("followers");return;}
   if(type==="like"||type==="comment"){
     if(postId){openPostDetail(postId,"chats");return;}
     switchTab("feed");
