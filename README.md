@@ -116,7 +116,7 @@ python -m http.server 8080
 
 1. 打开仓库的 **Actions** 页 → 左侧选「打包 PUSHUP APK」→ 点 **Run workflow**（推荐）；或者改动 `index.html` / `icons` / `capacitor.config.json` 后推到 `main` 自动触发。
 2. 等构建完成（约几分钟），在该次运行的 **Artifacts** 里下载 `PUSHUP-APK`；同一个包也会发到仓库 **Releases**，手机浏览器可直接下载。
-3. 把 Releases 里最新的 `PUSHUP-v*.apk`（当前 v1.10）传到手机，允许「未知来源」后安装即可。这是带 debug 签名的可安装包，不需要额外配置。
+3. 把 Releases 里最新的 `PUSHUP-v*.apk`（当前 v1.15）传到手机，允许「未知来源」后安装即可。这是带 debug 签名的可安装包，不需要额外配置。
 
 **版本号与更新日志**：`version.json` 是唯一版本源，构建时校验它与 `index.html` 的 `APP_VERSION` 一致，并据此设置 `versionName`、APK 文件名、Release 的 tag / 标题 / 正文。每次迭代升版本号，Release 里显示的是本次更新日志，不再是「自动构建」的固定话术；完整历史见 [`CHANGELOG.md`](./CHANGELOG.md)。
 

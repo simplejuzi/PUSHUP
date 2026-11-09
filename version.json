@@ -1,12 +1,11 @@
 {
-  "version": "1.10",
-  "tag": "v1.10",
-  "apk": "PUSHUP-v1.10.apk",
-  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.10/PUSHUP-v1.10.apk",
+  "version": "1.15",
+  "tag": "v1.15",
+  "apk": "PUSHUP-v1.15.apk",
+  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.15/PUSHUP-v1.15.apk",
   "changelog": [
-    "默认服务器地址改成自建反代：国内直连 Supabase 的域名会被阻断，现在装完直接就能连上，不用手动填",
-    "连不上服务器时，提示条会显示当前用的是哪个地址，点一下就能换",
-    "设置 → 服务器 里新增「改用官方直连」，换个网络环境想直连时随时能切回",
-    "自检与诊断区分「官方直连 / 自建代理 / 自定义」三种状态"
+    "动态详情页：去掉下面重复的点赞按钮，直接点「N 人点赞」那一行就能点赞 / 取消，已点赞时变强调色、大拇指变实心",
+    "修：详情页评论输入框一聚焦，就冒出一个半透明的「保存」悬浮球——保存球收起时不再让路变半透明",
+    "修：滚动详情页时评论输入条会跟着内容跑、盖住评论；现在固定在底栏上方，不再穿模"
   ]
 }

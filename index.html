@@ -198,6 +198,8 @@ h1.title.motto{font-size:20px;line-height:1.35;letter-spacing:-.4px;max-width:21
 .fab-save.dragging,.fab-save.dragging:active{transition:none;transform:scale(1.05);box-shadow:0 18px 36px rgba(var(--accent-rgb),.46)}
 .fab-save.hide{opacity:0;transform:scale(.6);pointer-events:none}
 .fab-save.dim{opacity:.26;transform:scale(.86)}
+/* v1.15：已经收起的球不能被 dim 顶出来（以前输入框一聚焦就冒出半透明的「保存」） */
+.fab-save.hide.dim{opacity:0;transform:scale(.6);pointer-events:none}
 .fab-save.saved{animation:fabPop .55s ease}
 @keyframes fabPop{0%{transform:scale(1)}40%{transform:scale(1.14)}70%{transform:scale(.97)}100%{transform:scale(1)}}
 .fab-save.nope{animation:fabNope .42s ease}
@@ -385,6 +387,28 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .stat3 .it:last-child{border-right:0}
 .stat3 .v{font-size:20px;font-weight:770;letter-spacing:-.5px}
 .stat3 .k{font-size:10.5px;color:var(--sub);margin-top:4px}
+/* v1.12：概览里能点的项（训练记录 / 动作总数） */
+.stat3 .it:active{background:var(--soft)}
+/* v1.12：训练记录列表 —— 简洁到一眼看出哪天练了什么 */
+.recs-sum{display:flex;gap:7px;flex-wrap:wrap;margin:12px 2px}
+.recs-sum span{font-size:11.5px;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.recs-sum b{color:var(--ink);font-weight:780}
+.recs-month{margin:8px 4px 2px;font-size:11px;color:var(--sub2);font-weight:700;letter-spacing:.02em}
+.recs-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.rrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:11px 13px}
+.rrow.tap{cursor:pointer}
+.rrow.tap:active{background:var(--soft)}
+.rdate{flex:none;width:50px;text-align:center}
+.rdate b{display:block;font-size:14.5px;font-weight:770;letter-spacing:-.2px}
+.rdate span{display:block;font-size:10.5px;color:var(--sub2);margin-top:1px}
+.rmain{flex:1;min-width:0}
+.rtop{display:flex;align-items:baseline;gap:5px}
+.rtop b{font-size:16px;font-weight:790;color:var(--accent);letter-spacing:-.3px}
+.rtop i{font-style:normal;font-size:11px;color:var(--sub)}
+.rtags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.rtags span{font-size:11px;color:var(--sub);background:var(--soft);border-radius:999px;padding:3px 8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrar{flex:none;color:var(--sub2);font-size:16px}
+.recs-empty{text-align:center;color:var(--sub2);font-size:12.5px;padding:44px 10px}
 .settings{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .sitem{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid var(--line);font-size:13.5px;font-weight:600;cursor:pointer}
 .sitem:last-child{border-bottom:0}
@@ -415,6 +439,17 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub2);cursor:pointer;font-size:10px;font-weight:650;background:none;border:0;font-family:inherit}
 .tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tab.on{color:var(--accent)}
+/* v1.14：底栏中间的「动态」做成凸起的主按钮 */
+.tab.mid{position:relative;padding-top:31px;gap:3px}
+.tab.mid .mid-ico{position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+  width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,var(--accent) 0%,var(--accent-mid) 100%);
+  box-shadow:0 10px 22px rgba(var(--accent-rgb),.36),0 2px 6px rgba(0,0,0,.14);
+  transition:transform .16s ease,box-shadow .16s ease}
+.tab.mid .mid-ico svg{width:24px;height:24px;stroke:#fff;stroke-width:2.1}
+.tab.mid:active .mid-ico{transform:translateX(-50%) scale(.93)}
+.tab.mid.on{color:var(--accent)}
+.tab.mid.on .mid-ico{box-shadow:0 10px 24px rgba(var(--accent-rgb),.5),0 0 0 4px rgba(var(--accent-rgb),.15)}
 .toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:11px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:88%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 /* v1.7：弹窗打开时把提示抬到弹窗上方，别被注册/登录面板盖住 */
@@ -640,8 +675,62 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .workout-box{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;background:var(--soft);border-radius:12px;padding:10px 11px}
 .workout-box span{font-size:11.5px;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
 .workout-box b{color:var(--accent);font-size:13px}
+.workout-box .wb-more{color:var(--accent);border-color:rgba(var(--accent-rgb),.35);cursor:pointer;font-weight:700}
 .fdel{font-size:11px;color:var(--sub2);margin-top:10px;cursor:pointer}
 .empty-hint{text-align:center;color:var(--sub2);font-size:12.5px;padding:34px 10px}
+/* ===== v1.13：图片全屏预览 ===== */
+.imgview{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:70;display:none;align-items:center;
+  justify-content:center;overflow:hidden;touch-action:none}
+.imgview.on{display:flex}
+.imgview img{max-width:100%;max-height:100%;user-select:none;-webkit-user-select:none;
+  will-change:transform;transition:transform .12s ease-out}
+.imgview .iv-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;
+  border:0;background:rgba(255,255,255,.16);color:#fff;font-size:17px;line-height:1;cursor:pointer;z-index:2}
+.imgview .iv-count{position:absolute;top:20px;left:0;right:0;text-align:center;
+  color:rgba(255,255,255,.82);font-size:12px;letter-spacing:.06em;pointer-events:none}
+.imgview .iv-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:56px;border:0;
+  border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer;z-index:2}
+.imgview .iv-nav.prev{left:8px}
+.imgview .iv-nav.next{right:8px}
+.imgview .iv-tip{position:absolute;bottom:20px;left:0;right:0;text-align:center;
+  color:rgba(255,255,255,.55);font-size:11px;pointer-events:none}
+/* ===== v1.13：动态详情 ===== */
+.pd-like{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:11px}
+.pd-like .lb{font-size:11.5px;color:var(--sub);margin-right:2px}
+.pd-like .who{display:inline-flex;align-items:center;gap:5px;background:var(--soft);
+  border-radius:999px;padding:4px 9px 4px 5px;font-size:11.5px;color:var(--ink);font-weight:650}
+.pd-like .who .av{width:20px;height:20px;font-size:11px;margin:0;vertical-align:0}
+.pd-like .who img{width:20px;height:20px;border-radius:50%;object-fit:cover}
+.pd-cm{margin-top:4px}
+.pd-cm .fcm{padding:10px 0}
+.pd-cm .fcm-name{font-size:12.5px}
+.pd-cm .fcm-text{font-size:13px}
+/* v1.15：评论条改成独立固定条（在 .phone 里，贴着底栏上方），
+   不再跟着详情页内容一起滚，也就不会盖住评论 */
+.pd-bar{position:absolute;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));
+  background:var(--card);border-top:1px solid var(--line);padding:9px 20px;
+  display:flex;gap:6px;align-items:center;z-index:6;
+  box-shadow:0 -8px 20px rgba(23,24,28,.06)}
+.pd-bar[hidden]{display:none}
+.pd-bar input{flex:1;min-width:0;border:1px solid var(--line);background:var(--soft);
+  border-radius:999px;height:32px;padding:0 13px;font:inherit;font-size:13px;
+  color:var(--ink);outline:0}
+/* v1.15：点赞并进「N 人点赞」这一行 —— 点它点赞 / 取消，只用颜色区分状态 */
+.pd-likebtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
+  background:var(--card);color:var(--sub);border-radius:999px;padding:6px 12px;
+  font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.pd-likebtn .pd-thumb{font-size:13px;filter:grayscale(1);opacity:.5;transition:filter .15s,opacity .15s}
+.pd-likebtn.on{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.1);color:var(--accent)}
+.pd-likebtn.on .pd-thumb{filter:none;opacity:1}
+.pd-likebtn:active{transform:scale(.96)}
+.pd-ops{display:flex;justify-content:flex-end;margin-top:2px}
+.pd-ops button{border:0;background:transparent;color:var(--sub2);font:inherit;
+  font-size:11.5px;padding:7px 2px;cursor:pointer}
+.pd-empty{text-align:center;color:var(--sub2);font-size:12px;padding:16px 0}
+/* ===== v1.13：下拉刷新提示 ===== */
+.pullhint{height:0;overflow:hidden;text-align:center;color:var(--sub2);font-size:11.5px;transition:height .16s}
+.pullhint.on{height:34px;line-height:34px}
+.fcard{cursor:pointer}
 .user-row{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:8px;box-shadow:var(--shadow);cursor:pointer}
 .user-mid{flex:1;min-width:0}
 .user-mid b{display:block;font-size:13px;color:var(--ink)}
@@ -702,7 +791,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .me-ph{font-size:26px;font-weight:700;color:var(--sub2)}
 .me-info{flex:1;min-width:0}
 .me-name{font-size:16px;font-weight:750;color:var(--ink)}
-.me-sub{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.45}
+.me-sub{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me-nums{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .me-num{font-size:11.5px;color:var(--sub);background:var(--soft);border-radius:999px;padding:5px 10px;cursor:pointer}
 .me-num b{color:var(--accent);font-size:13px;margin-left:2px}
@@ -809,7 +898,12 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           </div>
           <div class="sumbar" id="monthSummary"></div>
           <div class="detail" id="dayDetail"></div>
-          <div class="sec-title">本月记录<span>点击可编辑 / 补录</span></div>
+          <div class="sec-title">训练记录<span>点一条可编辑 / 补录</span></div>
+          <div class="filters" id="recRangeFilters" style="margin-top:10px">
+            <button class="fchip" data-r="all" onclick="setRecRange('all')">全部</button>
+            <button class="fchip on" data-r="7" onclick="setRecRange('7')">近七天</button>
+            <button class="fchip" data-r="30" onclick="setRecRange('30')">一个月</button>
+          </div>
           <div class="list" id="recordList"></div>
           <div style="height:10px"></div>
         </div>
@@ -873,11 +967,19 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <span class="feed-me-go" id="feedMeGo">去登录</span>
         </div>
         <div class="seg-row">
-          <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all')">全部</button>
-          <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends')">好友</button>
+          <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all',1)">全部</button>
+          <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends',1)">好友</button>
         </div>
+        <div class="pullhint" id="pullHint"></div>
         <div id="feedList"></div>
         <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.13：动态详情（图文 + 谁点赞 + 谁评论，评论只能在这里发） ===== -->
+      <div class="page" id="page-post">
+        <div class="sub-back" onclick="closePostDetail()">‹ 返回动态</div>
+        <div id="pdBody"></div>
+        <div style="height:92px"></div>
       </div>
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
@@ -977,6 +1079,18 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div style="height:80px"></div>
       </div>
 
+      <!-- ===== v1.12：训练记录（简洁列表，可看自己，也可看别人公开的部分） ===== -->
+      <div class="page" id="page-recs">
+        <div class="sub-back" onclick="closeRecords()">‹ 返回</div>
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">RECORDS</div><h1 class="title" id="recsTitle">训练记录</h1></div>
+          <div class="badge" id="recsCount">0 天</div>
+        </div>
+        <div class="recs-sum" id="recsSum"></div>
+        <div class="recs-list" id="recsList"></div>
+        <div style="height:80px"></div>
+      </div>
+
       <!-- ===== 设置：原我的页所有设置 / 关于项统一搬到这里 ===== -->
       <div class="page" id="page-settings">
         <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
@@ -1061,10 +1175,16 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     <div class="tabbar">
       <button class="tab on" id="tab-record" onclick="switchTab('record')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>记录</button>
       <button class="tab" id="tab-data" onclick="switchTab('data')"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
-      <button class="tab" id="tab-feed" onclick="switchTab('feed')"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3V5z"/><path d="M8 9h8M8 13h5"/></svg>动态</button>
+      <button class="tab mid" id="tab-feed" onclick="switchTab('feed')" aria-label="动态">
+        <span class="mid-ico"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3V5z"/><path d="M8 9h8M8 13h5"/></svg></span>
+        <span>动态</span>
+      </button>
       <button class="tab" id="tab-chats" onclick="switchTab('chats')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/><path d="M8 9h8M8 12h5"/></svg>消息</button>
       <button class="tab" id="tab-profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
     </div>
+
+    <!-- v1.15：详情页评论输入条（固定贴在底栏上方，不跟着内容滚） -->
+    <div class="pd-bar" id="pdBar" hidden></div>
 
     <!-- v1.7：悬浮保存球（拖动后自动吸附左右侧边，位置记住） -->
     <button class="fab-save" id="fabSave" onclick="fabTap()" aria-label="保存记录">
@@ -1140,6 +1260,16 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="ins-head"><b>找人聊聊</b><button class="tx" onclick="document.getElementById('chatPickerModal').classList.remove('on')">✕</button></div>
         <div id="chatPickerList"></div>
       </div>
+    </div>
+
+    <!-- ===== v1.13：图片全屏预览（点空白退出） ===== -->
+    <div id="imgView" class="imgview" onclick="if(event.target===this)closeImgView()">
+      <button class="iv-close" onclick="event.stopPropagation();closeImgView()">✕</button>
+      <div class="iv-count" id="ivCount">1 / 1</div>
+      <button class="iv-nav prev" id="ivPrev" onclick="event.stopPropagation();ivStep(-1)">‹</button>
+      <button class="iv-nav next" id="ivNext" onclick="event.stopPropagation();ivStep(1)">›</button>
+      <img id="ivImg" alt="图片预览" onclick="event.stopPropagation()" ondblclick="ivZoomToggle()">
+      <div class="iv-tip" id="ivTip">双指放大 · 双击放大 · 单击空白退出</div>
     </div>
 
     <!-- ===== v1.5 内置表情 / 表情包 ===== -->
@@ -1232,7 +1362,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
     <div class="modal" id="profileModal">
       <div class="sheet">
         <div class="sh-t">编辑个人资料</div>
-        <div class="sh-s">头像和名字只存在这台手机上，不会上传。头像会自动压缩，换设备可用「导出备份」带走。</div>
+        <div class="sh-s">昵称和头像会同步到账号，朋友在动态里看到的就是这个（昵称不能和别人重复，保存前会先查一下线上）。</div>
         <div class="pe-avatar-wrap">
           <img id="peAvatar" alt="头像预览">
           <div class="pe-avatar-btns">
@@ -1244,7 +1374,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div class="form">
           <label>昵称<input id="peName" type="text" maxlength="12" placeholder="卷卷大人"></label>
         </div>
-        <div class="sh-btns"><button onclick="closeProfileEdit()">取消</button><button class="primary" onclick="saveProfileEdit()">保存</button></div>
+        <div class="sh-btns"><button onclick="closeProfileEdit()">取消</button><button class="primary" id="peSave" onclick="saveProfileEdit()">保存</button></div>
       </div>
     </div>
     <!-- v1.2：突破奖励（今天比上次多做 >10 个） -->
@@ -1396,13 +1526,12 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.10";
+const APP_VERSION="v1.15";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "默认服务器地址改成自建反代：国内直连 Supabase 的域名会被阻断，现在装完直接就能连上，不用手动填",
-  "连不上服务器时，提示条会显示当前用的是哪个地址，点一下就能换",
-  "设置 → 服务器 里新增「改用官方直连」，换个网络环境想直连时随时能切回",
-  "自检与诊断区分「官方直连 / 自建代理 / 自定义」三种状态"
+  "动态详情页：去掉下面重复的点赞按钮，直接点「N 人点赞」那一行就能点赞 / 取消，已点赞时变强调色、大拇指变实心",
+  "修：详情页评论输入框一聚焦，就冒出一个半透明的「保存」悬浮球——保存球收起时不再让路变半透明",
+  "修：滚动详情页时评论输入条会跟着内容跑、盖住评论；现在固定在底栏上方，不再穿模"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -1618,11 +1747,12 @@ function switchTab(name){
   document.getElementById("page-"+name).classList.add("on");
   const _tb=document.getElementById("tab-"+name);
   if(_tb)_tb.classList.add("on");
-  else{const _p=(name==="friends"||name==="settings"||name==="myposts")?"profile":(name==="library"?"record":(name==="chat"?"chats":"feed"));
+  else{const _p=(name==="friends"||name==="settings"||name==="myposts"||name==="recs")?"profile":(name==="library"?"record":(name==="chat"?"chats":"feed"));
        const _pe=document.getElementById("tab-"+_p);if(_pe)_pe.classList.add("on");}
   document.getElementById("libFoot").classList.toggle("hide",!(name==="library"&&libDirty));
   if(name==="record")refreshFab();else setFabVisible(false);   /* v1.7：只在记录页 + 有改动时出现 */
   document.getElementById("screen").scrollTop=0;
+  if(name!=="post")hidePdBar();          /* v1.15：评论条只在详情页出现 */
   if(name==="data"){if(dataView==="history")renderHistory();else renderStats();}
   if(name==="library")renderLibrary();
   if(name==="record"||name==="data")pullRecordsThrottled();
@@ -1647,8 +1777,9 @@ function renderAll(){fillRecord();renderStats();renderHistory();renderLibrary();
    Native（MainActivity.onBackPressed）会调 window.__pushupBack()：
    返回 true  = 网页自己处理了（关弹窗 / 回上一级），别退出 App
    返回 false = 已经在记录首页，允许退出（退出前做了「再按一次」防误触） */
-const SUB_PARENT={library:"record",myposts:"profile",friends:"profile",chat:"chats",settings:"profile"};
+const SUB_PARENT={library:"record",myposts:"profile",friends:"profile",chat:"chats",settings:"profile",recs:"profile",post:"feed"};
 const BACK_MODALS=[
+  ["imgView",closeImgView],
   ["emojiPanel",function(){const m=document.getElementById("emojiPanel");if(m)m.classList.remove("on");}],
   ["breakModal",closeBreakthrough],
   ["updateModal",closeUpdate],
@@ -2024,7 +2155,8 @@ function initFab(){
   /* 输入框获得焦点（键盘弹出）时先让开，别挡住正在改的数字 */
   document.addEventListener("focusin",e=>{
     const t=e&&e.target;
-    if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"))el.classList.add("dim");
+    /* v1.15：只有球本来就露在外面时才让路；已收起（不在记录页 / 没改动）就别动它 */
+    if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA")&&!el.classList.contains("hide"))el.classList.add("dim");
   });
   document.addEventListener("focusout",()=>el.classList.remove("dim"));
 }
@@ -2044,6 +2176,23 @@ function streakDays(){
   let cur=parseD(todayStr()),n=0;
   while(set.has(k(cur))){n++;cur.setDate(cur.getDate()-1);}
   return n;
+}
+/* v1.12：连续天数只给一句话，别太长
+   今天练了 → 连续 N 天；只是今天还没练（断不到 2 天）→ 今天还没有训练哦；
+   超过 2 天没练 → 最近还没有训练哦；一条记录都没有 → 还没有训练记录 */
+function latestRecDate(){
+  let m="";
+  DATA.forEach(function(r){if(r&&r.d&&r.d>m)m=r.d;});
+  return m;
+}
+function streakText(){
+  const n=streakDays();
+  if(n>0)return "连续 "+n+" 天";
+  const last=latestRecDate();
+  if(!last)return "还没有训练记录";
+  const gap=Math.round((parseD(todayStr())-parseD(last))/864e5);
+  if(gap<=2)return "今天还没有训练哦";
+  return "最近还没有训练哦";
 }
 function renderHistory(){
   let[y,m]=curMonth;
@@ -2074,8 +2223,34 @@ function renderHistory(){
     '<div class="it"><div class="v">'+total+'</div><div class="k">本月累计</div></div>'+
     '<div class="it"><div class="v">'+(monthRows.length?Math.round(total/monthRows.length):0)+'</div><div class="k">日均</div></div>';
   renderDayDetail();
-  const list=[...monthRows].sort((a,b)=>b.d.localeCompare(a.d));
-  document.getElementById("recordList").innerHTML=list.length?list.map(r=>{
+  renderRecRangeList();
+}
+/* v1.14：历史页下面的记录列表按「全部 / 近七天 / 一个月」筛选，默认近七天 */
+var REC_RANGE="7";
+function setRecRange(k){
+  if(k!=="all"&&k!=="7"&&k!=="30")k="7";
+  REC_RANGE=k;
+  document.querySelectorAll(".fchip[data-r]").forEach(function(b){
+    b.className="fchip"+((b.getAttribute("data-r")||"")===k?" on":"");
+  });
+  renderRecRangeList();
+}
+function recRowsForRange(){
+  const rows=DATA.slice();
+  if(REC_RANGE==="all")return rows.sort(function(a,b){return b.d.localeCompare(a.d);});
+  const days=Number(REC_RANGE)||7;
+  const end=parseD(todayStr());
+  const start=new Date(end.getTime()-(days-1)*864e5);
+  return rows.filter(function(r){
+    const d=parseD(r.d);
+    return d>=start&&d<=end;
+  }).sort(function(a,b){return b.d.localeCompare(a.d);});
+}
+function renderRecRangeList(){
+  const box=document.getElementById("recordList");if(!box)return;
+  const list=recRowsForRange();
+  const empty=(REC_RANGE==="7"?"近七天还没有记录":(REC_RANGE==="30"?"近一个月还没有记录":"还没有任何记录"));
+  box.innerHTML=list.length?list.map(function(r){
     const tags=[];
     if(r.w!=null)tags.push('<span class="tag">'+r.w.toFixed(2)+' kg</span>');
     if(r.a!=null)tags.push('<span class="tag">臂围 '+r.a+' cm</span>');
@@ -2083,8 +2258,9 @@ function renderHistory(){
     if(!tags.length&&!extra)tags.push('<span class="tag" style="background:transparent;color:var(--sub2)">仅俯卧撑</span>');
     return '<div class="row" onclick="editFrom(\''+r.d+'\')"><div class="dt"><div class="dd">'+fmtSlash(r.d)+'</div><div class="dw">'+wdOf(r.d)+'</div></div>'+
       '<div class="pv">'+r.p+'<small>个</small></div><div class="tags">'+extra+tags.join("")+'</div><div class="arrow">›</div></div>';
-  }).join(""):'<div class="muted" style="text-align:center;padding:24px">这个月还没有记录</div>';
+  }).join(""):'<div class="muted" style="text-align:center;padding:24px">'+empty+'</div>';
 }
+
 function pickDate(ds){if(ds>todayStr())return;selDate=ds;renderHistory();document.getElementById("dayDetail").scrollIntoView({behavior:"smooth",block:"nearest"});}
 function renderDayDetail(){
   const r=byDate(selDate),box=document.getElementById("dayDetail");
@@ -2110,7 +2286,7 @@ function renderStats(){
     document.getElementById("kpis").innerHTML=
       kpi0("累计俯卧撑",0,"个","0 天打卡",true)+kpi0("日均",0,"个","还没有数据",false)+
       kpi0("单日最高",0,"个","—",false)+kpi0("连续打卡",0,"天","—",false);
-    document.getElementById("streakText").textContent="连续 0 天";
+    document.getElementById("streakText").textContent=streakText();
     const empty='<div class="muted" style="text-align:center;padding:34px 10px;font-size:12.5px">还没有记录，去「记录」页保存第一条吧</div>';
     document.getElementById("barChart").innerHTML=empty;
     document.getElementById("lineChart").innerHTML=empty;
@@ -2129,7 +2305,7 @@ function renderStats(){
   const stD=parseD(TODAY);stD.setDate(stD.getDate()-Math.max(0,streak-1));
   const streakStart=slash2(key(stD))+" 起";
   document.getElementById("kpis").innerHTML=kpi("累计俯卧撑",total,"个",DATA.length+" 天打卡",true)+kpi("日均",avg,"个","最高单日 "+best,false)+kpi("单日最高",best,"个",bestDates,false)+kpi("连续打卡",streak,"天",streakStart,false);
-  document.getElementById("streakText").textContent="连续 "+streak+" 天";
+  document.getElementById("streakText").textContent=streakText();
   const rows=[...DATA].sort((a,b)=>a.d.localeCompare(b.d)),W=342,H=132,maxV=Math.max(1,...rows.map(r=>r.p||0));
   if(rows.length){
     const axA=document.getElementById("axA"),axB=document.getElementById("axB"),axC=document.getElementById("axC");
@@ -2375,10 +2551,11 @@ function renderProfile(){
   setTxt("profileName",NICKNAME);
   const pTotal=DATA.reduce((a,r)=>a+(r.p||0),0);
   setTxt("profileSub",DATA.length?("已记录 "+DATA.length+" 天 · 累计 "+pTotal.toLocaleString()+" 个"):"还没有记录 · 从今天开始");
+  /* v1.14：这三项都能点，但外观保持以前的灰色，不额外暗示可点 */
   document.getElementById("profileStats").innerHTML=
-    '<div class="it"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
-    '<div class="it"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
-    '<div class="it"><div class="v">'+FAVS.length+'</div><div class="k">常用动作</div></div>';
+    '<div class="it" onclick="openRecords()"><div class="v">'+DATA.length+'</div><div class="k">训练记录</div></div>'+
+    '<div class="it" onclick="switchTab(\'library\')"><div class="v">'+EX.length+'</div><div class="k">动作总数</div></div>'+
+    '<div class="it" onclick="switchTab(\'data\')"><div class="v">'+DATA.length+'</div><div class="k">健身天数</div></div>';
   document.getElementById("themeLight").className=THEME==="light"?"on":"";
   document.getElementById("themeDark").className=THEME==="dark"?"on":"";
   document.getElementById("themeAuto").className=THEME==="auto"?"on":"";
@@ -2388,6 +2565,94 @@ function renderProfile(){
   const pv=document.getElementById("profileVersion");if(pv)pv.textContent=APP_VERSION;
   const av=document.getElementById("aboutVersion");if(av)av.textContent=APP_VERSION+" · 正式版";
   const cv=document.getElementById("curVersion");if(cv)cv.textContent=APP_VERSION;
+}
+/* ============ v1.12：训练记录页 ============
+   一张简洁列表：左边日期，右边「总个数 + 动作小标签」，一眼看出哪天练了什么。
+   自己的记录来自本机；别人的只能看到 TA 发动态时公开的那部分训练成果
+   （records 表是本人私有的，数据库层面就读不到别人的）。 */
+let RECS_UID="",RECS_BACK="profile";
+function openRecords(uid){
+  const from=(typeof currentPageName==="function")?currentPageName():"profile";
+  RECS_BACK=(from==="recs")?"profile":(from||"profile");
+  SUB_PARENT.recs=RECS_BACK;                 /* 返回键回到来的那一页 */
+  RECS_UID=String(uid||"");
+  renderRecordsPage();
+  switchTab("recs");
+}
+function closeRecords(){switchTab(RECS_BACK||"profile");}
+function tsDate(ts){
+  const d=new Date(Number(ts)||0);
+  if(isNaN(d.getTime()))return "";
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function recsRows(uid){
+  const meId=(sLoad().session)||"";
+  if(!uid||uid===meId){
+    return DATA.map(function(r){
+      const src=(r.items&&r.items.length)?r.items:[{id:"pushup",v:r.p}];
+      return {d:r.d,total:Number(r.p)||0,w:r.w,a:r.a,self:true,
+        items:src.map(function(i){
+          const e=exById(i.id)||{n:i.id,u:""};
+          return {n:e.n,v:(i.v==null?null:i.v),u:e.u||""};
+        })};
+    });
+  }
+  const seen={},rows=[];
+  sLoad().posts.forEach(function(p){
+    if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
+    const d=tsDate(p.ts);if(!d||seen[d])return;
+    seen[d]=1;
+    rows.push({d:d,self:false,
+      total:p.workout.reduce(function(a,x){return a+(Number(x.v)||0);},0),
+      items:p.workout.map(function(x){return {n:x.n,v:x.v,u:x.u||""};})});
+  });
+  return rows;
+}
+function renderRecordsPage(){
+  const me=sMe(),uid=RECS_UID;
+  const isSelf=!uid||(me&&uid===me.id);
+  const who=isSelf?null:sUser(uid);
+  const title=document.getElementById("recsTitle");
+  if(title)title.textContent=isSelf?"训练记录":((who&&who.name?who.name:"TA")+"的训练");
+  const rows=recsRows(isSelf?"":uid).filter(function(r){return !!r.d;})
+    .sort(function(a,b){return b.d.localeCompare(a.d);});
+  const cnt=document.getElementById("recsCount");if(cnt)cnt.textContent=rows.length+" 天";
+  const total=rows.reduce(function(a,r){return a+(Number(r.total)||0);},0);
+  const names={};rows.forEach(function(r){r.items.forEach(function(i){if(i.n)names[i.n]=1;});});
+  let sum='<span><b>'+rows.length+'</b> 天</span><span>累计 <b>'+total.toLocaleString()+'</b> 个</span>';
+  if(Object.keys(names).length)sum+='<span><b>'+Object.keys(names).length+'</b> 种动作</span>';
+  if(!isSelf)sum+='<span>只有 TA 公开的部分</span>';
+  const sumEl=document.getElementById("recsSum");if(sumEl)sumEl.innerHTML=sum;
+  const box=document.getElementById("recsList");if(!box)return;
+  if(!rows.length){
+    box.innerHTML='<div class="recs-empty">'+(isSelf?"还没有记录，去「记录」页保存第一条吧":"TA 还没有公开过训练内容")+'</div>';
+    return;
+  }
+  let h="",month="";
+  rows.forEach(function(r){
+    const m=r.d.slice(0,7);
+    if(m!==month){month=m;h+='<div class="recs-month">'+m.slice(0,4)+" 年 "+Number(m.slice(5))+" 月</div>";}
+    const items=r.items.filter(function(i){return i.n;});
+    const shown=items.slice(0,3).map(function(i){
+      return '<span>'+sEsc(i.n)+(i.v!=null?" "+i.v+(i.u||""):"")+'</span>';
+    }).join("");
+    const more=items.length>3?'<span>+'+(items.length-3)+'</span>':"";
+    const extra=[];
+    if(r.w!=null&&r.w!=="")extra.push('<span>'+Number(r.w).toFixed(2)+' kg</span>');
+    if(r.a!=null&&r.a!=="")extra.push('<span>臂围 '+r.a+' cm</span>');
+    const tags=shown+more+extra.join("");
+    h+='<div class="rrow'+(r.self?" tap":"")+'"'+(r.self?' onclick="openRecsDay(\''+r.d+'\')"':"")+'>'+
+      '<div class="rdate"><b>'+r.d.slice(5).replace("-","/")+'</b><span>'+wdOf(r.d)+'</span></div>'+
+      '<div class="rmain"><div class="rtop"><b>'+(Number(r.total)||0)+'</b><i>个</i></div>'+
+      '<div class="rtags">'+(tags||'<span>未填写动作</span>')+'</div></div>'+
+      (r.self?'<div class="rrar">›</div>':"")+'</div>';
+  });
+  box.innerHTML=h;
+}
+function openRecsDay(d){
+  if(!d)return;
+  keepDateOnce=true;curDate=d;
+  switchTab("record");
 }
 const MQ=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
 
@@ -2502,10 +2767,34 @@ function closeImport(){document.getElementById("importModal").classList.remove("
 
 /* ============ v1.2：编辑个人资料 ============ */
 function openProfileEdit(){
+  /* v1.11：登录态下先把账号资料补到本机，避免弹窗里还是安装默认的头像和名字 */
+  try{
+    const me=sMe();
+    if(me){
+      if(NICKNAME===DEFAULT_NICKNAME&&me.name)NICKNAME=me.name;
+      if((!AVATAR||AVATAR===DEFAULT_AVATAR)&&me.avatar)AVATAR=me.avatar;
+      try{localStorage.setItem(NKEY,NICKNAME);localStorage.setItem(AKEY,AVATAR);}catch(e){}
+      setTxt("profileName",NICKNAME);
+      const pa=document.getElementById("profileAvatar");if(pa)pa.src=AVATAR||DEFAULT_AVATAR;
+    }
+  }catch(e){}
   pendingAvatar=AVATAR||DEFAULT_AVATAR;
   document.getElementById("peAvatar").src=pendingAvatar;
   document.getElementById("peName").value=NICKNAME;
   document.getElementById("profileModal").classList.add("on");
+  /* 再向云端确认一次（别的设备可能改过），回来顺手刷新页面上的资料卡 */
+  if(typeof pullMyProfile==="function"){
+    pullMyProfile().then(function(changed){
+      if(!changed)return;
+      try{
+        const pa=document.getElementById("profileAvatar");if(pa)pa.src=AVATAR||DEFAULT_AVATAR;
+        const na=document.getElementById("peAvatar");if(na)na.src=AVATAR||DEFAULT_AVATAR;
+        const ni=document.getElementById("peName");
+        if(ni&&document.activeElement!==ni)ni.value=NICKNAME;
+        pendingAvatar=AVATAR||DEFAULT_AVATAR;
+      }catch(e){}
+    });
+  }
 }
 function closeProfileEdit(){document.getElementById("profileModal").classList.remove("on");}
 function pickAvatar(){const el=document.getElementById("avatarFile");if(el)el.click();}
@@ -2537,32 +2826,44 @@ function saveProfileEdit(){
   const el=document.getElementById("peName");
   const nm=((el&&el.value)||"").trim().slice(0,12)||DEFAULT_NICKNAME;
   const me0=sMe();
-  /* v1.5：改昵称也要查重，不能改成别人的名字 */
-  if(nameTaken(nm,me0?me0.id:"")){toast("这个名称已经有人用了，换一个");return;}
-  const prevN=NICKNAME,prevA=AVATAR;
-  NICKNAME=nm;AVATAR=pendingAvatar||DEFAULT_AVATAR;
+  /* v1.5：先查本机缓存（从云端拉下来过的资料都在这里），最快能挡掉大部分重名 */
+  if(nameTaken(nm,me0?me0.id:"")){toast("这个名称已经有人用了，换一个");return Promise.resolve(false);}
+  const av=pendingAvatar||DEFAULT_AVATAR;
+  if(nm===NICKNAME&&av===AVATAR){closeProfileEdit();return Promise.resolve(true);}
+  const btn=document.getElementById("peSave");
+  const busy=function(on,txt){
+    if(!btn)return;
+    btn.disabled=!!on;
+    btn.textContent=on?(txt||"检查中…"):"保存";
+  };
+  /* v1.12：保存前先问一次数据库，名字被别人占着就不让保存
+     （以前是先写本地再回滚，界面上会先闪一下新名字） */
+  if(!(CLOUD()&&me0&&typeof cloudNameTaken==="function")) return Promise.resolve(doProfileSave(nm,av));
+  const check=cloudNameTaken(nm,me0?me0.id:"");
+  busy(true);
+  return check.then(function(taken){
+    busy(false);
+    if(taken){toast("这个名称已经有人用了，换一个");return false;}
+    return doProfileSave(nm,av);
+  }).catch(function(){
+    busy(false);
+    return doProfileSave(nm,av);        /* 云端查不了（没网 / 没登录）就先按本机结果保存 */
+  });
+}
+/* 真正落本地 + 上行云端 */
+function doProfileSave(nm,av){
+  NICKNAME=nm;AVATAR=av;
   saveAll();closeProfileEdit();renderProfile();
-  /* v1.5：本地资料与社区账号保持同步，资料卡 / 动态条立即刷新 */
   try{
     const me=sMe();
     if(me){me.name=NICKNAME;me.avatar=AVATAR;sSave();
-      if(typeof sbUpsertProfile==="function")sbUpsertProfile(me);
+      /* v1.11：改名要真的写进云端 profiles 行，否则换台设备登录还是旧名字 */
+      if(typeof sbUpdateProfile==="function")sbUpdateProfile(me);
+      if(typeof pushSettings==="function")pushSettings(false).catch(function(){});
       renderMeCard();renderFeedMe();renderFeed();}
   }catch(e){}
   toast("资料已保存");
-  /* 云端再核一次，防本地缓存过期；真撞车就回滚并提示，不让你占别人的名字 */
-  if(CLOUD()&&me0){
-    cloudNameTaken(nm,me0.id).then(function(t){
-      if(!t)return;
-      NICKNAME=prevN;AVATAR=prevA;pendingAvatar=prevA;
-      saveAll();renderProfile();
-      const me=sMe();
-      if(me){me.name=prevN;me.avatar=prevA;sSave();
-        if(typeof sbUpsertProfile==="function")sbUpsertProfile(me);}
-      renderMeCard();renderFeedMe();renderFeed();
-      toast("这个名称已经有人用了，已还原");
-    }).catch(function(){});
-  }
+  return true;
 }
 
 /* ============ 清空数据 ============
@@ -3243,7 +3544,7 @@ function renderMeCard(){
          av.className="me-av"+(me?"":" off");}
   const n=document.getElementById("meName"),sub=document.getElementById("meSub");
   if(n)n.textContent=me?me.name:"未登录";
-  if(sub)sub.textContent=me?("已记录 "+((typeof DATA!=="undefined"?DATA:[]).length)+" 天 · 点卡片编辑资料")
+  if(sub)sub.textContent=me?("已记录 "+((typeof DATA!=="undefined"?DATA:[]).length)+" 天")
                           :"登录后即可发动态、加好友、聊天";
   const f=document.getElementById("myFollowing"),r=document.getElementById("myFollowers");
   if(f)f.textContent=me?sFollowingIds(me.id).length:0;
@@ -3452,6 +3753,49 @@ function sbUpsertProfile(u){
     body:JSON.stringify({id:u.id,name:u.name,avatar:u.avatar||""})
   });
 }
+/* v1.11：账号资料（Auth 元数据 / profiles 行）→ 本机资料。
+   症状：登录后「我的」卡片和「编辑个人资料」还是安装时的默认头像与默认昵称。
+   原因：登录只把名字写进 s.users，而这两个界面读的是本机的 NICKNAME / AVATAR，
+   它们只由「编辑个人资料」写入，登录流程从来没同步过。
+   现在登录、注册、恢复会话、打开编辑弹窗都会以账号资料为准刷一次。 */
+function applyAccountProfile(name,avatar,force){
+  let changed=false;
+  const nm=String(name||"").trim().slice(0,12);
+  if(nm&&(force||NICKNAME!==nm)){NICKNAME=nm;changed=true;}
+  const av=String(avatar||"");
+  if(/^(data:image\/|https?:\/\/)/.test(av)&&AVATAR!==av){AVATAR=av;changed=true;}
+  if(!changed)return false;
+  try{localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);}catch(e){}
+  try{
+    const me=sMe();if(me){me.name=NICKNAME;me.avatar=AVATAR;sSave();}
+    renderProfile();renderMeCard();renderFeedMe();
+    const fp=document.getElementById("page-feed");
+    if(fp&&fp.classList.contains("on")&&typeof renderFeed==="function")renderFeed();
+  }catch(e){}
+  return true;
+}
+/* 自己的 profiles 行是头像 / 昵称的权威来源：别的设备改了名，这边登录就能看到 */
+function pullMyProfile(){
+  if(!CLOUD()||!SB_TOKEN)return Promise.resolve(false);
+  const uid=sLoad().session;
+  if(!uid)return Promise.resolve(false);
+  return sbFetch("/rest/v1/profiles?id=eq."+encodeURIComponent(uid)+"&select=id,name,avatar&limit=1")
+    .then(function(a){
+      const p=Array.isArray(a)?a[0]:null;
+      if(!p)return false;
+      return applyAccountProfile(p.name,p.avatar,true);
+    }).catch(function(){return false;});
+}
+/* 改资料必须 PATCH 已有行：sbUpsertProfile 用的是 ignore-duplicates，
+   对已存在的 profiles 行完全不生效，于是云端名字永远改不动 */
+function sbUpdateProfile(u){
+  if(!CLOUD()||!u||!u.id)return Promise.resolve(false);
+  return fetch(SB_URL+"/rest/v1/profiles?id=eq."+encodeURIComponent(u.id),{
+    method:"PATCH",
+    headers:Object.assign(sbH(),{"Prefer":"return=minimal"}),
+    body:JSON.stringify({name:u.name,avatar:u.avatar||""})
+  }).then(function(r){noteNet(r.ok);return r.ok;}).catch(function(){noteNet(false);return false;});
+}
 function cloudApplySession(d,email,fallbackName){
   if(!d||!d.access_token||!d.user)return false;
   SB_TOKEN=d.access_token;
@@ -3461,8 +3805,12 @@ function cloudApplySession(d,email,fallbackName){
            avatar:meta.avatar||"",emoji:"💪"};
   const s=sLoad();if(!s.users.some(x=>x.id===u.id))s.users.push(u);
   s.session=u.id;sSave();
+  /* v1.11：登录 / 注册成功当场把账号资料写进本机资料，否则「我的」和「编辑个人资料」
+     还是安装时的默认头像与默认昵称（以前只写进 s.users，那两个界面读的是 NICKNAME / AVATAR） */
+  applyAccountProfile(u.name,u.avatar,true);
   sbUpsertProfile(u);
   syncCloud();
+  pullMyProfile();                    /* 再以 profiles 行为准补一次，然后才合并记录 */
   onLoginMerge();return true;
 }
 /* 把 Supabase Auth 的报错翻译成具体原因 */
@@ -3514,8 +3862,8 @@ function cloudLogin(email,pass){
   });
 }
 function syncCloud(){
-  if(!CLOUD())return;
-  Promise.all([
+  if(!CLOUD())return Promise.resolve(false);
+  return Promise.all([
     sbFetch("/rest/v1/profiles?select=*&limit=200"),
     sbFetch("/rest/v1/follows?select=*&limit=500"),
     sbFetch("/rest/v1/posts?select=*&order=ts.desc&limit=40")   /* v1.9：图片是 base64，条数收小以适配云函数 6MB 上限 */,
@@ -3765,9 +4113,18 @@ function renderFriends(){
 }
 
 /* ---- 动态 ---- */
-function setFeedFilter(k){if(k!=="all"&&k!=="friends")k="all";feedFilter=k;
+function setFeedFilter(k,manual){
+  if(k!=="all"&&k!=="friends")k="all";
+  const same=(k===feedFilter&&!!manual);
+  feedFilter=k;
   document.querySelectorAll(".seg-feed").forEach(function(b){
-    b.className="seg-feed"+((b.getAttribute("data-k")||"")===k?" on":"");});renderFeed();}
+    b.className="seg-feed"+((b.getAttribute("data-k")||"")===k?" on":"");});
+  renderFeed();
+  /* v1.13：点「全部 / 好友」都回到最上面；再点当前这个也算一次「回到顶部」 */
+  const sc=document.getElementById("screen");
+  if(sc)sc.scrollTop=0;
+  if(same)toast("已回到顶部");
+}
 function todayWorkout(){
   const d=todayStr(),r=(typeof DATA!=="undefined"?DATA:[]).find(x=>x.d===d);
   if(!r||!r.items||!r.items.length)return null;
@@ -3779,7 +4136,11 @@ function likeCount(id){return sLoad().likes.filter(function(l){return l.a===id;}
 function commentsOf(id){return sLoad().comments.filter(function(c){return c.p===id;})
   .sort(function(x,y){return x.ts-y.ts;});}
 function commentCount(id){return sLoad().comments.filter(function(c){return c.p===id;}).length;}
-function refreshPostViews(){renderFeed();renderMyPosts();}
+function refreshPostViews(){
+  renderFeed();renderMyPosts();
+  const pg=document.getElementById("page-post");
+  if(pg&&pg.classList.contains("on")&&PD_ID)renderPostDetail();
+}
 function toggleLike(id){
   const me=sMe();if(!me){openAuth();return;}
   const s=sLoad(),i=s.likes.findIndex(function(l){return l.a===id&&l.b===me.id;});
@@ -3810,37 +4171,282 @@ function delComment(cid,pid){
 
 function postCardHtml(p,me){
   const u=sUser(p.uid),mine=me&&p.uid===me.id;
-  let h='<div class="fcard"><div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
+  /* v1.13：整张卡片可点，进动态详情页看图文、谁点赞、谁评论 */
+  let h='<div class="fcard" onclick="openPostDetail(\''+p.id+'\')">'+
+    '<div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
     '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
     '<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span></div>';
   if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
-  if(p.images&&p.images.length)h+='<div class="fimgs">'+p.images.map(function(d){
-    return '<img src="'+d+'" alt="动态图片" onclick="window.open(this.src)">';}).join("")+'</div>';
+  if(p.images&&p.images.length)h+='<div class="fimgs">'+p.images.map(function(d,i){
+    return '<img src="'+d+'" alt="动态图片" onclick="event.stopPropagation();openImgView(\''+p.id+'\','+i+')">';}).join("")+'</div>';
   if(p.workout&&p.workout.length)h+='<div class="workout-box">'+p.workout.map(function(x){
-    return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+'</div>';
-  /* 点赞 / 评论：只有登录后能点，未登录点了会拉起注册登录 */
-  const lk=postLiked(p.id),lc=likeCount(p.id),cc=commentCount(p.id),cs=commentsOf(p.id);
+    return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+
+    /* v1.12：训练成果旁边直接进记录页；别人的也能看（只看得到 TA 公开的部分） */
+    '<span class="wb-more" onclick="event.stopPropagation();openRecords(\''+p.uid+'\')">'+(mine?"看我的记录 ›":"看 TA 的记录 ›")+'</span></div>';
+  /* v1.13：列表里不再展开评论、也不显示谁评论了 —— 想评论必须点进详情页 */
+  const lk=postLiked(p.id),lc=likeCount(p.id),cc=commentCount(p.id);
   h+='<div class="fbar">'+
-    '<button class="fbtn'+(lk?' on':'')+'" onclick="toggleLike(\''+p.id+'\')">👍 <b>'+lc+'</b></button>'+
-    '<button class="fbtn'+(openCm[p.id]?' on':'')+'" onclick="toggleComments(\''+p.id+'\')">💬 <b>'+cc+'</b></button>'+
-    (mine?'<span class="fbar-sp"></span><button class="fbtn" onclick="delPost(\''+p.id+'\')">删除</button>':'')+
+    '<button class="fbtn'+(lk?' on':'')+'" onclick="event.stopPropagation();toggleLike(\''+p.id+'\')">👍 <b>'+lc+'</b></button>'+
+    '<button class="fbtn" onclick="event.stopPropagation();openPostDetail(\''+p.id+'\')">💬 <b>'+cc+'</b></button>'+
+    (mine?'<span class="fbar-sp"></span><button class="fbtn" onclick="event.stopPropagation();delPost(\''+p.id+'\')">删除</button>':'')+
     '</div>';
-  if(openCm[p.id]){
-    h+='<div class="fcms">'+(cs.length?cs.map(function(c){
-      const cu=sUser(c.uid);
-      return '<div class="fcm"><div class="fcm-av">'+sAv(cu)+'</div><div class="fcm-body">'+
-        '<div class="fcm-name">'+sEsc(cu.name)+'<span>'+sTime(c.ts)+'</span>'+
-        (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
-        '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
-    }).join(''):'<div class="cm-empty">还没有评论，说一句吧</div>')+
-      '<div class="cm-row"><input id="cmInput_'+p.id+'" maxlength="200" placeholder="写条评论…"'+
-      ' onkeydown="if(event.key===\'Enter\')sendComment(\''+p.id+'\')">'+
-      '<button class="cm-emoji" onclick="toggleEmoji(\'cmInput_'+p.id+'\')">☺</button>'+
-      '<button class="cm-send" onclick="sendComment(\''+p.id+'\')">发送</button></div>'+
-      '</div>';
-  }
   return h+'</div>';
 }
+/* ============ v1.13：动态详情页 ============
+   图文 + 谁点赞（头像 + 名字）+ 全部评论；评论输入只在这里出现。 */
+let PD_ID="",PD_BACK="feed";
+function openPostDetail(pid,from){
+  if(!pid)return;
+  const fromPage=from||((typeof currentPageName==="function")?currentPageName():"feed");
+  PD_BACK=(fromPage==="post")?"feed":(fromPage||"feed");
+  SUB_PARENT.post=PD_BACK;
+  PD_ID=pid;
+  renderPostDetail();
+  switchTab("post");
+}
+function closePostDetail(){hidePdBar();switchTab(PD_BACK||"feed");}
+function renderPostDetail(){
+  const box=document.getElementById("pdBody");if(!box)return;
+  const s=sLoad(),me=sMe(),p=s.posts.find(function(x){return x.id===PD_ID;});
+  if(!p){
+    box.innerHTML='<div class="empty-hint">这条动态已经被删除了</div>';
+    hidePdBar();
+    return;
+  }
+  const u=sUser(p.uid),mine=me&&p.uid===me.id;
+  const likes=s.likes.filter(function(l){return l.a===p.id;});
+  const cs=commentsOf(p.id),lk=postLiked(p.id);
+  let h='<div class="fcard" style="margin-top:14px;cursor:default">'+
+    '<div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
+    '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
+    '<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span></div>';
+  if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
+  if(p.images&&p.images.length)h+='<div class="fimgs" style="grid-template-columns:repeat(2,1fr)">'+
+    p.images.map(function(d,i){
+      return '<img src="'+d+'" alt="动态图片" onclick="openImgView(\''+p.id+'\','+i+')">';}).join("")+'</div>';
+  if(p.workout&&p.workout.length)h+='<div class="workout-box">'+p.workout.map(function(x){
+    return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+
+    '<span class="wb-more" onclick="openRecords(\''+p.uid+'\')">'+(mine?"看我的记录 ›":"看 TA 的记录 ›")+'</span></div>';
+  /* v1.15：不再单独放一个点赞按钮 —— 点赞并进「N 人点赞」这一行，点它就是点赞 / 取消，
+     已点赞时整颗变强调色 + 实心大拇指，未点赞是灰的 */
+  h+='<div class="pd-like">'+
+    '<button class="pd-likebtn'+(lk?" on":"")+'" onclick="toggleLike(\''+p.id+'\')">'+
+    '<span class="pd-thumb">👍</span>'+(lk?"已点赞 · ":"")+likes.length+' 人点赞</button>';
+  if(likes.length){
+    h+=likes.map(function(l){
+      const lu=sUser(l.b);
+      return '<span class="who"><span class="av">'+(lu.avatar?'<img src="'+sEsc(lu.avatar)+'" alt="">':sEsc(lu.emoji||"💪"))+'</span>'+sEsc(lu.name)+'</span>';
+    }).join("");
+  }else h+='<span class="lb">还没有人点赞</span>';
+  h+='</div>';
+  if(mine)h+='<div class="pd-ops"><button onclick="delPost(\''+p.id+'\')">删除动态</button></div>';
+  /* 评论 */
+  h+='<div class="sec-title" style="margin-top:16px">评论 <span>共 '+cs.length+' 条</span></div><div class="pd-cm">';
+  h+=cs.length?cs.map(function(c){
+    const cu=sUser(c.uid);
+    return '<div class="fcm"><div class="fcm-av">'+sAv(cu)+'</div><div class="fcm-body">'+
+      '<div class="fcm-name">'+sEsc(cu.name)+'<span>'+sTime(c.ts)+'</span>'+
+      (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
+      '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
+  }).join(""):'<div class="pd-empty">还没有评论，来说一句</div>';
+  h+='</div>';
+  box.innerHTML=h;
+  renderPdBar(p,me);
+}
+/* v1.15：评论输入条是固定条，单独渲染 —— 和内容分开，滚动时不会穿模盖住评论。
+   同一条动态 + 同样的登录状态就不重建，免得把正在打的字冲掉。 */
+function renderPdBar(p,me){
+  const bar=document.getElementById("pdBar");
+  if(!bar)return;
+  const key=p.id+(me?"#me":"#anon");
+  if(bar.getAttribute("data-pd")===key&&!bar.hidden && bar.innerHTML)return;
+  bar.setAttribute("data-pd",key);
+  if(me){
+    bar.innerHTML='<input id="cmInput_'+p.id+'" maxlength="200" placeholder="写条评论…"'+
+      ' onkeydown="if(event.key===\'Enter\')sendComment(\''+p.id+'\')">'+
+      '<button class="cm-emoji" onclick="toggleEmoji(\'cmInput_'+p.id+'\')">☺</button>'+
+      '<button class="cm-send" onclick="sendComment(\''+p.id+'\')">发送</button>';
+  }else{
+    bar.innerHTML='<button class="btn-primary sm" style="margin:0 auto" onclick="openAuth()">登录后参与评论</button>';
+  }
+  bar.hidden=false;
+}
+function hidePdBar(){
+  const bar=document.getElementById("pdBar");
+  if(!bar)return;
+  bar.hidden=true;
+  bar.innerHTML="";
+  if(bar.removeAttribute)bar.removeAttribute("data-pd");
+}
+
+/* ============ v1.13：图片全屏预览 ============
+   双指缩放 / 双击放大 / 拖动查看 / 多图左右切换；点空白处（或右上角 ✕、系统返回）退出。 */
+let IV={list:[],i:0,scale:1,tx:0,ty:0,sx:0,sy:0,ox:0,oy:0,moved:false,lastTap:0,d0:0,s0:1};
+function openImgView(pid,idx){
+  const p=sLoad().posts.find(function(x){return x.id===pid;});
+  if(!p||!p.images||!p.images.length)return;
+  IV.list=p.images;
+  IV.i=Math.max(0,Math.min(Number(idx)||0,p.images.length-1));
+  IV.scale=1;IV.tx=0;IV.ty=0;IV.moved=false;
+  const v=document.getElementById("imgView");if(!v)return;
+  v.classList.add("on");
+  paintImgView();
+}
+function closeImgView(){
+  const v=document.getElementById("imgView");if(v)v.classList.remove("on");
+  IV.scale=1;IV.tx=0;IV.ty=0;
+}
+function paintImgView(){
+  const img=document.getElementById("ivImg");if(!img)return;
+  img.src=IV.list[IV.i]||"";
+  img.style.transform="translate3d("+IV.tx+"px,"+IV.ty+"px,0) scale("+IV.scale+")";
+  const c=document.getElementById("ivCount");
+  if(c)c.textContent=(IV.i+1)+" / "+IV.list.length;
+  const pv=document.getElementById("ivPrev"),nx=document.getElementById("ivNext");
+  if(pv)pv.hidden=IV.i<=0;
+  if(nx)nx.hidden=IV.i>=IV.list.length-1;
+  const tip=document.getElementById("ivTip");
+  if(tip)tip.textContent=IV.scale>1?"双指缩放 · 拖动查看 · 点空白退出":"双指放大 · 双击放大 · 点空白退出";
+}
+function ivStep(d){
+  const j=IV.i+d;if(j<0||j>=IV.list.length)return;
+  IV.i=j;IV.scale=1;IV.tx=0;IV.ty=0;paintImgView();
+}
+function ivZoomToggle(){
+  IV.scale=(IV.scale>1)?1:2.2;IV.tx=0;IV.ty=0;paintImgView();
+}
+function ivDist(t){
+  const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;
+  return Math.sqrt(dx*dx+dy*dy)||1;
+}
+function clampIv(){
+  const v=document.getElementById("imgView"),img=document.getElementById("ivImg");
+  if(!v||!img)return;
+  const w=v.clientWidth||360,h=v.clientHeight||640;
+  const iw=(img.clientWidth||w)*IV.scale,ih=(img.clientHeight||h)*IV.scale;
+  const mx=Math.max(0,(iw-w)/2),my=Math.max(0,(ih-h)/2);
+  IV.tx=Math.max(-mx,Math.min(mx,IV.tx));
+  IV.ty=Math.max(-my,Math.min(my,IV.ty));
+}
+function bindImgView(){
+  const v=document.getElementById("imgView");
+  if(!v||v._ivReady)return;
+  v._ivReady=1;
+  v.addEventListener("touchstart",function(e){
+    if(e.touches.length===2){IV.d0=ivDist(e.touches);IV.s0=IV.scale;IV.moved=true;return;}
+    if(e.touches.length!==1)return;
+    IV.moved=false;IV.sx=e.touches[0].clientX;IV.sy=e.touches[0].clientY;
+    IV.ox=IV.tx;IV.oy=IV.ty;
+  },{passive:true});
+  v.addEventListener("touchmove",function(e){
+    if(e.touches.length===2&&IV.d0){
+      IV.scale=Math.max(1,Math.min(4,IV.s0*(ivDist(e.touches)/IV.d0)));
+      clampIv();paintImgView();
+      if(e.cancelable)e.preventDefault();
+      return;
+    }
+    if(e.touches.length!==1)return;
+    const dx=e.touches[0].clientX-IV.sx,dy=e.touches[0].clientY-IV.sy;
+    if(Math.abs(dx)>6||Math.abs(dy)>6)IV.moved=true;
+    if(IV.scale>1){IV.tx=IV.ox+dx;IV.ty=IV.oy+dy;clampIv();paintImgView();}
+  },{passive:false});
+  v.addEventListener("touchend",function(e){
+    if(IV.scale>1){IV.d0=0;return;}
+    IV.d0=0;
+    const t=e.changedTouches&&e.changedTouches[0];
+    if(!t)return;
+    if(!IV.moved){
+      const onImg=(t.target&&t.target.id==="ivImg");
+      const now=Date.now();
+      if(onImg&&now-IV.lastTap<320){ivZoomToggle();IV.lastTap=0;return;}
+      IV.lastTap=now;
+      if(!onImg)closeImgView();      /* 点空白退出 */
+      return;
+    }
+    const dx=t.clientX-IV.sx;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(t.clientY-IV.sy))ivStep(dx<0?1:-1);
+  });
+  v.addEventListener("click",function(e){
+    if(e.target===v)closeImgView();
+  });
+  v.addEventListener("wheel",function(e){
+    if(e.cancelable)e.preventDefault();
+    IV.scale=Math.max(1,Math.min(4,IV.scale+(e.deltaY<0?0.25:-0.25)));
+    clampIv();paintImgView();
+  },{passive:false});
+}
+
+/* ============ v1.13：动态页下拉刷新 ============ */
+let PF={y:0,dy:0,on:false,busy:false};
+function setPullHint(dy){
+  const h=document.getElementById("pullHint");if(!h)return;
+  if(!dy){h.className="pullhint";h.textContent="";return;}
+  h.className="pullhint on";
+  h.textContent=dy>=64?"松开刷新":"下拉刷新";
+}
+function bindFeedPull(){
+  const sc=document.getElementById("screen");
+  if(!sc||sc._pfReady)return;
+  sc._pfReady=1;
+  sc.addEventListener("touchstart",function(e){
+    const pg=document.getElementById("page-feed");
+    if(e.touches.length!==1||!pg||!pg.classList.contains("on")){PF.on=false;return;}
+    PF.on=(sc.scrollTop<=0);PF.y=e.touches[0].clientY;PF.dy=0;
+  },{passive:true});
+  sc.addEventListener("touchmove",function(e){
+    if(!PF.on||e.touches.length!==1)return;
+    const dy=e.touches[0].clientY-PF.y;
+    if(dy<=0||sc.scrollTop>0){PF.dy=0;setPullHint(0);return;}
+    PF.dy=Math.min(dy,110);
+    setPullHint(PF.dy);
+  },{passive:true});
+  sc.addEventListener("touchend",function(){
+    if(!PF.on){setPullHint(0);return;}
+    const dy=PF.dy;PF.on=false;PF.dy=0;setPullHint(0);
+    if(dy>=64)refreshFeedNow();
+  });
+}
+function refreshFeedNow(){
+  if(PF.busy)return;
+  PF.busy=true;
+  const h=document.getElementById("pullHint");
+  if(h){h.className="pullhint on";h.textContent="正在刷新…";}
+  const before={};sLoad().posts.forEach(function(p){before[p.id]=1;});
+  const done=function(){
+    PF.busy=false;
+    renderFeed();
+    const s=sLoad();
+    const got=s.posts.filter(function(p){
+      if(before[p.id])return false;
+      if(p.vis==="friends"&&p.uid!==s.session&&!sFriend(p.uid))return false;
+      return true;}).length;
+    if(h){h.className="pullhint";h.textContent="";}
+    const sc=document.getElementById("screen");if(sc)sc.scrollTop=0;
+    toast(got?("有 "+got+" 条新动态"):"已经是最新的了");
+  };
+  let pr=null;
+  try{pr=(typeof syncCloud==="function")?syncCloud():null;}catch(e){}
+  if(pr&&typeof pr.then==="function")return pr.then(done).catch(done);
+  done();return Promise.resolve(true);
+}
+
+/* ============ v1.13：表情面板点空白关闭 ============ */
+function bindEmojiOutside(){
+  if(document._emojiOutside)return;
+  document._emojiOutside=1;
+  document.addEventListener("click",function(e){
+    const pn=document.getElementById("emojiPanel");
+    if(!pn||!pn.classList.contains("on"))return;
+    let n=e.target;
+    while(n&&n!==document.body){
+      if(n===pn)return;                                   /* 点面板里面不关 */
+      if(n.getAttribute&&/toggleEmoji/.test(String(n.getAttribute("onclick")||"")))return;  /* 触发按钮自己管 */
+      n=n.parentNode;
+    }
+    pn.classList.remove("on");
+  });
+}
+
 function renderFeed(){
   renderFeedMe();
   const el=document.getElementById("feedList");if(!el)return;
@@ -3915,7 +4521,9 @@ function delPost(id){
   s.likes=s.likes.filter(function(l){return l.a!==id;});
   s.comments=s.comments.filter(function(c){return c.p!==id;});
   sSave();sbDel("posts","id=eq."+id);
+  const onDetail=document.getElementById("page-post");
   renderFeed();renderMyPosts();toast("已删除");
+  if(onDetail&&onDetail.classList.contains("on")&&PD_ID===id)closePostDetail();
 }
 
 /* ---- 图片压缩（纯 canvas，无外部库） ---- */
@@ -4195,8 +4803,9 @@ function pullSettings(){
       if(Array.isArray(x.favs)&&x.favs.length)FAVS=x.favs;
       if(Array.isArray(x.custom)){CUSTOM=x.custom;normalizeUnits(CUSTOM);EX=BASE_EX.concat(CUSTOM);}
       if(Array.isArray(x.cats))CATS=BASE_CATS.concat(x.cats);
-      if(typeof x.nickname==="string"&&x.nickname)NICKNAME=x.nickname;
-      if(typeof x.avatar==="string"&&x.avatar.indexOf("data:image")===0)AVATAR=x.avatar;
+      /* v1.11：昵称 / 头像以 profiles 行为准，settings 里的这两项不再覆盖本机——
+         旧版本曾把安装默认的「卷卷大人 + 默认头像」写进 settings 行，
+         登录后一拉就把账号真实资料盖掉了，正是「编辑资料还是默认值」的成因。 */
       if(x.theme)THEME=x.theme;
       if(x.palette)PALETTE=x.palette;
       _lastSet=settingsPayload();
@@ -4227,6 +4836,10 @@ function onLoginMerge(){
       const pulled=Math.max(0,DATA.length-beforeN);
       const localOnly=DATA.filter(function(r){return !REMOTE[r.d];}).length;
       return pushAllRecords().then(function(){return {pullOk:pullOk!==false,pulled:pulled,localOnly:localOnly};});
+    })
+    .then(function(info){
+      /* v1.11：设置拉回来之后再按 profiles 行校一次身份，然后把正确值推回 settings */
+      return pullMyProfile().then(function(){return info;});
     })
     .then(function(info){
       return pushSettings(false).then(function(){return info;});
@@ -4289,6 +4902,7 @@ function socialOnEnter(name){
   try{
     if(name==="feed")renderFeed();
     if(name==="myposts")renderMyPosts();
+    if(name==="post"&&PD_ID)renderPostDetail();
     if(name==="friends")renderFriends();
     if(name==="chats")renderChats();
     if(name==="chat")renderChat();
@@ -4326,6 +4940,8 @@ function initSocial(){
     refreshSocialUI();
     startPolling();
     if(CLOUD())syncCloud();
+    /* v1.11：开着 App 恢复登录态时也校准一次资料，不用重新登录 */
+    if(CLOUD()&&SB_TOKEN&&sMe())pullMyProfile();
     if(syncEnabled())onLoginMerge();
   }catch(e){}
 }
@@ -4337,6 +4953,9 @@ renderAll();
 bindWeightChart();
 initFab();
 bindSwipe();
+bindImgView();                      /* v1.13：图片预览手势 */
+bindFeedPull();                     /* v1.13：动态页下拉刷新 */
+bindEmojiOutside();                 /* v1.13：表情面板点空白关闭 */
 netProbe();                        /* v1.9：启动就探一次云端到底通不通 */
 initSplash();
 initMotto();
