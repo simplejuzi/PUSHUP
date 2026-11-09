@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>PUSHUP · 俯卧撑训练记录</title>
-<meta name="description" content="以俯卧撑为核心的自重训练记录工具。每天 3 秒记完，数据只存在本机，离线可用。">
+<meta name="description" content="以俯卧撑为核心的自重训练记录工具。每天 3 秒记完，登录后自动同步，随时导出备份。">
 <meta name="theme-color" content="#FAFAF8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15171A" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -100,6 +100,15 @@ body.dark[data-palette="dusk"]{
 .exp-box .k{font-size:10.5px;color:var(--sub2);margin-bottom:3px}
 .exp-box .v{font-size:12.5px;font-weight:700;color:var(--ink);word-break:break-all;margin-bottom:10px}
 .exp-box .v:last-child{margin-bottom:0}
+/* v1.5：应用内更新日志 */
+.log-v{font-size:10.5px;color:var(--accent);background:var(--accent-soft);border-radius:999px;
+  padding:2px 8px;margin-left:6px;font-weight:800;vertical-align:1px}
+.log-list{list-style:none;margin:12px 0 0;padding:0;max-height:52vh;overflow-y:auto}
+.log-list li{position:relative;font-size:12.5px;line-height:1.7;color:var(--ink);
+  padding:0 0 9px 22px;word-break:break-word}
+.log-list li b{position:absolute;left:0;top:4px;width:15px;height:15px;line-height:15px;
+  text-align:center;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-size:9.5px;font-weight:800}
 .upd-log{font-size:12.5px;color:var(--ink);line-height:1.95;margin-top:12px;background:var(--soft);border-radius:14px;padding:13px 15px;white-space:pre-wrap}
 .upd-link{display:block;text-align:center;font-size:11.5px;color:var(--accent);margin-top:12px;cursor:pointer;text-decoration:underline}
 .tpl-bar{display:flex;gap:8px;margin-top:13px}
@@ -483,6 +492,138 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(var(--accent-rgb),.24)}
 .app-ic img{width:100%;height:100%;object-fit:cover;display:block;border-radius:17px}
 @media (max-width:520px){body{background:var(--surface)}}
+
+/* ===== v1.5 社区：动态 / 好友 / 聊天（全主题变量） ===== */
+.sub-back{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:12.5px;font-weight:700;margin-top:12px;cursor:pointer}
+.btn-primary,.btn-ghost{border:0;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.btn-primary{background:var(--accent);color:var(--surface)}
+.btn-ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.btn-primary.sm,.btn-ghost.sm{padding:8px 12px;font-size:12px;border-radius:10px}
+.btn-primary.wide,.btn-ghost.wide{width:100%;margin-top:12px}
+.seg-row{display:flex;gap:8px;margin-top:16px}
+.seg-feed,.seg-f{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:11px;padding:9px 0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.seg-feed.on,.seg-f.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;margin-top:12px}
+.fhead{display:flex;align-items:center;gap:10px}
+.fav,.user-av,.bubble-av{width:38px;height:38px;flex:none;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
+.fav img,.user-av img,.bubble-av img{width:100%;height:100%;object-fit:cover}
+.fmeta{flex:1;min-width:0}
+.fname{font-size:13px;font-weight:750;color:var(--ink)}
+.ftime{font-size:10.5px;color:var(--sub2);margin-top:2px}
+.vis-tag{font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 8px;white-space:nowrap}
+/* v1.5：点赞 / 评论 */
+.fbar{display:flex;align-items:center;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.fbar-sp{flex:1}
+.fbtn{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--soft);
+  color:var(--sub);border-radius:999px;padding:5px 11px;font:inherit;font-size:11.5px;font-weight:700;
+  cursor:pointer;line-height:1.15;transition:transform .12s}
+.fbtn b{font-weight:800}
+.fbtn.on{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.fbtn:active{transform:scale(.95)}
+.fcms{margin-top:10px;background:var(--soft);border-radius:14px;padding:9px 11px}
+.fcm{display:flex;gap:8px;padding:5px 0}
+.fcm+.fcm{border-top:1px solid var(--line)}
+.fcm-av{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
+.fcm-av img{width:100%;height:100%;object-fit:cover}
+.fcm-body{flex:1;min-width:0}
+.fcm-name{font-size:11.5px;font-weight:750;color:var(--ink)}
+.fcm-name span{font-weight:500;color:var(--sub2);font-size:10px;margin-left:6px}
+.fcm-name .fcm-del{color:var(--accent);cursor:pointer;font-weight:700}
+.fcm-text{font-size:12.5px;line-height:1.55;color:var(--ink);margin-top:2px;
+  word-break:break-word;white-space:pre-wrap}
+.cm-empty{font-size:11.5px;color:var(--sub2);padding:3px 0 6px}
+.cm-row{display:flex;align-items:center;gap:6px;margin-top:8px}
+.cm-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:999px;padding:7px 12px;font:inherit;font-size:12.5px;outline:none}
+.cm-row input:focus{border-color:var(--accent)}
+.cm-emoji{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:50%;
+  width:30px;height:30px;font-size:15px;cursor:pointer;flex:none;line-height:1;font-family:inherit}
+.cm-send{border:0;background:var(--accent);color:var(--surface);border-radius:999px;padding:7px 13px;
+  font:inherit;font-size:12px;font-weight:800;cursor:pointer;flex:none}
+.ftext{font-size:13.5px;line-height:1.65;color:var(--ink);margin-top:11px;white-space:pre-wrap;word-break:break-word}
+.fimgs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.fimgs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.workout-box{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;background:var(--soft);border-radius:12px;padding:10px 11px}
+.workout-box span{font-size:11.5px;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.workout-box b{color:var(--accent);font-size:13px}
+.fdel{font-size:11px;color:var(--sub2);margin-top:10px;cursor:pointer}
+.empty-hint{text-align:center;color:var(--sub2);font-size:12.5px;padding:34px 10px}
+.user-row{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:8px;box-shadow:var(--shadow);cursor:pointer}
+.user-mid{flex:1;min-width:0}
+.user-mid b{display:block;font-size:13px;color:var(--ink)}
+.user-mid small{display:block;font-size:11px;color:var(--sub2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.user-time{font-size:10px;color:var(--sub2)}
+.mini-btn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
+.mini-btn.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.chat-body{height:calc(100vh - 236px);min-height:260px;overflow-y:auto;margin-top:12px;padding-bottom:8px}
+.bubble-row{display:flex;align-items:flex-end;gap:7px;margin-top:12px}
+.bubble-row.out{justify-content:flex-end}
+.bubble{max-width:72%;background:var(--card);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:9px 11px;font-size:13px;line-height:1.55;color:var(--ink);word-break:break-word;box-shadow:var(--shadow)}
+.bubble-row.out .bubble{background:var(--accent);color:var(--surface);border-color:transparent;border-radius:16px 16px 4px 16px}
+.bubble-av{width:28px;height:28px;font-size:15px}
+.bubble-time{font-size:9.5px;opacity:.6;margin-top:5px;text-align:right}
+.bubble-img{max-width:100%;border-radius:10px;display:block}
+.bubble-sticker{font-size:46px;line-height:1.2;text-align:center}
+.bubble-cap{font-size:11px;text-align:center;opacity:.8}
+.chat-bar{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;margin-top:8px}
+.chat-bar input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-size:13px;font-family:inherit;outline:0;padding:6px}
+.chat-icon{border:0;background:var(--soft);border-radius:10px;width:32px;height:32px;font-size:16px;cursor:pointer;flex:none}
+.img-hint{font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer}
+.post-tool{display:flex;align-items:center;gap:8px;margin-top:10px}
+.post-imgs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.post-imgs img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.vis-row{display:flex;gap:8px;margin-top:14px;align-items:center}
+#postText{width:100%;min-height:84px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:11px;font-size:13px;line-height:1.6;font-family:inherit;outline:0;resize:vertical;margin-top:12px}
+.btn-row{display:flex;gap:10px;margin-top:16px}
+.btn-row button{flex:1}
+.emoji-panel{display:none;position:absolute;left:12px;right:12px;bottom:88px;z-index:32;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.22);padding:12px;max-height:46%;overflow-y:auto}
+.emoji-panel.on{display:block}
+.emoji-panel h4{font-size:11px;color:var(--sub);margin:6px 0 8px;font-weight:650}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.emoji-item{border:0;background:var(--soft);border-radius:9px;font-size:20px;padding:5px 0;cursor:pointer;font-family:inherit}
+.sticker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.sticker-item{border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:7px 2px;cursor:pointer;font-family:inherit}
+.sticker-item span{display:block;font-size:26px}
+.sticker-item small{display:block;font-size:9.5px;color:var(--sub);margin-top:2px}
+
+/* ===== v1.5 数据同步状态 ===== */
+.me-sync{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--sub2);margin-top:5px}
+.me-sync i{width:6px;height:6px;border-radius:50%;background:var(--sub2);flex:none;display:block}
+.me-sync i.ok{background:var(--green)}
+.me-sync i.bad{background:var(--amber)}
+.me-sync i.busy{background:var(--accent);animation:syncPulse 1s infinite}
+@keyframes syncPulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ===== v1.5 退出登录弹窗：当前账号卡 ===== */
+.logout-box{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:14px}
+.logout-box .me-av{width:46px;height:46px;font-size:23px}
+.logout-box b{display:block;font-size:14px;color:var(--ink)}
+.logout-box small{display:block;font-size:11px;color:var(--sub2);margin-top:3px}
+
+/* ===== v1.5 布局重构：资料卡 / 动态登录提示 / 合并页切换 ===== */
+.me-card{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px 15px;margin-top:18px;cursor:pointer}
+.me-av{width:62px;height:62px;flex:none;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;border:2px solid rgba(var(--accent-rgb),.18)}
+.me-av img{width:100%;height:100%;object-fit:cover}
+.me-av.off{background:var(--soft);border-color:var(--line)}
+.me-ph{font-size:26px;font-weight:700;color:var(--sub2)}
+.me-info{flex:1;min-width:0}
+.me-name{font-size:16px;font-weight:750;color:var(--ink)}
+.me-sub{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.45}
+.me-nums{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.me-num{font-size:11.5px;color:var(--sub);background:var(--soft);border-radius:999px;padding:5px 10px;cursor:pointer}
+.me-num b{color:var(--accent);font-size:13px;margin-left:2px}
+.feed-me{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:11px 12px;margin-top:16px;cursor:pointer}
+.feed-me-av{width:40px;height:40px;flex:none;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:21px;overflow:hidden}
+.feed-me-av img{width:100%;height:100%;object-fit:cover}
+.feed-me-av.off{background:var(--soft)}
+.feed-me-av.off .me-ph{font-size:19px}
+.feed-me-txt{flex:1;min-width:0}
+.feed-me-txt b{display:block;font-size:13px;color:var(--ink)}
+.feed-me-txt small{display:block;font-size:11px;color:var(--sub2);margin-top:3px}
+.feed-me-go{font-size:11.5px;font-weight:700;color:var(--accent);white-space:nowrap}
+.seg-data{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:11px;padding:9px 0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.seg-data.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
 </style>
 </head>
 <body>
@@ -542,58 +683,63 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <textarea class="note-input" id="noteInput" rows="1" placeholder="状态、感受、分组方式…"></textarea>
         </div>
         <button class="save" id="saveBtn" onclick="saveRecord()">更新今日记录</button>
-        <div class="privacy">数据仅保存在本机 · 无需登录 · 可随时导出</div>
+        <div class="privacy">训练记录只有你自己能看 · 可随时导出备份</div>
       </div>
 
-      <!-- ===== 历史 ===== -->
-      <div class="page" id="page-history">
+      <!-- ===== 数据：历史日历 + 统计图表合并，页内切换 ===== -->
+      <div class="page" id="page-data">
         <div class="head-row" style="margin-top:10px">
-          <div><div class="eyebrow">HISTORY</div><h1 class="title">训练日历</h1></div>
-          <div class="badge" id="countBadge">0 条记录</div>
+          <div><div class="eyebrow">DATA</div><h1 class="title">数据</h1></div>
+          <div style="display:flex;gap:6px">
+            <div class="badge" id="countBadge">0 条记录</div>
+            <div class="badge ok" id="weightBadge" style="display:none">暂无体重记录</div>
+          </div>
         </div>
-        <div class="monthbar">
-          <div class="m" id="monthLabel">—</div>
-          <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" id="nextMonthBtn" onclick="shiftMonth(1)">›</button></div>
+        <div class="seg-row">
+          <button class="seg-data on" data-k="history" onclick="setDataView('history')">历史日历</button>
+          <button class="seg-data" data-k="stats" onclick="setDataView('stats')">数据统计</button>
         </div>
-        <div class="cal-card">
-          <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-          <div class="cal" id="calendar"></div>
+        <div id="histPane">
+          <div class="monthbar">
+            <div class="m" id="monthLabel">—</div>
+            <div style="display:flex;gap:8px"><button class="navbtn" onclick="shiftMonth(-1)">‹</button><button class="navbtn" id="nextMonthBtn" onclick="shiftMonth(1)">›</button></div>
+          </div>
+          <div class="cal-card">
+            <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+            <div class="cal" id="calendar"></div>
+          </div>
+          <div class="sumbar" id="monthSummary"></div>
+          <div class="detail" id="dayDetail"></div>
+          <div class="sec-title">本月记录<span>点击可编辑 / 补录</span></div>
+          <div class="list" id="recordList"></div>
+          <div style="height:10px"></div>
         </div>
-        <div class="sumbar" id="monthSummary"></div>
-        <div class="detail" id="dayDetail"></div>
-        <div class="sec-title">本月记录<span>点击可编辑 / 补录</span></div>
-        <div class="list" id="recordList"></div>
-        <div style="height:10px"></div>
-      </div>
-
-      <!-- ===== 数据（本轮未改动） ===== -->
-      <div class="page" id="page-stats">
-        <div class="head-row" style="margin-top:10px">
-          <div><div class="eyebrow">INSIGHTS</div><h1 class="title">你的进步</h1></div>
-          <div class="badge ok" id="weightBadge">暂无体重记录</div>
+        <div id="statsPane" style="display:none">
+          <div class="kpis" id="kpis"></div>
+          <div class="chart-card">
+            <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x" id="peakLabel">峰值 <b>—</b> 个</span></div>
+            <div id="barChart"></div><div class="axis"><span id="axA">—</span><span id="axB">—</span><span id="axC">—</span></div>
+            <div class="chart-tip">↑ 点任意柱子 / 折线点，查看当天的详细记录</div>
+          </div>
+          <div class="chart-card"><div id="inspect"></div></div>
+          <div class="chart-card">
+            <div class="chart-head"><span class="t">体重变化</span><span class="x" id="weightMeta">暂无测量</span></div>
+            <div id="lineChart"></div><div class="axis"><span id="axW1">—</span><span id="axW2">—</span></div>
+            <div class="wtip-hint">↔ 在折线上左右滑动，查看每次测量的体重</div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-head"><span class="t">臂围</span><span class="x" id="armMeta">暂无测量</span></div>
+            <div class="arm-cmp" id="armCompare"></div>
+          </div>
+          <div class="muted" style="margin:14px 4px 0">正式版会为每个动作单独出趋势图；当前图表以俯卧撑为主项。</div>
+          <div style="height:10px"></div>
         </div>
-        <div class="kpis" id="kpis"></div>
-        <div class="chart-card">
-          <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x" id="peakLabel">峰值 <b>—</b> 个</span></div>
-          <div id="barChart"></div><div class="axis"><span id="axA">—</span><span id="axB">—</span><span id="axC">—</span></div>
-          <div class="chart-tip">↑ 点任意柱子 / 折线点，查看当天的详细记录</div>
-        </div>
-        <div class="chart-card"><div id="inspect"></div></div>
-        <div class="chart-card">
-          <div class="chart-head"><span class="t">体重变化</span><span class="x" id="weightMeta">暂无测量</span></div>
-          <div id="lineChart"></div><div class="axis"><span id="axW1">—</span><span id="axW2">—</span></div>
-          <div class="wtip-hint">↔ 在折线上左右滑动，查看每次测量的体重</div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-head"><span class="t">臂围</span><span class="x" id="armMeta">暂无测量</span></div>
-          <div class="arm-cmp" id="armCompare"></div>
-        </div>
-        <div class="muted" style="margin:14px 4px 0">正式版会为每个动作单独出趋势图；当前图表以俯卧撑为主项。</div>
-        <div style="height:10px"></div>
+        <div style="height:80px"></div>
       </div>
 
       <!-- ===== 动作库 ===== -->
       <div class="page" id="page-library">
+        <div class="sub-back" onclick="switchTab('record')">‹ 返回记录</div>
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
           <div class="badge">徒手 · 无器械为主</div>
@@ -611,22 +757,126 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         <div style="height:70px"></div>
       </div>
 
-      <!-- ===== 我的 ===== -->
+
+      <!-- ===== v1.5 动态 ===== -->
+      <div class="page" id="page-feed">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
+          <button class="btn-primary sm" id="feedPostBtn" onclick="openPost()">登录后发布</button>
+        </div>
+        <div class="feed-me" id="feedMeBar" onclick="feedMeClick()">
+          <div class="feed-me-av off" id="feedMeAv"><span class="me-ph">?</span></div>
+          <div class="feed-me-txt"><b id="feedMeName">未登录</b><small id="feedMeHint">登录后即可发布动态、看好友训练</small></div>
+          <span class="feed-me-go" id="feedMeGo">去登录</span>
+        </div>
+        <div class="seg-row">
+          <button class="seg-feed on" data-k="all" onclick="setFeedFilter('all')">全部</button>
+          <button class="seg-feed" data-k="friends" onclick="setFeedFilter('friends')">好友</button>
+        </div>
+        <div id="feedList"></div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
+      <div class="page" id="page-myposts">
+        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">MY POSTS</div><h1 class="title">我的动态</h1></div>
+          <button class="btn-primary sm" onclick="openPost()">＋ 发动态</button>
+        </div>
+        <div class="muted" style="margin:10px 3px">只有自己发过的会出现在这里，可点卡片下方删除</div>
+        <div id="mypostsList"></div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.5 好友 ===== -->
+      <div class="page" id="page-friends">
+        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">FRIENDS</div><h1 class="title">好友</h1></div>
+          <div class="badge">互相关注 = 好友</div>
+        </div>
+        <div class="searchbox">
+          <svg width="15" height="15" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
+          <input id="friendSearch" type="search" placeholder="搜昵称" oninput="renderFriends()">
+        </div>
+        <div class="seg-row">
+          <button class="seg-f on" data-k="following" onclick="setFriendTab('following')">关注</button>
+          <button class="seg-f" data-k="followers" onclick="setFriendTab('followers')">粉丝</button>
+          <button class="seg-f" data-k="find" onclick="setFriendTab('find')">找人</button>
+        </div>
+        <div id="friendList"></div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.5 消息（底栏主页面） ===== -->
+      <div class="page" id="page-chats">
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">MESSAGES</div><h1 class="title">消息</h1></div>
+          <div class="badge">打开 App 可收发</div>
+        </div>
+        <div class="muted" style="margin:10px 3px">最简单的好友私聊，App 关闭时不会推送通知</div>
+        <div id="chatList"></div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== v1.5 聊天 ===== -->
+      <div class="page" id="page-chat">
+        <div class="sub-back" onclick="switchTab('chats')">‹ 返回消息</div>
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">CHAT</div><h1 class="title" id="chatTitle">聊天</h1></div>
+          <button class="btn-ghost sm" onclick="openChatPicker()">换人</button>
+        </div>
+        <div id="chatBody" class="chat-body"></div>
+        <div class="chat-bar">
+          <button class="chat-icon" onclick="document.getElementById('chatFile').click()" title="发图片">▣</button>
+          <button class="chat-icon" onclick="toggleEmoji('chatInput')" title="表情">☺</button>
+          <input id="chatInput" type="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')submitChat()">
+          <button class="btn-primary sm" onclick="submitChat()">发送</button>
+        </div>
+        <div id="chatImgHint" class="img-hint" style="display:none" onclick="chatImg=null;this.style.display='none'"></div>
+        <input id="chatFile" type="file" accept="image/*" style="display:none" onchange="onChatImg(event)">
+      </div>
+
+      <!-- ===== 我的（重做：只留资料 / 概览 / 快捷入口） ===== -->
       <div class="page" id="page-profile">
         <div class="head-row" style="margin-top:10px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
-          <div class="badge" id="profileVersion">v1.4</div>
+          <button class="btn-ghost sm" onclick="switchTab('settings')">设置 ›</button>
         </div>
-        <!-- v1.2：个人资料（头像 + 昵称，点卡片可修改） -->
-        <div class="profile-card" onclick="openProfileEdit()">
-          <img class="profile-avatar" id="profileAvatar" alt="我的头像">
-          <div class="profile-info">
-            <div class="profile-name" id="profileName">卷卷大人</div>
-            <div class="profile-sub" id="profileSub">今天也练了吗？</div>
+        <div class="me-card" id="meCard" onclick="meCardClick()">
+          <div class="me-av off" id="meAvatar"><span class="me-ph">?</span></div>
+          <div class="me-info">
+            <div class="me-name" id="meName">未登录</div>
+            <div class="me-sub" id="meSub">登录后即可发动态、加好友、聊天</div>
+            <div class="me-sync" id="meSync"><i></i><span>登录后自动同步</span></div>
+            <div class="me-nums">
+              <span class="me-num" onclick="event.stopPropagation();openFriends('following')">关注 <b id="myFollowing">0</b></span>
+              <span class="me-num" onclick="event.stopPropagation();openFriends('followers')">粉丝 <b id="myFollowers">0</b></span>
+            </div>
           </div>
-          <span class="profile-edit">编辑 ›</span>
+          <button class="btn-ghost sm" onclick="event.stopPropagation();openProfileEdit()">编辑</button>
         </div>
+
+        <div class="sec-title">训练概览</div>
         <div class="stat3" id="profileStats"></div>
+
+        <div class="sec-title">快捷入口</div>
+        <div class="settings">
+          <div class="sitem" onclick="openMyPosts()">我的动态<span class="r">只看自己发的 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="switchTab('friends')">好友<span class="r">关注 / 粉丝 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="switchTab('settings')">设置<span class="r">外观 / 配色 / 数据 / 关于 <span class="ar">›</span></span></div>
+        </div>
+        <div style="height:80px"></div>
+      </div>
+
+      <!-- ===== 设置：原我的页所有设置 / 关于项统一搬到这里 ===== -->
+      <div class="page" id="page-settings">
+        <div class="sub-back" onclick="switchTab('profile')">‹ 返回我的</div>
+        <div class="head-row" style="margin-top:10px">
+          <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
+          <div class="badge" id="profileVersion">v1.5</div>
+        </div>
 
         <div class="sec-title">外观</div>
         <div class="theme-seg">
@@ -644,7 +894,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <button class="pal" id="paldusk" onclick="setPalette('dusk')"><span class="dot" style="background:#6242C4"></span>暮紫</button>
         </div>
 
-        <div class="sec-title">数据管理<span>本地保存 · 不上传</span></div>
+        <div class="sec-title">数据管理<span>导出备份 · 导入恢复</span></div>
         <div class="settings">
           <div class="sitem" onclick="exportJSON()">导出备份<span class="r">JSON · 含全部记录 <span class="ar">›</span></span></div>
           <div class="sitem" onclick="exportCSV()">导出表格<span class="r">CSV · 可用 Excel 打开 <span class="ar">›</span></span></div>
@@ -652,25 +902,26 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <div class="sitem danger" onclick="openClearData()">清空数据<span class="r">不可恢复 · 自动刷新 <span class="ar">›</span></span></div>
         </div>
 
-        <div class="sec-title">软件更新<span>启动时静默检查</span></div>
+        <div class="sec-title">软件更新<span>新版本直接覆盖安装即可</span></div>
         <div class="settings">
-          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.4</span> <span class="ar">›</span></span></div>
-          <div class="sitem" onclick="window.open(RELEASE_PAGE,'_blank')">查看更新日志<span class="r">GitHub 发行版 <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="checkUpdate(true)">检测更新<span class="r">当前 <span id="curVersion">v1.5</span> <span class="ar">›</span></span></div>
+          <div class="sitem" onclick="openChangelog()">更新日志<span class="r">当前 <span id="logVersionInline">v1.5</span> <span class="ar">›</span></span></div>
         </div>
 
         <div class="sec-title">关于</div>
         <div class="about">
           <div class="app-ic"><img src="icons/icon-512.png" alt="PUSHUP"></div>
           <div class="app-nm">PUSHUP</div>
-          <div class="app-vr" id="aboutVersion">v1.4 · 正式版</div>
-          <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑次数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。外观支持跟随系统，数据只存在你的设备里，不登录、不上传，随时导出备份。</div>
+          <div class="app-vr" id="aboutVersion">v1.5 · 正式版</div>
+          <div class="app-ds">一个以俯卧撑为核心的自重训练记录工具。每天 3 秒记完：俯卧撑个数、体重、臂围，以及平板支撑、臀桥等徒手动作。内置动作按五大动作模式整理，可自由设为常用，也能添加自己的动作和分类。训练数据本机优先，登录后自动同步到账号，也可以随时导出备份。</div>
           <div class="about-row"><span class="k">作者</span><span class="v">再多吃一口饭</span></div>
           <div class="about-row"><span class="k">酷安</span><a href="https://www.coolapk.com/u/2456761" target="_blank" rel="noopener">作者主页 →</a></div>
-          <div class="about-row"><span class="k">项目</span><a href="https://github.com/simplejuzi/PUSHUP" target="_blank" rel="noopener">GitHub 仓库 →</a></div>
-          <div class="about-row"><span class="k">数据</span><span class="v">仅本机 · 离线可用</span></div>
+          <div class="about-row"><span class="k">GitHub</span><a href="https://github.com/simplejuzi" target="_blank" rel="noopener">作者主页 →</a></div>
+          <div class="about-row"><span class="k">数据</span><span class="v">本机优先 · 登录后云端同步</span></div>
+          <div class="about-row"><span class="k">社区</span><span class="v" id="socialModeTag">—</span></div>
         </div>
-        <div class="foot-note2">PUSHUP · 为每天多一点坚持而做<br>数据不会上传，换设备请用导出 / 导入</div>
-        <div style="height:10px"></div>
+        <div class="foot-note2">PUSHUP · 为每天多一点坚持而做<br>登录后训练记录自动同步，换设备登录同一账号即可</div>
+        <div style="height:80px"></div>
       </div>
 
     </div>
@@ -682,10 +933,82 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
     <div class="tabbar">
       <button class="tab on" id="tab-record" onclick="switchTab('record')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>记录</button>
-      <button class="tab" id="tab-history" onclick="switchTab('history')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>历史</button>
-      <button class="tab" id="tab-stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
-      <button class="tab" id="tab-library" onclick="switchTab('library')"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>动作</button>
+      <button class="tab" id="tab-data" onclick="switchTab('data')"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
+      <button class="tab" id="tab-feed" onclick="switchTab('feed')"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3V5z"/><path d="M8 9h8M8 13h5"/></svg>动态</button>
+      <button class="tab" id="tab-chats" onclick="switchTab('chats')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/><path d="M8 9h8M8 12h5"/></svg>消息</button>
       <button class="tab" id="tab-profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
+    </div>
+
+
+    <!-- ===== v1.5 注册 / 登录（名称 + 手机号 + 密码，无验证码） ===== -->
+    <div class="modal" id="authModal">
+      <div class="sheet form">
+        <div class="ins-head"><b id="auTitle">加入 PUSHUP</b><button class="tx" onclick="closeAuth()">✕</button></div>
+        <label id="auNameLb">名称<input id="auName" maxlength="12" placeholder="朋友看到的名字，不能重复"></label>
+        <label>手机号<input id="auPhone" inputmode="numeric" maxlength="11" placeholder="11 位手机号，当账号用"></label>
+        <label>密码<input id="auPass" type="password" placeholder="1~8 位都行"></label>
+        <div class="muted" style="margin-top:8px">名称 / 11 位手机号 / 密码，不需要验证码；名称不能和别人重复</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="submitAuth('reg')">注册</button>
+          <button class="btn-ghost" onclick="submitAuth('login')">登录</button>
+        </div>
+        <button class="btn-ghost wide" id="auLogout" style="display:none" onclick="doLogout()">退出当前账号</button>
+      </div>
+    </div>
+
+    <!-- ===== v1.5 退出登录（登录后点我的页整体资料卡弹出） ===== -->
+    <div class="modal" id="logoutModal">
+      <div class="sheet form">
+        <div class="ins-head"><b>当前账号</b><button class="tx" onclick="closeLogout()">✕</button></div>
+        <div class="logout-box">
+          <div class="me-av" id="loAv"></div>
+          <div><b id="loName"></b><small id="loPhone"></small></div>
+        </div>
+        <div class="muted" style="margin-top:12px">退出后可重新登录，本机训练记录不会丢失</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="closeLogout()">取消</button>
+          <button class="btn-ghost" style="color:#E5484D;font-weight:800" onclick="doLogout()">退出登录</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== v1.5 发布动态 ===== -->
+    <div class="modal" id="postModal">
+      <div class="sheet sheet-tall form">
+        <div class="ins-head"><b>发布动态</b><button class="tx" onclick="closePost()">✕</button></div>
+        <textarea id="postText" placeholder="今天练得怎么样？"></textarea>
+        <div class="post-tool">
+          <button class="btn-ghost sm" onclick="document.getElementById('postFile').click()">＋ 图片</button>
+          <button class="btn-ghost sm" onclick="toggleEmoji('postText')">☺ 表情</button>
+          <span class="muted" id="postImgCount">0 / 3</span>
+        </div>
+        <div id="postImgPrev" class="post-imgs"></div>
+        <input id="postFile" type="file" accept="image/*" multiple style="display:none" onchange="onPostImg(event)">
+        <label class="chk"><input type="checkbox" id="postAttachChk" onchange="postAttach=this.checked"> 附带今天的训练成果</label>
+        <div id="postWorkout" class="workout-box"></div>
+        <div class="vis-row">
+          <button class="mini-btn on" id="visAll" onclick="setPostVis('all')">全部人可见</button>
+          <button class="mini-btn" id="visFriends" onclick="setPostVis('friends')">仅好友可见</button>
+        </div>
+        <button class="btn-primary wide" onclick="submitPost()">发布</button>
+      </div>
+    </div>
+
+    <!-- ===== v1.5 选择聊天对象 ===== -->
+    <div class="modal" id="chatPickerModal">
+      <div class="sheet sheet-tall">
+        <div class="ins-head"><b>找人聊聊</b><button class="tx" onclick="document.getElementById('chatPickerModal').classList.remove('on')">✕</button></div>
+        <div id="chatPickerList"></div>
+      </div>
+    </div>
+
+    <!-- ===== v1.5 内置表情 / 表情包 ===== -->
+    <div id="emojiPanel" class="emoji-panel">
+      <h4>表情</h4>
+      <div id="emojiGrid" class="emoji-grid"></div>
+      <h4 style="margin-top:12px">表情包 · 点一下直接发</h4>
+      <div id="stickerGrid" class="sticker-grid"></div>
+      <button class="btn-ghost wide" onclick="document.getElementById('emojiPanel').classList.remove('on')">收起</button>
     </div>
 
     <!-- v1.1：导入（文件 / 文本 / 模板） -->
@@ -738,9 +1061,19 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <div class="sheet">
         <div class="sh-t">发现新版本 <span id="updVer"></span></div>
         <div class="upd-log" id="updLog"></div>
-        <div class="sh-note" id="updNote">直接覆盖安装，本机记录不会丢失。</div>
-        <span class="upd-link" onclick="window.open(RELEASE_PAGE,'_blank')">或用浏览器打开下载页</span>
+        <div class="sh-note" id="updNote">直接覆盖安装，账号与记录都不会丢失。</div>
+        <span class="upd-link" onclick="openChangelog()">查看本次更新内容</span>
         <div class="sh-btns"><button onclick="closeUpdate()">稍后</button><button class="primary" id="updBtn" onclick="startUpdate()">立即更新</button></div>
+      </div>
+    </div>
+    <!-- v1.5：应用内更新日志 -->
+    <div class="modal" id="logModal">
+      <div class="sheet sheet-tall">
+        <div class="ins-head"><b>更新日志 <span class="log-v" id="logVer">v1.5</span></b>
+          <button class="tx" onclick="closeChangelog()">✕</button></div>
+        <ul class="log-list" id="logList"></ul>
+        <div class="sh-note">新版本直接覆盖安装即可，账号与训练记录都会保留。</div>
+        <div class="sh-btns"><button class="primary" onclick="closeChangelog()">知道了</button></div>
       </div>
     </div>
     <!-- v1.2：编辑个人资料 -->
@@ -897,13 +1230,42 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.4";
+const APP_VERSION="v1.5";
+/* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
+const APP_CHANGELOG=[
+  "底栏改版：取消「动作」Tab，新增居中的「动态」；动作库改从记录页「浏览动作库」进入",
+  "新增动态专区：图文发布、附带当天训练成果、全部人 / 仅好友可见",
+  "新增好友功能：关注 / 粉丝 / 找人，互相关注才算好友",
+  "新增最简好友私聊：文字、图片、内置表情与表情包（打开 App 可收发）",
+  "新增名称 + 11 位手机号 + 密码三字段注册登录，无验证码；社区支持本地演示与 Supabase 双模式",
+  "导航与我的页重构：历史 + 数据合并为「数据」页并加页内切换，原数据位改「消息」；设置项全部收进设置页；未登录显示灰色头像与提示，发动态必须登录",
+  "点资料卡整体：未登录弹注册登录、已登录弹退出登录确认；手机号强制 11 位；动态只留「全部 / 好友」且默认全部，我的动态拆为独立页；设置与快捷入口去掉重复账号 / 消息入口",
+  "训练数据上云：登录后逐日实时同步，改一条推一条；未登录只存本机并在保存时提示可登录；登录时把本机数据并入账号，多设备按修改时间合并；导入 / 清空同步到云端",
+  "动态支持点赞与评论：评论可带表情，别人发的也能点；未登录点一下会提示登录",
+  "昵称唯一：注册和改名都会查重（不区分大小写），云端另有唯一索引兜底",
+  "联网后文案清理：去掉「只存本机」「离线可用」等旧说法，改为登录后自动同步",
+  "关于页改为跳到作者 GitHub 主页；更新日志改为应用内查看（仓库转私有后外部发行页打不开）"
+];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
   "https://api.github.com/repos/simplejuzi/PUSHUP/releases/latest",
   "https://raw.githubusercontent.com/simplejuzi/PUSHUP/main/version.json"
 ];
 const PKEY="fitness_palette_v1";
+function openChangelog(){
+  const ul=document.getElementById("logList"),v=document.getElementById("logVer"),
+        iv=document.getElementById("logVersionInline");
+  if(v)v.textContent=APP_VERSION;
+  if(iv)iv.textContent=APP_VERSION;
+  if(ul)ul.innerHTML=APP_CHANGELOG.map(function(t,i){
+    return '<li><b>'+(i+1)+'</b>'+sEsc(t)+'</li>';}).join("");
+  const m=document.getElementById("logModal");
+  if(m)m.classList.add("on");
+}
+function closeChangelog(){
+  const m=document.getElementById("logModal");
+  if(m)m.classList.remove("on");
+}
 let PALETTE="default";
 /* 清空数据 / 全新安装时保留的内置默认常用动作（顺序即展示顺序） */
 const DEFAULT_FAVS=["pushup","knee-pushup","russian-twist","plank","glute-bridge"];
@@ -951,7 +1313,7 @@ if(Array.isArray(CUSTOM)&&normalizeUnits(CUSTOM)){
 /* ============ v1.2：个人资料（头像 + 昵称） ============ */
 const AKEY="fitness_avatar_v1",NKEY="fitness_nickname_v1";
 const DEFAULT_NICKNAME="卷卷大人";
-/* 内置默认头像：健身房里做俯卧撑的熊猫（用户指定），320×320 JPEG 内联，离线可用。
+/* 内置默认头像：健身房里做俯卧撑的熊猫（用户指定），320×320 JPEG 内联，不依赖网络。
    源文件 icons/default-avatar.jpg：原图裁 640×640 正方形后缩放压缩。 */
 const DEFAULT_AVATAR="data:image/jpeg;base64,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";
 function normalizeUnits(list){
@@ -986,18 +1348,22 @@ function saveAll(){
     localStorage.setItem(CATKEY,JSON.stringify(CATS.filter(c=>c.k.indexOf("cc-")===0)));
     localStorage.setItem(PKEY,PALETTE);
     localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);}catch(e){}
+  try{scheduleSettingsSync();}catch(e){}
 }
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2000);}
 function switchTab(name){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
   document.getElementById("page-"+name).classList.add("on");
-  document.getElementById("tab-"+name).classList.add("on");
+  const _tb=document.getElementById("tab-"+name);
+  if(_tb)_tb.classList.add("on");
+  else{const _p=(name==="friends"||name==="settings"||name==="myposts")?"profile":(name==="library"?"record":(name==="chat"?"chats":"feed"));
+       const _pe=document.getElementById("tab-"+_p);if(_pe)_pe.classList.add("on");}
   document.getElementById("libFoot").classList.toggle("hide",!(name==="library"&&libDirty));
   document.getElementById("screen").scrollTop=0;
-  if(name==="history")renderHistory();
-  if(name==="stats")renderStats();
+  if(name==="data"){if(dataView==="history")renderHistory();else renderStats();}
   if(name==="library")renderLibrary();
+  if(name==="record"||name==="data")pullRecordsThrottled();
   if(name==="record"){
     /* v1.2 A：从历史 / 数据页主动跳到某天时保留目标日期（keepDateOnce），
        其它任何一次切回记录页都自动恢复到当天 */
@@ -1005,7 +1371,9 @@ function switchTab(name){
     else{curDate=todayStr();}
     fillRecord();
   }
-  if(name==="profile")renderProfile();
+  if(name==="profile"||name==="settings")renderProfile();
+  if(name==="feed")setFeedFilter("all");   /* 每次进动态页都默认显示「全部」 */
+  socialOnEnter(name);
 }
 /* v1.2：动态取当天，避免 App 跨天挂后台时「回今天」回到昨天 */
 function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -1102,7 +1470,11 @@ function saveRecord(){
   const i=DATA.findIndex(x=>x.d===curDate);
   if(i>=0)DATA[i]=obj;else DATA.push(obj);
   DATA.sort((x,y)=>x.d.localeCompare(y.d));
-  saveAll();toast("已保存 · "+fmtMD(curDate)+" "+items.length+" 个动作");
+  TMAP[curDate]=Date.now();
+  saveAll();
+  syncRecordNow(curDate);
+  toast(sMe()?("已保存 · "+fmtMD(curDate)+" "+items.length+" 个动作")
+            :"已保存 · 登录后自动同步到账号");
   checkBreakthrough();
 }
 
@@ -1291,6 +1663,7 @@ function markLibChange(){
 }
 function finishLib(){
   libDirty=false;
+  switchTab("record");
   document.getElementById("libFoot").classList.add("hide");
   document.getElementById("libList").style.paddingBottom="";
   toast("常用动作已更新");
@@ -1599,20 +1972,57 @@ function onAvatarFile(ev){
 }
 function saveProfileEdit(){
   const el=document.getElementById("peName");
-  NICKNAME=((el&&el.value)||"").trim().slice(0,12)||DEFAULT_NICKNAME;
-  AVATAR=pendingAvatar||DEFAULT_AVATAR;
-  saveAll();closeProfileEdit();renderProfile();toast("资料已保存");
+  const nm=((el&&el.value)||"").trim().slice(0,12)||DEFAULT_NICKNAME;
+  const me0=sMe();
+  /* v1.5：改昵称也要查重，不能改成别人的名字 */
+  if(nameTaken(nm,me0?me0.id:"")){toast("这个名称已经有人用了，换一个");return;}
+  const prevN=NICKNAME,prevA=AVATAR;
+  NICKNAME=nm;AVATAR=pendingAvatar||DEFAULT_AVATAR;
+  saveAll();closeProfileEdit();renderProfile();
+  /* v1.5：本地资料与社区账号保持同步，资料卡 / 动态条立即刷新 */
+  try{
+    const me=sMe();
+    if(me){me.name=NICKNAME;me.avatar=AVATAR;sSave();
+      if(typeof sbUpsertProfile==="function")sbUpsertProfile(me);
+      renderMeCard();renderFeedMe();renderFeed();}
+  }catch(e){}
+  toast("资料已保存");
+  /* 云端再核一次，防本地缓存过期；真撞车就回滚并提示，不让你占别人的名字 */
+  if(CLOUD()&&me0){
+    cloudNameTaken(nm,me0.id).then(function(t){
+      if(!t)return;
+      NICKNAME=prevN;AVATAR=prevA;pendingAvatar=prevA;
+      saveAll();renderProfile();
+      const me=sMe();
+      if(me){me.name=prevN;me.avatar=prevA;sSave();
+        if(typeof sbUpsertProfile==="function")sbUpsertProfile(me);}
+      renderMeCard();renderFeedMe();renderFeed();
+      toast("这个名称已经有人用了，已还原");
+    }).catch(function(){});
+  }
 }
 
 /* ============ 清空数据：清完自动刷新页面 ============ */
 function openClearData(){document.getElementById("clearModal").classList.add("on");}
 function closeClearData(){document.getElementById("clearModal").classList.remove("on");}
 function doClearData(){
-  try{
-    localStorage.clear();
-    sessionStorage.setItem("pushup_cleared_toast","1");
-  }catch(e){}
-  location.reload();
+  let fired=false;
+  const done=function(){
+    if(fired)return;fired=true;
+    try{
+      const soc=localStorage.getItem(SOC_KEY);
+      localStorage.clear();
+      /* 只清训练数据，账号登录态保留，否则清完还要重新登录 */
+      if(soc)localStorage.setItem(SOC_KEY,soc);
+      sessionStorage.setItem("pushup_cleared_toast","1");
+    }catch(e){}
+    location.reload();
+  };
+  if(syncEnabled()){
+    setSyncState("syncing");
+    clearCloudData().then(done).catch(done);
+    setTimeout(done,2600);   /* 网络卡住也要能刷新 */
+  }else done();
 }
 function parseLegacy(txt){
   const out=[];
@@ -1657,6 +2067,7 @@ function doImport(){
   applyTheme();
   closeImport();document.getElementById("importText").value="";renderAll();
   toast("已导入并保存 "+valid.length+" 条记录");
+  syncAllRecords();
 }
 
 /* ============ 开屏励志语句（固定词库 · 每次打开顺序循环） ============ */
@@ -1710,13 +2121,13 @@ function initSplash(){
 function skipSplash(){
   clearTimeout(splashTimer);
   syncStatusBar();
-  /* 每次打开 App 静默检查一次更新；开屏结束后才查，离线性失败一律零提示 */
+  /* 每次打开 App 静默检查一次更新；开屏结束后才查，失败一律零提示 */
   if(!updateChecked){updateChecked=true;setTimeout(()=>checkUpdate(false),500);}
   const el=document.getElementById("splash");if(!el)return;
   el.classList.add("out");setTimeout(()=>{el.style.display="none";},450);
 }
 
-/* ============ PUSHUP 正式版：离线 ============ */
+/* ============ PUSHUP 正式版：数据与社区 ============ */
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
 }
@@ -1885,7 +2296,7 @@ async function fetchLatest(){
       }
       return {version:"v"+(j.version||""),notes:(j.changelog||[]).map(x=>"· "+x).join("\n"),
               url:j.apkUrl||"",name:j.apk||""};
-    }catch(e){ /* 离线 / 超时：完全静默，绝不弹网络错误 */ }
+    }catch(e){ /* 超时 / 失败：完全静默，绝不弹网络错误 */ }
   }
   return null;
 }
@@ -1991,7 +2402,7 @@ function showBreakthrough(diff,prev,now){
 }
 function closeBreakthrough(){stopCheer();const b=document.getElementById("breakModal");if(b)b.classList.remove("on");}
 
-/* ============ v1.2：点击音效（Web Audio 合成，离线可用、零外部音频文件） ============ */
+/* ============ v1.2：点击音效（Web Audio 合成，零外部音频文件） ============ */
 let AC=null;
 function audioCtx(){
   try{
@@ -2131,6 +2542,848 @@ function bindClickSound(){
   },true);
 }
 
+
+
+/* ===== v1.5 布局重构：合并页切换 / 未登录态 / 我的页入口 ===== */
+let dataView="history";
+function setDataView(k){
+  dataView=k;
+  const h=document.getElementById("histPane"),st=document.getElementById("statsPane");
+  if(h)h.style.display=k==="history"?"":"none";
+  if(st)st.style.display=k==="stats"?"":"none";
+  const cb=document.getElementById("countBadge"),wb=document.getElementById("weightBadge");
+  if(cb)cb.style.display=k==="history"?"":"none";
+  if(wb)wb.style.display=k==="stats"?"":"none";
+  document.querySelectorAll(".seg-data").forEach(function(b){
+    b.className="seg-data"+((b.getAttribute("data-k")||"")===k?" on":"");});
+  if(k==="history")renderHistory();else renderStats();
+}
+function renderMeCard(){
+  const me=sMe(),av=document.getElementById("meAvatar");
+  if(av){av.innerHTML=me?sAv(me):'<span class="me-ph">?</span>';
+         av.className="me-av"+(me?"":" off");}
+  const n=document.getElementById("meName"),sub=document.getElementById("meSub");
+  if(n)n.textContent=me?me.name:"未登录";
+  if(sub)sub.textContent=me?("已记录 "+((typeof DATA!=="undefined"?DATA:[]).length)+" 天 · 点卡片编辑资料")
+                          :"登录后即可发动态、加好友、聊天";
+  const f=document.getElementById("myFollowing"),r=document.getElementById("myFollowers");
+  if(f)f.textContent=me?sFollowingIds(me.id).length:0;
+  if(r)r.textContent=me?sFollowers(me.id).length:0;
+  renderSyncState();
+}
+function meCardClick(){if(sMe())openLogout();else openAuth();}
+function openLogout(){
+  const me=sMe();if(!me){openAuth();return;}
+  const av=document.getElementById("loAv"),n=document.getElementById("loName"),p=document.getElementById("loPhone");
+  if(av){av.innerHTML=sAv(me);av.className="me-av";}
+  if(n)n.textContent=me.name;
+  if(p)p.textContent=me.phone?String(me.phone).replace(/^(\d{3})\d{4}(\d{4})$/,"$1****$2"):"";
+  document.getElementById("logoutModal").classList.add("on");
+}
+function closeLogout(){document.getElementById("logoutModal").classList.remove("on");}
+function openFriends(k){if(!sMe()){openAuth();return;}setFriendTab(k);switchTab("friends");}
+function openMyPosts(){if(!sMe()){openAuth();return;}switchTab("myposts");}
+function renderFeedMe(){
+  const me=sMe(),av=document.getElementById("feedMeAv"),n=document.getElementById("feedMeName"),
+        h=document.getElementById("feedMeHint"),go=document.getElementById("feedMeGo"),
+        btn=document.getElementById("feedPostBtn");
+  if(av){av.innerHTML=me?sAv(me):'<span class="me-ph">?</span>';
+         av.className="feed-me-av"+(me?"":" off");}
+  if(n)n.textContent=me?me.name:"未登录";
+  if(h)h.textContent=me?"今天练得怎么样？":"登录后即可发布动态、看好友训练";
+  if(go)go.textContent=me?"＋ 发动态":"去登录";
+  if(btn)btn.textContent=me?"＋ 发布":"登录后发布";
+}
+function feedMeClick(){if(sMe())openPost();else openAuth();}
+
+/* ==================================================================
+   v1.5 社区：动态 / 好友 / 最简聊天
+   双模式：SB_URL + SB_ANON 留空 → 本地模式（localStorage，可完整点动）
+           填好后 → Supabase Auth + REST（轮询，无需 SDK、不改构建脚本）
+   ================================================================== */
+const SB_URL="https://zqrlolyntlcewrwfhumd.supabase.co";
+const SB_ANON="sb_publishable_O7AmNzcRHCKtWThXB9_8tg_xWaMoRQU";
+const SOC_KEY="pushup_social_v1";
+const CLOUD=()=>!!(SB_URL&&SB_ANON);
+let SOC=null,SB_TOKEN="",feedFilter="all",friendTab="following",postVis="all",
+    TMAP={},REMOTE={},_lastSet=null,_setTimer=null,_recTimer=null,_pullAt=0,
+    SYNC_STATE="off",_lastSyncAt=0,
+    TMAP_KEY="fitness_times_v1",
+    chatWith=null,chatTimer=null,postImgs=[],chatImg=null,emojiFor=null,postAttach=true,
+    openCm={};
+
+const EMOJIS=["💪","🔥","💯","👏","👍","🎉","😄","😂","🥳","😎","🙌","🤝",
+ "🏋️","🤸","🧘","🏃","🚴","💦","⏱️","🥇","🏅","⚡","✨","❤️","😀","😅",
+ "😍","😭","😤","🤔","😴","🥵","🤩","😱","🫡","👊","🦾","🍀"];
+const STICKERS=[["💪","练完了"],["🔥","太强了"],["😂","笑不活了"],["🥇","今天第一"],
+ ["😴","摆烂一天"],["🫡","收到"],["🎉","破纪录"],["🥵","累趴了"]];
+
+function sEsc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function sTime(ts){const d=new Date(ts),p=n=>String(n).padStart(2,"0");
+  return p(d.getMonth()+1)+"/"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());}
+function sUid(){return "u"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function sLoad(){
+  if(SOC)return SOC;
+  let d=null;try{d=JSON.parse(localStorage.getItem(SOC_KEY)||"null");}catch(e){}
+  if(!d&&typeof window!=="undefined"&&window.__PREVIEW_SEED__)d=JSON.parse(JSON.stringify(window.__PREVIEW_SEED__));
+  SOC=d||{users:[],session:null,follows:[],posts:[],messages:[],likes:[],comments:[],token:""};
+  ["users","follows","posts","messages","likes","comments"].forEach(k=>{if(!Array.isArray(SOC[k]))SOC[k]=[];});
+  SB_TOKEN=SOC.token||"";
+  return SOC;
+}
+function sSave(){const s=sLoad();s.token=SB_TOKEN;
+  try{localStorage.setItem(SOC_KEY,JSON.stringify(s));return true;}
+  catch(e){toast("本地空间不足，图片可能没存下");return false;}}
+function sMe(){const s=sLoad();return s.users.find(u=>u.id===s.session)||null;}
+function sUser(id){return sLoad().users.find(u=>u.id===id)||{id:id,name:"已注销",emoji:"👤",avatar:""};}
+function sAv(u){return u.avatar?'<img src="'+sEsc(u.avatar)+'" alt="">':'<span>'+sEsc(u.emoji||"💪")+'</span>';}
+function sFollowing(id){const s=sLoad();return s.follows.some(f=>f.a===s.session&&f.b===id);}
+function sFriend(id){const s=sLoad();return id!==s.session&&sFollowing(id)&&s.follows.some(f=>f.a===id&&f.b===s.session);}
+/* v1.5：昵称唯一。本地缓存里覆盖所有从云端拉下来的资料，先本地查；云端再查一次防缓存过期 */
+function nameTaken(name,exceptId){
+  const k=String(name||"").trim().toLowerCase();
+  if(!k)return false;
+  return sLoad().users.some(function(u){
+    return u.id!==exceptId&&String(u.name||"").trim().toLowerCase()===k;});
+}
+function cloudNameTaken(name,exceptId){
+  try{
+    if(!CLOUD())return Promise.resolve(false);
+    const raw=String(name||"").trim();
+    if(!raw)return Promise.resolve(false);
+    return fetch(SB_URL+"/rest/v1/profiles?select=id,name&name=ilike."+encodeURIComponent(raw)+"&limit=3",
+        {headers:sbH()})
+      .then(function(r){return r.ok?r.json():[];})
+      .then(function(a){
+        if(!Array.isArray(a))return false;
+        const k=raw.toLowerCase();
+        return a.some(function(x){return x.id!==exceptId&&String(x.name||"").trim().toLowerCase()===k;});
+      })
+      .catch(function(){return false;});
+  }catch(e){return Promise.resolve(false);}
+}
+function sFollowers(id){return sLoad().follows.filter(f=>f.b===id).map(f=>f.a);}
+function sFollowingIds(id){return sLoad().follows.filter(f=>f.a===id).map(f=>f.b);}
+
+/* ---- 云端适配（纯 fetch，无 SDK；写操作先落本地再静默上行） ---- */
+function sbH(){return {"apikey":SB_ANON,"Content-Type":"application/json",
+  "Authorization":"Bearer "+(SB_TOKEN||SB_ANON),"Prefer":"return=representation"};}
+function sbFetch(p,o){return fetch(SB_URL+p,Object.assign({headers:sbH()},o||{}))
+  .then(r=>r.ok?r.json():null).catch(()=>null);}
+function sbPush(t,row){if(!CLOUD())return;sbFetch("/rest/v1/"+t,{method:"POST",body:JSON.stringify(row)});}
+function sbDel(t,q){if(!CLOUD())return;sbFetch("/rest/v1/"+t+"?"+q,{method:"DELETE"});}
+function sbAuth(p,b){return fetch(SB_URL+"/auth/v1/"+p,{method:"POST",
+  headers:{"apikey":SB_ANON,"Content-Type":"application/json"},body:JSON.stringify(b)})
+  .then(r=>r.json()).catch(()=>null);}
+/* 云端消息列用 from_id / to_id（避开 SQL 保留字）；拉回后统一映射成本地 from / to */
+function normMsg(m){
+  return {id:m.id,from:m.from||m.from_id,to:m.to||m.to_id,
+    text:m.text||"",image:m.image||"",sticker:m.sticker||"",
+    ts:m.ts,read:!!m.read};
+}
+function sbUpsertProfile(u){
+  if(!CLOUD())return;
+  sbFetch("/rest/v1/profiles",{
+    method:"POST",
+    headers:Object.assign(sbH(),{"Prefer":"resolution=ignore-duplicates,return=minimal"}),
+    body:JSON.stringify({id:u.id,name:u.name,phone:u.phone,avatar:u.avatar||""})
+  });
+}
+function cloudApplySession(d,phone,fallbackName){
+  if(!d||!d.access_token||!d.user)return false;
+  SB_TOKEN=d.access_token;
+  const meta=d.user.user_metadata||{};
+  const u={id:d.user.id,name:meta.name||fallbackName||phone,phone:phone,pass:"",
+           avatar:meta.avatar||"",emoji:"💪"};
+  const s=sLoad();if(!s.users.some(x=>x.id===u.id))s.users.push(u);
+  s.session=u.id;sSave();
+  sbUpsertProfile(u);
+  syncCloud();
+  onLoginMerge();return true;
+}
+function cloudRegister(name,phone,pass){
+  if(!/^\d{11}$/.test(String(phone||"")))return Promise.resolve({ok:false,why:"phone"});
+  /* 先查云端有没有同名，避免注册成功但昵称撞车 */
+  return cloudNameTaken(name).then(function(taken){
+    if(taken)return {ok:false,why:"name"};
+    return sbAuth("signup",{email:phone+"@pushup.local",password:pass,
+      data:{name:name,phone:phone}}).then(function(d){
+        if(!d||d.error){
+          const msg=String((d&&d.error&&(d.error.message||d.error.code))||"");
+          if(/already|exists|registered|duplicate/i.test(msg))return {ok:false,why:"phone"};
+          return {ok:false,why:"fail"};
+        }
+        const go=d.access_token?cloudApplySession(d,phone,name):cloudLogin(phone,pass);
+        return Promise.resolve(go).then(function(r){
+          return (r===true||(r&&r.ok))?{ok:true}:{ok:false,why:"fail"};});
+      }).catch(function(){return {ok:false,why:"net"};});
+  }).catch(function(){return {ok:false,why:"net"};});
+}
+function cloudLogin(phone,pass){
+  return sbAuth("token?grant_type=password",{email:phone+"@pushup.local",password:pass})
+    .then(function(d){return cloudApplySession(d,phone,phone);})
+    .catch(()=>false);
+}
+function syncCloud(){
+  if(!CLOUD())return;
+  Promise.all([
+    sbFetch("/rest/v1/profiles?select=*&limit=200"),
+    sbFetch("/rest/v1/follows?select=*&limit=500"),
+    sbFetch("/rest/v1/posts?select=*&order=ts.desc&limit=100"),
+    sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=300"),
+    sbFetch("/rest/v1/post_likes?select=*&limit=2000"),
+    sbFetch("/rest/v1/post_comments?select=*&order=ts.asc&limit=2000")
+  ]).then(function(a){
+    const s=sLoad(),ps=a[0],fs=a[1],po=a[2],ms=a[3],lk=a[4],cm=a[5];
+    if(ps)ps.forEach(p=>{if(!s.users.some(u=>u.id===p.id))s.users.push(
+      {id:p.id,name:p.name,phone:p.phone||"",pass:"",avatar:p.avatar||"",emoji:"💪"});});
+    if(fs)fs.forEach(f=>{if(!s.follows.some(x=>x.a===f.a&&x.b===f.b))s.follows.push({a:f.a,b:f.b});});
+    if(po)po.forEach(p=>{if(!s.posts.some(x=>x.id===p.id))s.posts.push(p);});
+    if(ms)ms.forEach(m=>{const x=normMsg(m);
+      if(!s.messages.some(y=>y.id===x.id))s.messages.push(x);});
+    if(lk)lk.forEach(function(x){
+      if(!s.likes.some(function(y){return y.a===x.post_id&&y.b===x.uid;}))
+        s.likes.push({a:x.post_id,b:x.uid});});
+    if(cm)cm.forEach(function(x){
+      if(!s.comments.some(function(y){return y.id===x.id;}))
+        s.comments.push({id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts});});
+    sSave();refreshSocialUI();
+  }).catch(()=>{});
+}
+function pullChat(){
+  if(!CLOUD()||!SB_TOKEN)return;
+  sbFetch("/rest/v1/messages?select=*&order=ts.asc&limit=300").then(function(ms){
+    if(!ms)return;const s=sLoad();let n=0;
+    ms.forEach(m=>{const x=normMsg(m);
+      if(!s.messages.some(y=>y.id===x.id)){s.messages.push(x);n++;}});
+    if(n){sSave();const c=document.getElementById("page-chat"),l=document.getElementById("page-chats");
+      if(c&&c.classList.contains("on"))renderChat();
+      if(l&&l.classList.contains("on"))renderChats();}
+  });
+}
+function startPolling(){
+  if(chatTimer)clearInterval(chatTimer);
+  chatTimer=setInterval(function(){
+    if(CLOUD())pullChat();
+    else{const c=document.getElementById("page-chat");
+         if(c&&c.classList.contains("on"))renderChat();}
+  },4000);
+}
+
+/* ---- 注册 / 登录：本地与云端统一入口 ---- */
+function localRegister(name,phone,pass){
+  if(!/^\d{11}$/.test(String(phone||""))){toast("手机号要 11 位数字");return false;}
+  const s=sLoad();if(s.users.some(u=>u.phone===phone)){toast("这个手机号已经注册过了");return false;}
+  if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return false;}
+  const u={id:sUid(),name:name,phone:phone,pass:pass,
+    avatar:(typeof AVATAR!=="undefined"?AVATAR:""),emoji:"💪"};
+  s.users.push(u);s.session=u.id;sSave();toast("注册成功 · 欢迎 "+u.name);return true;
+}
+function localLogin(phone,pass){
+  const s=sLoad(),u=s.users.find(x=>x.phone===phone&&x.pass===pass);
+  if(!u){toast("手机号或密码不对");return false;}
+  s.session=u.id;sSave();onLoginMerge();toast("欢迎回来 "+u.name);return true;
+}
+function submitAuth(mode){
+  const name=(document.getElementById("auName").value||"").trim();
+  const phone=(document.getElementById("auPhone").value||"").trim();
+  const pass=document.getElementById("auPass").value||"";
+  if(!phone||!pass){toast("手机号和密码填一下");return;}
+  if(mode==="reg"&&!name){toast("给自己起个名称");return;}
+  if(!/^\d{11}$/.test(phone)){toast("手机号要 11 位数字");return;}
+  if(mode==="reg"){
+    if(name.length>12){toast("名称最多 12 个字");return;}
+    if(nameTaken(name)){toast("这个名称已经有人用了，换一个");return;}
+  }
+  if(CLOUD()){
+    const p=mode==="reg"?cloudRegister(name,phone,pass):cloudLogin(phone,pass);
+    Promise.resolve(p).then(function(r){
+      if(r===true||(r&&r.ok)){closeAuth();refreshSocialUI();toast(mode==="reg"?"注册成功":"欢迎回来");return;}
+      const why=(r&&r.why)||"fail";
+      toast(why==="name"?"这个名称已经有人用了，换一个"
+          :why==="phone"?"这个手机号已经注册过了"
+          :why==="net"?"连不上云端，稍后再试"
+          :"没成功，检查手机号或密码");
+    }).catch(function(){toast("连不上云端，稍后再试");});
+  }else{
+    const ok=mode==="reg"?localRegister(name,phone,pass):localLogin(phone,pass);
+    if(ok){closeAuth();refreshSocialUI();}
+  }
+}
+function openAuth(){
+  const m=document.getElementById("authModal"),me=sMe();
+  const nl=document.getElementById("auNameLb"),ni=document.getElementById("auName");
+  if(nl)nl.style.display=me?"none":"";
+  if(ni)ni.style.display=me?"none":"";
+  const t=document.getElementById("auTitle");if(t)t.textContent=me?("当前账号 · "+me.name):"加入 PUSHUP";
+  const lo=document.getElementById("auLogout");if(lo)lo.style.display=me?"":"none";
+  m.classList.add("on");
+}
+function closeAuth(){document.getElementById("authModal").classList.remove("on");}
+function doLogout(){const s=sLoad();s.session=null;SB_TOKEN="";sSave();
+  REMOTE={};_lastSet=null;SYNC_STATE="off";
+  closeAuth();closeLogout();refreshSocialUI();toast("已退出");}
+
+/* ---- 好友 ---- */
+function setFriendTab(k){friendTab=k;document.querySelectorAll(".seg-f").forEach(function(b){
+  b.className="seg-f"+((b.getAttribute("data-k")||"")===k?" on":"");});renderFriends();}
+function toggleFollow(id){
+  if(!sMe()){openAuth();return;}
+  const s=sLoad(),i=s.follows.findIndex(f=>f.a===s.session&&f.b===id);
+  if(i>=0){s.follows.splice(i,1);sbDel("follows","a=eq."+s.session+"&b=eq."+id);}
+  else{s.follows.push({a:s.session,b:id});sbPush("follows",{a:s.session,b:id});}
+  sSave();renderFriends();refreshSocialCounts();toast(i>=0?"已取消关注":"已关注");
+}
+function renderFriends(){
+  const el=document.getElementById("friendList");if(!el)return;
+  const me=sMe();
+  if(!me){el.innerHTML='<div class="empty-hint">先登录再加入社区</div>';return;}
+  const kw=((document.getElementById("friendSearch")||{}).value||"").trim().toLowerCase();
+  const s=sLoad();
+  let list=friendTab==="find"?s.users.filter(u=>u.id!==me.id)
+    :(friendTab==="following"?sFollowingIds(me.id):sFollowers(me.id)).map(sUser);
+  list=list.filter(u=>!kw||String(u.name).toLowerCase().indexOf(kw)>=0);
+  el.innerHTML=list.length?list.map(function(u){
+    const f=sFollowing(u.id),fd=sFriend(u.id);
+    return '<div class="user-row" onclick="openChat(\''+u.id+'\')">'+
+      '<div class="user-av">'+sAv(u)+'</div>'+
+      '<div class="user-mid"><b>'+sEsc(u.name)+(fd?' <span class="vis-tag">好友</span>':'')+'</b>'+
+      '<small>'+(fd?'互相关注':(f?'我已关注':'关注了我'))+' · 点这行聊天</small></div>'+
+      '<button class="mini-btn'+(f?' on':'')+'" onclick="event.stopPropagation();toggleFollow(\''+u.id+'\')">'+
+      (f?'已关注':'＋ 关注')+'</button></div>';
+  }).join(""):'<div class="empty-hint">'+(kw?"没找到这个人":(friendTab==="find"?"还没有其他伙伴":"这里还是空的"))+'</div>';
+}
+
+/* ---- 动态 ---- */
+function setFeedFilter(k){if(k!=="all"&&k!=="friends")k="all";feedFilter=k;
+  document.querySelectorAll(".seg-feed").forEach(function(b){
+    b.className="seg-feed"+((b.getAttribute("data-k")||"")===k?" on":"");});renderFeed();}
+function todayWorkout(){
+  const d=todayStr(),r=(typeof DATA!=="undefined"?DATA:[]).find(x=>x.d===d);
+  if(!r||!r.items||!r.items.length)return null;
+  return r.items.map(x=>({n:x.n||x.id,v:x.v,u:x.u||"个"}));
+}
+/* ---- v1.5：点赞 / 评论 ---- */
+function postLiked(id){const s=sLoad();return s.likes.some(function(l){return l.a===id&&l.b===s.session;});}
+function likeCount(id){return sLoad().likes.filter(function(l){return l.a===id;}).length;}
+function commentsOf(id){return sLoad().comments.filter(function(c){return c.p===id;})
+  .sort(function(x,y){return x.ts-y.ts;});}
+function commentCount(id){return sLoad().comments.filter(function(c){return c.p===id;}).length;}
+function refreshPostViews(){renderFeed();renderMyPosts();}
+function toggleLike(id){
+  const me=sMe();if(!me){openAuth();return;}
+  const s=sLoad(),i=s.likes.findIndex(function(l){return l.a===id&&l.b===me.id;});
+  if(i>=0){s.likes.splice(i,1);sSave();sbDel("post_likes","post_id=eq."+id+"&uid=eq."+me.id);}
+  else{s.likes.push({a:id,b:me.id});sSave();sbPush("post_likes",{post_id:id,uid:me.id});}
+  refreshPostViews();
+}
+function toggleComments(id){openCm[id]=!openCm[id];refreshPostViews();}
+function sendComment(id){
+  const me=sMe();if(!me){openAuth();return;}
+  const el=document.getElementById("cmInput_"+id);
+  const text=String((el&&el.value)||"").trim().slice(0,200);
+  if(!text){toast("说点什么吧");return;}
+  const c={id:sUid(),p:id,uid:me.id,text:text,ts:Date.now()};
+  const s=sLoad();s.comments.push(c);sSave();
+  sbPush("post_comments",{id:c.id,post_id:id,uid:me.id,text:text,ts:c.ts});
+  if(el)el.value="";
+  const pn=document.getElementById("emojiPanel");if(pn)pn.classList.remove("on");
+  openCm[id]=true;refreshPostViews();
+}
+function delComment(cid,pid){
+  const me=sMe();if(!me)return;
+  const s=sLoad(),i=s.comments.findIndex(function(c){return c.id===cid;});
+  if(i<0||s.comments[i].uid!==me.id)return;
+  s.comments.splice(i,1);sSave();sbDel("post_comments","id=eq."+cid);
+  openCm[pid]=true;refreshPostViews();
+}
+
+function postCardHtml(p,me){
+  const u=sUser(p.uid),mine=me&&p.uid===me.id;
+  let h='<div class="fcard"><div class="fhead"><div class="fav">'+sAv(u)+'</div>'+
+    '<div class="fmeta"><div class="fname">'+sEsc(u.name)+'</div><div class="ftime">'+sTime(p.ts)+'</div></div>'+
+    '<span class="vis-tag">'+(p.vis==="friends"?"仅好友可见":"全部人可见")+'</span></div>';
+  if(p.text)h+='<div class="ftext">'+sEsc(p.text)+'</div>';
+  if(p.images&&p.images.length)h+='<div class="fimgs">'+p.images.map(function(d){
+    return '<img src="'+d+'" alt="动态图片" onclick="window.open(this.src)">';}).join("")+'</div>';
+  if(p.workout&&p.workout.length)h+='<div class="workout-box">'+p.workout.map(function(x){
+    return '<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>';}).join("")+'</div>';
+  /* 点赞 / 评论：只有登录后能点，未登录点了会拉起注册登录 */
+  const lk=postLiked(p.id),lc=likeCount(p.id),cc=commentCount(p.id),cs=commentsOf(p.id);
+  h+='<div class="fbar">'+
+    '<button class="fbtn'+(lk?' on':'')+'" onclick="toggleLike(\''+p.id+'\')">👍 <b>'+lc+'</b></button>'+
+    '<button class="fbtn'+(openCm[p.id]?' on':'')+'" onclick="toggleComments(\''+p.id+'\')">💬 <b>'+cc+'</b></button>'+
+    (mine?'<span class="fbar-sp"></span><button class="fbtn" onclick="delPost(\''+p.id+'\')">删除</button>':'')+
+    '</div>';
+  if(openCm[p.id]){
+    h+='<div class="fcms">'+(cs.length?cs.map(function(c){
+      const cu=sUser(c.uid);
+      return '<div class="fcm"><div class="fcm-av">'+sAv(cu)+'</div><div class="fcm-body">'+
+        '<div class="fcm-name">'+sEsc(cu.name)+'<span>'+sTime(c.ts)+'</span>'+
+        (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
+        '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
+    }).join(''):'<div class="cm-empty">还没有评论，说一句吧</div>')+
+      '<div class="cm-row"><input id="cmInput_'+p.id+'" maxlength="200" placeholder="写条评论…"'+
+      ' onkeydown="if(event.key===\'Enter\')sendComment(\''+p.id+'\')">'+
+      '<button class="cm-emoji" onclick="toggleEmoji(\'cmInput_'+p.id+'\')">☺</button>'+
+      '<button class="cm-send" onclick="sendComment(\''+p.id+'\')">发送</button></div>'+
+      '</div>';
+  }
+  return h+'</div>';
+}
+function renderFeed(){
+  renderFeedMe();
+  const el=document.getElementById("feedList");if(!el)return;
+  const s=sLoad(),me=sMe();
+  let ps=s.posts.slice().sort((a,b)=>b.ts-a.ts).filter(function(p){
+    if(p.vis==="friends"&&p.uid!==s.session&&!sFriend(p.uid))return false;
+    if(feedFilter==="friends"&&p.uid!==s.session&&!sFriend(p.uid))return false;
+    return true;});
+  el.innerHTML=ps.length?ps.map(p=>postCardHtml(p,me)).join("")
+    :'<div class="empty-hint">'+(me?"还没有动态，点右上角「＋ 发布」试试":"登录后就能看到大家的动态")+'</div>';
+}
+function renderMyPosts(){
+  const el=document.getElementById("mypostsList");if(!el)return;
+  const me=sMe();
+  if(!me){el.innerHTML='<div class="empty-hint">登录后查看我的动态</div>';return;}
+  const ps=sLoad().posts.filter(p=>p.uid===me.id).sort((a,b)=>b.ts-a.ts);
+  el.innerHTML=ps.length?ps.map(p=>postCardHtml(p,me)).join("")
+    :'<div class="empty-hint">还没有发过动态，点右上角「＋ 发动态」试试</div>';
+}
+function openPost(){
+  if(!sMe()){openAuth();return;}
+  postImgs=[];postVis="all";
+  const t=document.getElementById("postText");if(t)t.value="";
+  renderPostImgs();
+  const w=todayWorkout(),box=document.getElementById("postWorkout");
+  if(box)box.innerHTML=w?w.map(x=>'<span>'+sEsc(x.n)+' <b>'+sEsc(x.v)+'</b> '+sEsc(x.u)+'</span>').join("")
+    :'<span>今天还没有记录，去记录页保存后就能带上</span>';
+  const chk=document.getElementById("postAttachChk");
+  if(chk){chk.checked=!!w;chk.disabled=!w;}
+  postAttach=!!w;setPostVis("all");
+  document.getElementById("postModal").classList.add("on");
+  document.getElementById("emojiPanel").classList.remove("on");
+}
+function closePost(){document.getElementById("postModal").classList.remove("on");
+  document.getElementById("emojiPanel").classList.remove("on");}
+function setPostVis(v){postVis=v;
+  const a=document.getElementById("visAll"),b=document.getElementById("visFriends");
+  if(a)a.className="mini-btn"+(v==="all"?" on":"");
+  if(b)b.className="mini-btn"+(v==="friends"?" on":"");}
+function onPostImg(ev){
+  const fs=Array.prototype.slice.call(ev.target.files||[]).slice(0,3-postImgs.length);
+  if(!fs.length)return;
+  Promise.all(fs.map(f=>compressImage(f,720,.62))).then(function(ds){
+    postImgs=postImgs.concat(ds.filter(Boolean)).slice(0,3);renderPostImgs();});
+  ev.target.value="";
+}
+function renderPostImgs(){
+  const el=document.getElementById("postImgPrev");if(!el)return;
+  el.innerHTML=postImgs.map((d,i)=>'<img src="'+d+'" alt="待发布图片" onclick="rmPostImg('+i+')">').join("");
+  const c=document.getElementById("postImgCount");if(c)c.textContent=postImgs.length+" / 3";
+}
+function rmPostImg(i){postImgs.splice(i,1);renderPostImgs();}
+function submitPost(){
+  const me=sMe();if(!me){openAuth();return;}
+  const text=((document.getElementById("postText")||{}).value||"").trim();
+  const w=postAttach?todayWorkout():null;
+  if(!text&&!postImgs.length&&!w){toast("写点什么、加张图或带上今日成果");return;}
+  const p={id:sUid(),uid:me.id,text:text,images:postImgs.slice(),
+    workout:w,vis:postVis,ts:Date.now()};
+  sLoad().posts.push(p);sSave();
+  sbPush("posts",{id:p.id,uid:p.uid,text:p.text,images:p.images,workout:p.workout,vis:p.vis,ts:p.ts});
+  closePost();renderFeed();renderMyPosts();toast("已发布");
+}
+function delPost(id){
+  const s=sLoad(),i=s.posts.findIndex(p=>p.id===id);
+  if(i<0||s.posts[i].uid!==s.session)return;
+  s.posts.splice(i,1);
+  s.likes=s.likes.filter(function(l){return l.a!==id;});
+  s.comments=s.comments.filter(function(c){return c.p!==id;});
+  sSave();sbDel("posts","id=eq."+id);
+  renderFeed();renderMyPosts();toast("已删除");
+}
+
+/* ---- 图片压缩（纯 canvas，无外部库） ---- */
+function compressImage(file,maxSide,quality){
+  return new Promise(function(resolve){
+    if(typeof FileReader==="undefined"||typeof Image==="undefined"){resolve(null);return;}
+    const rd=new FileReader();
+    rd.onload=function(){
+      const img=new Image();
+      img.onload=function(){
+        try{
+          const sc=Math.min(1,maxSide/Math.max(img.width,img.height));
+          const c=document.createElement("canvas");
+          c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+          c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+          resolve(c.toDataURL("image/jpeg",quality));
+        }catch(e){resolve(null);}
+      };
+      img.onerror=function(){resolve(null);};
+      img.src=rd.result;
+    };
+    rd.onerror=function(){resolve(null);};
+    rd.readAsDataURL(file);
+  });
+}
+
+/* ---- 内置表情 / 表情包 ---- */
+function toggleEmoji(target){
+  const p=document.getElementById("emojiPanel");
+  if(p.classList.contains("on")&&emojiFor===target){p.classList.remove("on");return;}
+  emojiFor=target;
+  const g=document.getElementById("emojiGrid"),sg=document.getElementById("stickerGrid");
+  if(g)g.innerHTML=EMOJIS.map(e=>'<button class="emoji-item" onclick="insertEmoji(\''+e+'\')">'+e+'</button>').join("");
+  if(sg)sg.innerHTML=STICKERS.map(function(t){
+    return '<button class="sticker-item" onclick="sendSticker(\''+t[0]+'\',\''+t[1]+'\')">'+
+      '<span>'+t[0]+'</span><small>'+t[1]+'</small></button>';}).join("");
+  p.classList.add("on");
+}
+function insertEmoji(e){
+  const el=document.getElementById(emojiFor);if(!el)return;
+  const st=el.selectionStart==null?el.value.length:el.selectionStart;
+  const en=el.selectionEnd==null?st:el.selectionEnd;
+  el.value=el.value.slice(0,st)+e+el.value.slice(en);
+  try{el.focus();el.setSelectionRange(st+e.length,st+e.length);}catch(x){}
+  document.getElementById("emojiPanel").classList.remove("on");
+}
+function sendSticker(emo,cap){
+  if(emojiFor==="chatInput")sendChatMessage({sticker:emo,text:cap});
+  else{const el=document.getElementById(emojiFor);
+    if(el)el.value=(el.value?el.value+" ":"")+emo+cap;}
+  document.getElementById("emojiPanel").classList.remove("on");
+}
+
+/* ---- 最简聊天：打开 App 才收得到，无系统推送 ---- */
+function openChat(id){chatWith=id;
+  const m=document.getElementById("chatPickerModal");if(m)m.classList.remove("on");
+  document.getElementById("emojiPanel").classList.remove("on");
+  switchTab("chat");}
+function openChatPicker(){
+  const me=sMe(),el=document.getElementById("chatPickerList");if(!el)return;
+  const ids=me?sFollowingIds(me.id).concat(sFollowers(me.id)):[];
+  const list=[];ids.forEach(id=>{if(list.indexOf(id)<0)list.push(id);});
+  el.innerHTML=list.length?list.map(function(id){const u=sUser(id);
+    return '<div class="user-row" onclick="openChat(\''+id+'\')"><div class="user-av">'+sAv(u)+
+      '</div><div class="user-mid"><b>'+sEsc(u.name)+'</b><small>'+(sFriend(id)?'互相关注 · 好友':'可以聊天')+
+      '</small></div><span class="ar">›</span></div>';}).join("")
+    :'<div class="empty-hint">先去好友页关注几个人</div>';
+  document.getElementById("chatPickerModal").classList.add("on");
+}
+function renderChat(){
+  const el=document.getElementById("chatBody");if(!el)return;
+  const me=sMe();if(!me||!chatWith){el.innerHTML='<div class="empty-hint">先登录</div>';return;}
+  const u=sUser(chatWith),t=document.getElementById("chatTitle");if(t)t.textContent=u.name;
+  const ms=sLoad().messages.filter(m=>
+    (m.from===me.id&&m.to===chatWith)||(m.from===chatWith&&m.to===me.id))
+    .sort((a,b)=>a.ts-b.ts);
+  el.innerHTML=ms.length?ms.map(function(m){
+    const mine=m.from===me.id;let body="";
+    if(m.image)body='<img class="bubble-img" src="'+m.image+'" alt="图片" onclick="window.open(this.src)">';
+    if(m.sticker)body+='<div class="bubble-sticker">'+m.sticker+'</div><div class="bubble-cap">'+sEsc(m.text||"")+'</div>';
+    else if(m.text)body+='<div>'+sEsc(m.text)+'</div>';
+    return '<div class="bubble-row '+(mine?"out":"in")+'">'+(mine?"":'<div class="bubble-av">'+sAv(u)+'</div>')+
+      '<div class="bubble">'+body+'<div class="bubble-time">'+sTime(m.ts)+'</div></div></div>';
+  }).join(""):'<div class="empty-hint">还没有消息，打个招呼吧</div>';
+  el.scrollTop=el.scrollHeight;
+}
+function renderChats(){
+  const el=document.getElementById("chatList");if(!el)return;
+  const me=sMe();if(!me){el.innerHTML='<div class="empty-hint">先登录再加入社区</div>';return;}
+  const map={};sLoad().messages.forEach(function(m){
+    if(m.from===me.id||m.to===me.id){const o=m.from===me.id?m.to:m.from;
+      if(!map[o]||map[o].ts<m.ts)map[o]=m;}});
+  const ids=Object.keys(map).sort((a,b)=>map[b].ts-map[a].ts);
+  el.innerHTML=ids.length?ids.map(function(id){
+    const u=sUser(id),m=map[id];
+    const prev=m.image?"[图片]":(m.sticker?m.sticker+" "+(m.text||""):(m.text||""));
+    return '<div class="user-row" onclick="openChat(\''+id+'\')"><div class="user-av">'+sAv(u)+
+      '</div><div class="user-mid"><b>'+sEsc(u.name)+'</b><small>'+sEsc(prev)+
+      '</small></div><span class="user-time">'+sTime(m.ts)+'</span></div>';
+  }).join(""):'<div class="empty-hint">还没有会话 · 去好友页找人聊聊</div>';
+}
+function sendChatMessage(obj){
+  const me=sMe();if(!me||!chatWith)return;
+  const m=Object.assign({id:sUid(),from:me.id,to:chatWith,ts:Date.now(),read:false},obj||{});
+  sLoad().messages.push(m);sSave();
+  sbPush("messages",{id:m.id,from_id:m.from,to_id:m.to,text:m.text||"",
+    image:m.image||"",sticker:m.sticker||"",ts:m.ts});
+  const i=document.getElementById("chatInput");if(i)i.value="";
+  chatImg=null;const h=document.getElementById("chatImgHint");if(h)h.style.display="none";
+  renderChat();
+}
+function submitChat(){
+  const el=document.getElementById("chatInput"),t=(el.value||"").trim();
+  if(!t&&!chatImg)return;
+  sendChatMessage({text:t,image:chatImg||""});
+}
+function onChatImg(ev){
+  const f=ev.target.files&&ev.target.files[0];if(!f)return;
+  compressImage(f,560,.6).then(function(d){
+    if(!d)return;chatImg=d;
+    const h=document.getElementById("chatImgHint");
+    if(h){h.style.display="";h.textContent="已附 1 张图 · 点这里取消";}});
+  ev.target.value="";
+}
+
+/* ==================================================================
+   v1.5 训练数据云同步
+   records(uid, d, payload, updated_at) —— 一天一条，实时单条 upsert
+   settings(uid, favs/custom/cats/nickname/theme/palette/avatar) —— 字段级 PATCH
+   未登录只写本机；登录后先拉云端合并，再把本机较新的推上去
+   ================================================================== */
+function syncEnabled(){
+  if(!sMe())return false;
+  if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)return true;
+  return CLOUD()&&!!SB_TOKEN;
+}
+function sbWrite(p,method,body,prefer){
+  if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)
+    return new Promise(function(r){setTimeout(function(){r(true);},520);});
+  const h=sbH();if(prefer)h.Prefer=prefer;
+  const o={method:method,headers:h};
+  if(body!==undefined)o.body=JSON.stringify(body);
+  return fetch(SB_URL+p,o).then(function(r){return r.ok;}).catch(function(){return false;});
+}
+function syncRecordRow(r,ts){
+  return {uid:sMe().id,d:r.d,payload:r,updated_at:new Date(ts||Date.now()).toISOString()};
+}
+function saveTimes(){try{localStorage.setItem(TMAP_KEY,JSON.stringify(TMAP));}catch(e){}}
+function saveLocalRaw(){
+  try{localStorage.setItem(KEY,JSON.stringify(DATA));}catch(e){}
+  saveTimes();
+}
+/* 只写偏好，不碰记录、不触发推送（用于云端数据回填到本机） */
+function saveLocalPrefs(){
+  try{
+    localStorage.setItem(FKEY,JSON.stringify(FAVS));localStorage.setItem(TKEY,THEME);
+    localStorage.setItem(CKEY,JSON.stringify(CUSTOM));
+    localStorage.setItem(CATKEY,JSON.stringify(CATS.filter(c=>c.k.indexOf("cc-")===0)));
+    localStorage.setItem(PKEY,PALETTE);
+    localStorage.setItem(AKEY,AVATAR);localStorage.setItem(NKEY,NICKNAME);
+  }catch(e){}
+}
+function settingsPayload(){
+  return {favs:FAVS,custom:CUSTOM,cats:CATS.filter(c=>c.k.indexOf("cc-")===0),
+          nickname:NICKNAME,theme:THEME,palette:PALETTE,avatar:AVATAR};
+}
+function setSyncState(st){
+  SYNC_STATE=st;
+  if(st==="ok")_lastSyncAt=Date.now();
+  renderSyncState();
+}
+function syncAgo(){
+  if(!_lastSyncAt)return "";
+  const s=Math.round((Date.now()-_lastSyncAt)/1000);
+  if(s<10)return "刚刚";if(s<60)return s+" 秒前";
+  const m=Math.round(s/60);if(m<60)return m+" 分钟前";
+  return Math.round(m/60)+" 小时前";
+}
+function renderSyncState(){
+  const el=document.getElementById("meSync");if(!el)return;
+  const me=sMe();
+  let cls="",txt="";
+  if(!me){cls="";txt="未登录 · 记录仅存本机";}
+  else if(SYNC_STATE==="syncing"){cls="busy";txt="正在同步…";}
+  else if(SYNC_STATE==="fail"){cls="bad";txt="待同步 · 联网后自动重试";}
+  else if(SYNC_STATE==="ok"){cls="ok";txt="已同步 · "+syncAgo();}
+  else {cls="";txt=CLOUD()?"已登录 · 等待同步":"已登录 · 记录仅存本机";}
+  el.innerHTML='<i class="'+cls+'"></i><span>'+sEsc(txt)+'</span>';
+}
+/* ---- 单条记录：改一次推一次 ---- */
+function syncRecordNow(d){
+  if(!syncEnabled())return;
+  const me=sMe(),r=DATA.find(x=>x.d===d);
+  setSyncState("syncing");
+  if(!r){
+    const p="/rest/v1/records?uid=eq."+me.id+"&d=eq."+encodeURIComponent(d);
+    sbWrite(p,"DELETE").then(function(ok){delete REMOTE[d];setSyncState(ok?"ok":"fail");});
+    return;
+  }
+  const ts=TMAP[d]||Date.now();
+  sbWrite("/rest/v1/records?on_conflict=uid,d","POST",syncRecordRow(r,ts),
+          "resolution=merge-duplicates,return=minimal")
+    .then(function(ok){
+      if(ok)REMOTE[d]={json:JSON.stringify(r),ts:ts};
+      setSyncState(ok?"ok":"fail");
+    });
+}
+/* ---- 全量推送：只推与云端不同或本地独有的 ---- */
+function pushAllRecords(){
+  const me=sMe();if(!me)return Promise.resolve(true);
+  const rows=DATA.filter(function(r){
+    const rm=REMOTE[r.d];
+    return !rm||rm.json!==JSON.stringify(r);
+  }).map(function(r){return syncRecordRow(r,TMAP[r.d]||Date.now());});
+  if(!rows.length)return Promise.resolve(true);
+  const chunks=[];for(let i=0;i<rows.length;i+=80)chunks.push(rows.slice(i,i+80));
+  return chunks.reduce(function(p,c){
+    return p.then(function(){
+      return sbWrite("/rest/v1/records?on_conflict=uid,d","POST",c,
+                     "resolution=merge-duplicates,return=minimal");
+    });
+  },Promise.resolve(true)).then(function(ok){
+    if(ok)DATA.forEach(function(r){REMOTE[r.d]={json:JSON.stringify(r),ts:TMAP[r.d]||Date.now()};});
+    return ok;
+  });
+}
+/* ---- 拉云端记录，按 updated_at 合并（云端更新的覆盖本地） ---- */
+function pullRecords(){
+  const me=sMe();if(!me)return Promise.resolve(true);
+  if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)return Promise.resolve(true);
+  return sbFetch("/rest/v1/records?select=d,payload,updated_at&uid=eq."+me.id+"&limit=5000")
+    .then(function(rows){
+      if(!rows)return false;
+      let changed=false;
+      rows.forEach(function(x){
+        if(!x||!x.d||!x.payload)return;
+        const ts=Date.parse(x.updated_at)||0,lt=TMAP[x.d]||0;
+        const i=DATA.findIndex(function(r){return r.d===x.d;});
+        if(i<0){DATA.push(Object.assign({},x.payload,{d:x.d}));TMAP[x.d]=ts;changed=true;}
+        else if(ts>lt){DATA[i]=Object.assign({},x.payload,{d:x.d});TMAP[x.d]=ts;changed=true;}
+        REMOTE[x.d]={json:JSON.stringify(Object.assign({},x.payload,{d:x.d})),ts:ts};
+      });
+      if(changed){
+        DATA.sort(function(a,b){return a.d.localeCompare(b.d);});
+        saveLocalRaw();renderAll();
+      }
+      return true;
+    }).catch(function(){return false;});
+}
+/* ---- 设置：只 PATCH 变化的字段 ---- */
+function pushSettings(force){
+  const me=sMe();if(!me)return Promise.resolve(true);
+  const cur=settingsPayload(),patch={};
+  Object.keys(cur).forEach(function(k){
+    if(force||JSON.stringify(cur[k])!==JSON.stringify((_lastSet||{})[k]))patch[k]=cur[k];
+  });
+  if(!Object.keys(patch).length)return Promise.resolve(true);
+  patch.uid=me.id;patch.updated_at=new Date().toISOString();
+  return sbWrite("/rest/v1/settings?on_conflict=uid","POST",patch,
+                 "resolution=merge-duplicates,return=minimal").then(function(ok){
+    if(ok)_lastSet=JSON.parse(JSON.stringify(cur));
+    return ok;
+  });
+}
+function scheduleSettingsSync(){
+  if(!syncEnabled())return;
+  if(_setTimer)clearTimeout(_setTimer);
+  _setTimer=setTimeout(function(){pushSettings(false).catch(function(){});},600);
+}
+function pullSettings(){
+  const me=sMe();if(!me)return Promise.resolve(false);
+  if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)return Promise.resolve(false);
+  return sbFetch("/rest/v1/settings?select=*&uid=eq."+me.id+"&limit=1")
+    .then(function(rows){
+      if(!rows||!rows.length)return false;
+      const x=rows[0];
+      if(Array.isArray(x.favs)&&x.favs.length)FAVS=x.favs;
+      if(Array.isArray(x.custom)){CUSTOM=x.custom;normalizeUnits(CUSTOM);EX=BASE_EX.concat(CUSTOM);}
+      if(Array.isArray(x.cats))CATS=BASE_CATS.concat(x.cats);
+      if(typeof x.nickname==="string"&&x.nickname)NICKNAME=x.nickname;
+      if(typeof x.avatar==="string"&&x.avatar.indexOf("data:image")===0)AVATAR=x.avatar;
+      if(x.theme)THEME=x.theme;
+      if(x.palette)PALETTE=x.palette;
+      _lastSet=settingsPayload();
+      applyTheme();saveLocalPrefs();renderAll();
+      return true;
+    }).catch(function(){return false;});
+}
+/* ---- 登录后合并：先拉云端（新的覆盖本地），再把本地独有 / 较新的推上去 ---- */
+function onLoginMerge(){
+  if(!syncEnabled()){renderSyncState();return Promise.resolve(false);}
+  setSyncState("syncing");
+  return pullSettings()
+    .then(function(){return pullRecords();})
+    .then(function(){return pushAllRecords();})
+    .then(function(){return pushSettings(false);})
+    .then(function(){
+      _lastSyncAt=Date.now();setSyncState("ok");
+      try{refreshSocialUI();}catch(e){}
+      return true;
+    })
+    .catch(function(){setSyncState("fail");return false;});
+}
+/* ---- 导入 / 清空 ---- */
+function syncAllRecords(){
+  if(!syncEnabled())return;
+  const now=Date.now();
+  DATA.forEach(function(r){TMAP[r.d]=now;});
+  saveTimes();setSyncState("syncing");
+  REMOTE={};
+  pushAllRecords().then(function(ok){setSyncState(ok?"ok":"fail");});
+}
+function clearCloudData(){
+  const me=sMe();
+  if(!syncEnabled()||!me)return Promise.resolve(true);
+  return Promise.all([
+    sbWrite("/rest/v1/records?uid=eq."+me.id,"DELETE"),
+    sbWrite("/rest/v1/settings?uid=eq."+me.id,"DELETE")
+  ]).then(function(){REMOTE={};_lastSet=null;return true;}).catch(function(){return false;});
+}
+function syncInitLocal(){
+  try{
+    const t=JSON.parse(localStorage.getItem(TMAP_KEY)||"{}");
+    TMAP=(t&&typeof t==="object"&&!Array.isArray(t))?t:{};
+  }catch(e){TMAP={};}
+  REMOTE={};_lastSet=null;
+  renderSyncState();
+}
+function pullRecordsThrottled(){
+  if(!syncEnabled())return;
+  if(Date.now()-_pullAt<10000)return;
+  _pullAt=Date.now();
+  pullRecords().then(function(ok){if(ok&&SYNC_STATE!=="syncing")setSyncState("ok");});
+}
+
+/* ---- 初始化与刷新 ---- */
+function socialOnEnter(name){
+  try{
+    if(name==="feed")renderFeed();
+    if(name==="myposts")renderMyPosts();
+    if(name==="friends")renderFriends();
+    if(name==="chats")renderChats();
+    if(name==="chat")renderChat();
+    if(name==="profile"||name==="settings"){renderProfile();refreshSocialCounts();}
+    if(name==="data")setDataView(dataView);
+  }catch(e){}
+}
+function refreshSocialCounts(){
+  const me=sMe();
+  const f=document.getElementById("myFollowing"),r=document.getElementById("myFollowers");
+  if(f)f.textContent=me?sFollowingIds(me.id).length:0;
+  if(r)r.textContent=me?sFollowers(me.id).length:0;
+  const t=document.getElementById("socialModeTag");
+  if(t)t.textContent=CLOUD()?"已连接 · 云端同步":"未连接";
+  renderMeCard();renderFeedMe();
+}
+function refreshSocialUI(){
+  refreshSocialCounts();
+  ["feed","myposts","friends","chats","chat"].forEach(function(n){
+    const el=document.getElementById("page-"+n);
+    if(el&&el.classList.contains("on"))socialOnEnter(n);});
+}
+function initSocial(){
+  try{
+    sLoad();
+    syncInitLocal();
+    if(typeof window!=="undefined"&&window.__PREVIEW_AUTO_LOGIN__&&!sMe()){
+      const s=sLoad();
+      if(!s.users.some(u=>u.id==="me_preview"))s.users.unshift({
+        id:"me_preview",name:(typeof NICKNAME!=="undefined"?NICKNAME:"卷卷大人"),
+        phone:"13900000000",pass:"1",
+        avatar:(typeof AVATAR!=="undefined"?AVATAR:""),emoji:"🐼"});
+      s.session="me_preview";sSave();
+    }
+    refreshSocialUI();
+    startPolling();
+    if(CLOUD())syncCloud();
+    if(syncEnabled())onLoginMerge();
+  }catch(e){}
+}
+
 /* ============ 初始化 ============ */
 applyTheme();
 try{localStorage.removeItem("pushup_logo_v1");}catch(e){}
@@ -2139,6 +3392,7 @@ bindWeightChart();
 initSplash();
 initMotto();
 bindClickSound();
+initSocial();
 /* 清空数据并刷新后给一次明确反馈（开屏层会盖住 toast，先跳过开屏） */
 try{
   if(sessionStorage.getItem("pushup_cleared_toast")==="1"){
