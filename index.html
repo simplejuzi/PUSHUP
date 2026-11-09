@@ -775,6 +775,19 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .user-mid b{display:block;font-size:13px;color:var(--ink)}
 .user-mid small{display:block;font-size:11px;color:var(--sub2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
 .user-time{font-size:10px;color:var(--sub2)}
+/* v1.19：消息页「通知」——关注 / 点赞 / 评论 */
+.notif-item{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;padding:11px 12px;margin-top:8px;box-shadow:var(--shadow);cursor:pointer}
+.notif-item:active{background:var(--soft)}
+.notif-ic{width:34px;height:34px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;background:var(--accent-soft)}
+.notif-mid{flex:1;min-width:0}
+.notif-mid b{display:block;font-size:13px;color:var(--ink);font-weight:650;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notif-mid small{display:block;font-size:11px;color:var(--sub2);margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notif-time{font-size:10px;color:var(--sub2);flex:none}
+.notif-empty{text-align:center;color:var(--sub2);font-size:12px;padding:14px 0}
 .mini-btn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
 .mini-btn.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
 /* v1.17：聊天页整体覆盖手机屏，顶部标题 + 中间记录滚动 + 底部固定输入条 */
@@ -1073,6 +1086,8 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <span id="netbarChat"><b>连不上服务器</b>：消息发不出去也收不到。<span class="nb-go">点这里换服务器地址 ›</span></span>
         </div>
         <div class="muted" style="margin:10px 3px">最简单的好友私聊，App 关闭时不会推送通知</div>
+        <div id="notifList"></div>
+        <div class="sec-title" id="chatListTitle" style="display:none">会话</div>
         <div id="chatList"></div>
         <div style="height:80px"></div>
       </div>
@@ -1584,19 +1599,14 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.18";
+const APP_VERSION="v1.19";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "聊天页改成微信风格：顶部中间居中显示对方名字，我方也显示头像，气泡两侧都有头像",
-  "聊天输入条固定贴底，不再跟着聊天记录一起滚动；聊天页隐藏底栏",
-  "动态详情页：点赞按钮改成「爱心 + 点赞」，不再显示人数；和「评论 N 条」同一排、点赞放最右边",
-  "动态详情页上方单独显示「N 人点赞」+ 点赞人头像",
-  "进入动态详情页时隐藏底栏，评论框不再挡住动态图标",
-  "删掉各页面左上角的「‹ 返回」按钮，统一用系统物理返回键 / 全面屏返回手势",
-  "删掉动态页右上角的「发布」按钮，发动态入口保留在顶部的个人条上",
-  "删除动态改成「三个点」菜单（微信风格）：自己的动态卡片右上角点「···」展开，里面是「删除」；我的动态页里同样能直接删",
-  "删除动态需要二次确认，避免误删",
-  "我的页删掉「已记录 N 天」副标题，同步状态（已同步）保留"
+  "修：关注、动态、消息、点赞、评论现在实时刷新——每隔几秒自动拉一次云端，对方关注了你、发了动态或消息，你这边不用重进 App 就能看到",
+  "新增「消息页通知」：谁关注了你、谁赞了你的动态、谁评论了你的动态，都会在消息页顶部列出来，点一下直接跳到对应位置",
+  "聊天页微信风格：顶部居中标题、双方头像、固定输入条、隐藏底栏",
+  "动态详情页：点赞改成「爱心+点赞」与评论同排、人数单独显示；进入详情页隐藏底栏",
+  "删返回/发布按钮、三个点删除二次确认、我的页删「已记录 N 天」"
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -3977,10 +3987,19 @@ function pullChat(){
 function startPolling(){
   if(chatTimer)clearInterval(chatTimer);
   chatTimer=setInterval(function(){
-    if(CLOUD())pullChat();
-    else{const c=document.getElementById("page-chat");
-         if(c&&c.classList.contains("on"))renderChat();}
-  },4000);
+    /* v1.19：关注 / 动态 / 点赞 / 评论 / 消息都要实时刷新，
+       否则对方关注、发动态、发消息后你这边一直看不到。 */
+    if(syncEnabled())pollSocial();
+    const c=document.getElementById("page-chat");
+    if(c&&c.classList.contains("on"))renderChat();
+  },5000);
+}
+/* v1.19：社区数据实时刷新 —— 周期性全量拉取并去重合并（syncCloud 幂等）。 */
+let _polling=false;
+function pollSocial(){
+  if(_polling)return;
+  _polling=true;
+  syncCloud().then(function(){_polling=false;}).catch(function(){_polling=false;});
 }
 
 /* ---- 注册 / 登录：本地与云端统一入口 ---- */
@@ -4748,6 +4767,65 @@ function renderChats(){
       '</small></div><span class="user-time">'+sTime(m.ts)+'</span></div>';
   }).join(""):'<div class="empty-hint">还没有会话 · 去好友页找人聊聊</div>';
 }
+/* v1.19：消息页「通知」—— 谁关注了你 / 谁赞了你的动态 / 谁评论了你的动态。
+   这些都能从本机已有的 follows / likes / comments / posts 派生，无需新表。 */
+function renderNotifications(){
+  const box=document.getElementById("notifList");
+  if(!box)return;
+  const me=sMe();
+  if(!me){
+    box.innerHTML="";
+    const t=document.getElementById("chatListTitle");if(t)t.style.display="none";
+    return;
+  }
+  const s=sLoad(),list=[];
+  /* 新粉丝：别人关注了我 */
+  s.follows.forEach(function(f){
+    if(f.b===me.id&&f.a!==me.id){
+      list.push({type:"follow",uid:f.a,ts:0,text:"关注了你"});
+    }
+  });
+  /* 赞：别人赞了我的动态 */
+  s.likes.forEach(function(l){
+    if(l.b===me.id)return;                       /* 自己点的赞不算 */
+    const p=s.posts.find(function(x){return x.id===l.a;});
+    if(p&&p.uid===me.id){
+      list.push({type:"like",uid:l.b,ts:p.ts,text:"赞了你的动态",post:l.a});
+    }
+  });
+  /* 评论：别人评论了我的动态 */
+  s.comments.forEach(function(c){
+    if(c.uid===me.id)return;
+    const p=s.posts.find(function(x){return x.id===c.p;});
+    if(p&&p.uid===me.id){
+      list.push({type:"comment",uid:c.uid,ts:c.ts,text:(c.text||"").slice(0,24),post:c.p});
+    }
+  });
+  /* 按时间倒序，最近的在前 */
+  list.sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+  const t=document.getElementById("chatListTitle");
+  if(t)t.style.display=list.length?"":"none";
+  if(!list.length){box.innerHTML="";return;}
+  box.innerHTML='<div class="sec-title">通知</div>'+list.map(function(n){
+    const u=sUser(n.uid);
+    let ic,label;
+    if(n.type==="follow"){ic="➕";label=n.text;}
+    else if(n.type==="like"){ic="❤️";label=n.text;}
+    else{ic="💬";label="评论了你："+n.text;}
+    return '<div class="notif-item" onclick="notifTap(\''+n.type+'\',\''+(n.post||"")+'\')">'+
+      '<span class="notif-ic">'+ic+'</span>'+
+      '<div class="notif-mid"><b>'+sEsc(u.name)+'</b><small>'+sEsc(label)+'</small></div>'+
+      '<span class="notif-time">'+(n.ts?sTime(n.ts):"")+'</span></div>';
+  }).join("");
+}
+/* 点通知跳转 */
+function notifTap(type,postId){
+  if(type==="follow"){switchTab("friends");setFriendTab("followers");return;}
+  if(type==="like"||type==="comment"){
+    if(postId){openPostDetail(postId,"chats");return;}
+    switchTab("feed");
+  }
+}
 function sendChatMessage(obj){
   const me=sMe();if(!me||!chatWith)return;
   const m=Object.assign({id:sUid(),from:me.id,to:chatWith,ts:Date.now(),read:false},obj||{});
@@ -5027,7 +5105,7 @@ function socialOnEnter(name){
     if(name==="myposts")renderMyPosts();
     if(name==="post"&&PD_ID)renderPostDetail();
     if(name==="friends")renderFriends();
-    if(name==="chats")renderChats();
+    if(name==="chats"){renderChats();renderNotifications();}
     if(name==="chat")renderChat();
     if(name==="profile"||name==="settings"){renderProfile();refreshSocialCounts();}
     if(name==="data")setDataView(dataView);
