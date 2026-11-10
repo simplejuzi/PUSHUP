@@ -144,7 +144,7 @@ body.dark .hint{color:#6E747D}body.dark .hint b{color:#9BA1AA}
 .phone{width:390px;height:844px;flex:none;background:var(--surface);border-radius:44px;border:1px solid var(--phone-border);box-shadow:0 30px 80px rgba(23,24,28,.13),0 2px 8px rgba(23,24,28,.04);overflow:hidden;position:relative;display:flex;flex-direction:column}
 body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
 /* 不再绘制模拟状态栏：手机上直接使用系统真实状态栏，全屏时用安全区留白 */
-.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(4px + env(safe-area-inset-top)) 16px 118px;scrollbar-width:none}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(4px + env(safe-area-inset-top)) 10px 118px;scrollbar-width:none}
 .screen::-webkit-scrollbar{display:none}
 /* v1.23：动态页 / 详情页头部固定、内容区独立滚动（避免整页滚） */
 body.feed-lock .screen{overflow:hidden}
@@ -625,7 +625,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .splash .bot{bottom:calc(58px + env(safe-area-inset-bottom))}
 .splash .brand{top:calc(60px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:5px}
 .splash .brand img{width:54px;height:54px;border-radius:16px;object-fit:cover;box-shadow:0 10px 28px rgba(var(--accent-rgb),.42);animation:up .7s ease both}
-@media (display-mode:standalone){.screen{padding-top:calc(8px + env(safe-area-inset-top))}}
+@media (display-mode:standalone){.screen{padding-top:calc(0px + env(safe-area-inset-top))}}
 .app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(var(--accent-rgb),.24)}
 .app-ic img{width:100%;height:100%;object-fit:cover;display:block;border-radius:17px}
 @media (max-width:520px){body{background:var(--surface)}}
@@ -767,7 +767,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .more-menu button.danger{color:#E5484D}
 .more-menu .mi{font-size:14px;line-height:1}
 /* v1.17：删除动态二次确认弹窗 */
-.confirm-sheet{max-width:330px}
+.confirm-sheet{max-width:330px;margin:0 auto}
 .confirm-sheet .sh-s{font-size:12.5px;line-height:1.6;color:var(--sub)}
 .confirm-sheet .sh-btns{gap:10px}
 .confirm-sheet .sh-btns button{flex:1}
@@ -943,7 +943,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 记录 ===== -->
       <div class="page on" id="page-record">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow" id="recEyebrow">11月9日 星期一</div><h1 class="title motto" id="recMotto">今天也撑一下</h1></div>
           <div class="badge"><span class="dot"></span><span id="streakText">连续 0 天</span></div>
         </div>
@@ -992,7 +992,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 数据：历史日历 + 统计图表合并，页内切换 ===== -->
       <div class="page" id="page-data">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">DATA</div><h1 class="title">数据</h1></div>
           <div style="display:flex;gap:6px">
             <div class="badge" id="countBadge" style="display:none">0 条记录</div>
@@ -1048,7 +1048,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 动作库 ===== -->
       <div class="page" id="page-library">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
           <div class="badge">徒手 · 无器械为主</div>
         </div>
@@ -1069,7 +1069,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <!-- ===== v1.5 动态 ===== -->
       <div class="page" id="page-feed">
         <div class="feed-head">
-          <div class="head-row" style="margin-top:10px">
+          <div class="head-row" style="margin-top:4px">
             <div><div class="eyebrow">COMMUNITY</div><h1 class="title">动态</h1></div>
           </div>
           <div class="netbar hide">
@@ -1105,7 +1105,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
       <div class="page" id="page-myposts">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">MY POSTS</div><h1 class="title">我的动态</h1></div>
           <button class="btn-primary sm" onclick="openPost()">＋ 发动态</button>
         </div>
@@ -1116,7 +1116,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.22 用户主页（点头像进入） ===== -->
       <div class="page" id="page-user">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title" id="userTitle">用户主页</h1></div>
         </div>
         <div class="user-hero" id="userHero"></div>
@@ -1138,7 +1138,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.5 好友 ===== -->
       <div class="page" id="page-friends">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">FRIENDS</div><h1 class="title">好友</h1></div>
           <div class="badge">互相关注 = 好友</div>
         </div>
@@ -1157,7 +1157,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.5 消息（底栏主页面） ===== -->
       <div class="page" id="page-chats">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">MESSAGES</div><h1 class="title">消息</h1></div>
           <div style="display:flex;gap:8px">
             <button class="btn-ghost sm" onclick="openChatPicker()">发起</button>
@@ -1177,7 +1177,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.21 通知（独立页面） ===== -->
       <div class="page" id="page-notifs">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">NOTIFICATIONS</div><h1 class="title">通知</h1></div>
           <div class="badge" id="notifCount">0 条</div>
         </div>
@@ -1200,7 +1200,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 我的（重做：只留资料 / 概览 / 快捷入口） ===== -->
       <div class="page" id="page-profile">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">PROFILE</div><h1 class="title">我的</h1></div>
           <button class="btn-ghost sm" onclick="switchTab('settings')">设置 ›</button>
         </div>
@@ -1232,7 +1232,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== v1.12：训练记录（简洁列表，可看自己，也可看别人公开的部分） ===== -->
       <div class="page" id="page-recs">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">RECORDS</div><h1 class="title" id="recsTitle">训练记录</h1></div>
           <div class="badge" id="recsCount">0 天</div>
         </div>
@@ -1243,7 +1243,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 
       <!-- ===== 设置：原我的页所有设置 / 关于项统一搬到这里 ===== -->
       <div class="page" id="page-settings">
-        <div class="head-row" style="margin-top:10px">
+        <div class="head-row" style="margin-top:4px">
           <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
           <div class="badge" id="profileVersion">v1.9</div>
         </div>
@@ -1703,10 +1703,13 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.25";
+const APP_VERSION="v1.26";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "修：「我的动态」里点右上角三个点没反应——现在能正常弹出删除菜单",
+  "修：发布/删除/取消点赞/取关跨账号不同步——云同步改为以云端为准全量替换，删掉的动态、取消的赞都会正确消失",
+  "修：删除动态的确认弹窗歪了（靠左），现在居中显示",
+  "好友页：文字更精简不再被省略截断；「找人」排除已有关注关系的人",
+  "顶部标题栏再上移、左右边距再收窄，内容更紧凑",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -4319,16 +4322,36 @@ function syncCloud(){
       if(!u){s.users.push({id:p.id,name:p.name,pass:"",avatar:p.avatar||"",emoji:"💪"});}
       else{ if(p.name)u.name=p.name; u.avatar=p.avatar||""; }
     });
-    if(fs)fs.forEach(f=>{if(!s.follows.some(x=>x.a===f.a&&x.b===f.b))s.follows.push({a:f.a,b:f.b});});
-    if(po)po.forEach(p=>{if(!s.posts.some(x=>x.id===p.id))s.posts.push(p);});
-    if(ms)ms.forEach(m=>{const x=normMsg(m);
-      if(!s.messages.some(y=>y.id===x.id))s.messages.push(x);});
-    if(lk)lk.forEach(function(x){
-      if(!s.likes.some(function(y){return y.a===x.post_id&&y.b===x.uid;}))
-        s.likes.push({a:x.post_id,b:x.uid,ts:x.ts||0});});
-    if(cm)cm.forEach(function(x){
-      if(!s.comments.some(function(y){return y.id===x.id;}))
-        s.comments.push({id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts});});
+    /* v1.25：以云端为准「全量替换」，而不是只加不减。
+       之前是增量合并（只 push 不存在的），导致对方删除动态 / 取消点赞 / 取关后，
+       本机旧数据永远清不掉，跨账号不同步。 */
+    if(fs){
+      /* 保留本机「离线发的关注」：session 主动关注、云端还没有的（重传） */
+      const mineOff=s.follows.filter(function(f){return f.a===s.session&&!fs.some(function(x){return x.a===f.a&&x.b===f.b;});});
+      s.follows=fs.concat(mineOff);
+    }
+    if(po){
+      /* 保留本机「离线发的动态」：session 发的、云端还没有的 */
+      const mineOff=s.posts.filter(function(p){return p.uid===s.session&&!po.some(function(x){return x.id===p.id;});});
+      s.posts=po.concat(mineOff);
+    }
+    if(ms){
+      /* 保留本机「离线发的消息」+ 已读状态 */
+      const readMap={};s.messages.forEach(function(m){if(m.read)readMap[m.id]=1;});
+      const mineOff=s.messages.filter(function(m){return m.from===s.session&&!ms.some(function(x){return x.id===m.id;});});
+      s.messages=ms.map(normMsg).concat(mineOff);
+      s.messages.forEach(function(m){if(readMap[m.id])m.read=true;});
+    }
+    if(lk){
+      /* 保留本机「离线点的赞」 */
+      const mineOff=s.likes.filter(function(l){return l.b===s.session&&!lk.some(function(x){return x.post_id===l.a&&x.uid===l.b;});});
+      s.likes=lk.map(function(x){return {a:x.post_id,b:x.uid,ts:x.ts||0};}).concat(mineOff);
+    }
+    if(cm){
+      /* 保留本机「离线发的评论」 */
+      const mineOff=s.comments.filter(function(c){return c.uid===s.session&&!cm.some(function(x){return x.id===c.id;});});
+      s.comments=cm.map(function(x){return {id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts};}).concat(mineOff);
+    }
     sSave();refreshSocialUI();
   }).catch(()=>{});
 }
@@ -4555,18 +4578,29 @@ function renderFriends(){
   if(!me){el.innerHTML='<div class="empty-hint">先登录再加入社区</div>';return;}
   const kw=((document.getElementById("friendSearch")||{}).value||"").trim().toLowerCase();
   const s=sLoad();
-  let list=friendTab==="find"?s.users.filter(u=>u.id!==me.id)
-    :(friendTab==="following"?sFollowingIds(me.id):sFollowers(me.id)).map(sUser);
+  /* v1.25：「找人」排除已经有关注关系的人（互相关注/已关注/粉丝都不算「陌生人」） */
+  let list;
+  if(friendTab==="find"){
+    list=s.users.filter(function(u){
+      if(u.id===me.id)return false;
+      return !s.follows.some(function(f){return f.a===me.id&&f.b===u.id;})   /* 我关注的 */
+          && !s.follows.some(function(f){return f.a===u.id&&f.b===me.id;});  /* 关注我的 */
+    });
+  }else if(friendTab==="following"){
+    list=sFollowingIds(me.id).map(sUser);
+  }else{
+    list=sFollowers(me.id).map(sUser);
+  }
   list=list.filter(u=>!kw||String(u.name).toLowerCase().indexOf(kw)>=0);
   el.innerHTML=list.length?list.map(function(u){
     const f=sFollowing(u.id),fd=sFriend(u.id);
     return '<div class="user-row" onclick="openChat(\''+u.id+'\')">'+
       '<div class="user-av user-av-click" onclick="event.stopPropagation();openUserProfile(\''+u.id+'\')">'+sAv(u)+'</div>'+
       '<div class="user-mid"><b class="user-av-click" onclick="event.stopPropagation();openUserProfile(\''+u.id+'\')">'+sEsc(u.name)+(fd?' <span class="vis-tag">好友</span>':'')+'</b>'+
-      '<small>'+(fd?'互相关注':(f?'我已关注':'关注了我'))+' · 点头像看主页 · 点这行聊天</small></div>'+
+      '<small>'+(fd?'互相关注':(f?'我已关注':'关注了我'))+'</small></div>'+
       '<button class="mini-btn'+(f?' on':'')+'" onclick="event.stopPropagation();toggleFollow(\''+u.id+'\')">'+
       (f?'已关注':'＋ 关注')+'</button></div>';
-  }).join(""):'<div class="empty-hint">'+(kw?"没找到这个人":(friendTab==="find"?"还没有其他伙伴":"这里还是空的"))+'</div>';
+  }).join(""):'<div class="empty-hint">'+(kw?"没找到这个人":(friendTab==="find"?"没有新的伙伴可加":(friendTab==="following"?"还没有关注的人":"还没有粉丝")))+'</div>';
 }
 
 /* ---- 动态 ---- */
