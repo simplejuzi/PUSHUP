@@ -1,15 +1,9 @@
 {
-  "version": "1.24",
-  "tag": "v1.24",
-  "apk": "PUSHUP-v1.24.apk",
-  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.24/PUSHUP-v1.24.apk",
+  "version": "1.25",
+  "tag": "v1.25",
+  "apk": "PUSHUP-v1.25.apk",
+  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.25/PUSHUP-v1.25.apk",
   "changelog": [
-    "修：登录约 1 小时后云同步失效——头像不更新、删动态不消失、消息发不出",
-    "现在登录会保存刷新令牌，过期自动续期；真正过期时会提示重新登录",
-    "修：登录态失效时网络仍显示「已连接」却拉不到数据，现在能正确识别并提示",
-    "修：退出登录后「编辑个人资料」还显示上一个账号的昵称和头像",
-    "各页面左右边距收窄、顶部标题栏上移，内容更紧凑",
-    "训练记录公开：所有人都能看别人的训练记录，也会被别人看到",
-    "修：开屏 2.6 秒期间状态栏闪白，现在启动即适配开屏深色、不再闪白"
+    "修：「我的动态」里点右上角三个点没反应——现在能正常弹出删除菜单"
   ]
 }

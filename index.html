@@ -1703,16 +1703,10 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.24";
+const APP_VERSION="v1.25";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "修：登录约 1 小时后云同步失效——头像不更新、删动态不消失、消息发不出",
-  "现在登录会保存刷新令牌，过期自动续期；真正过期时会提示重新登录",
-  "修：登录态失效时网络仍显示「已连接」却拉不到数据，现在能正确识别并提示",
-  "修：退出登录后「编辑个人资料」还显示上一个账号的昵称和头像",
-  "各页面左右边距收窄、顶部标题栏上移，内容更紧凑",
-  "训练记录公开：所有人都能看别人的训练记录，也会被别人看到",
-  "修：开屏 2.6 秒期间状态栏闪白，现在启动即适配开屏深色、不再闪白",
+  "修：「我的动态」里点右上角三个点没反应——现在能正常弹出删除菜单",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -4672,13 +4666,18 @@ let PENDING_DEL_ID="";
 let PENDING_DEL_COMMENT=null;
 function moreMenuHtml(id){
   return '<div class="more" onclick="event.stopPropagation()">'+
-    '<button class="more-btn" onclick="toggleMore(\''+id+'\')">···</button>'+
-    '<div class="more-menu" id="moreMenu_'+id+'">'+
+    '<button class="more-btn" onclick="toggleMore(event,\''+id+'\')">···</button>'+
+    '<div class="more-menu">'+
       '<button class="danger" onclick="openDelPost(\''+id+'\');closeMoreMenus()"><span class="mi">🗑️</span>删除</button>'+
     '</div></div>';
 }
-function toggleMore(id){
-  const m=document.getElementById("moreMenu_"+id);
+/* v1.24：用事件对象定位按钮所在 .more 容器内的菜单，而非 getElementById。
+   同一条动态会同时渲染在「动态」页和「我的动态」页，DOM 里存在重复的 moreMenu_<id>，
+   getElementById 只会命中第一个（可能落在隐藏页面），导致点三个点没反应。 */
+function toggleMore(ev,id){
+  const btn=ev&&ev.currentTarget;
+  const wrap=btn?btn.parentNode:null;
+  const m=wrap?wrap.querySelector(".more-menu"):null;
   if(!m)return;
   const on=m.classList.contains("on");
   closeMoreMenus();
