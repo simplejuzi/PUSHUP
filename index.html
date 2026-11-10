@@ -152,11 +152,13 @@ body.feed-lock .screen{overflow:hidden}
 #page-feed .feed-head{flex:none}
 #page-feed .feed-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px;scrollbar-width:none}
 #page-feed .feed-scroll::-webkit-scrollbar{display:none}
-#page-post.on{display:flex;flex-direction:column;height:100%;overflow:hidden}
+#page-post.on{display:flex;flex-direction:column;position:absolute;inset:0;background:var(--surface);z-index:3;overflow:hidden}
 /* v1.26：帖子头部可滚动（长文多图不挤爆评论），但最多占屏幕一半 */
 #page-post .pd-head{flex:none;overflow-y:auto;max-height:46%;scrollbar-width:none}
 #page-post .pd-head::-webkit-scrollbar{display:none}
-#page-post .pd-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:56px}
+/* v1.28：评论区 flex:1 自动填满到输入框上沿（输入框已是正常流，不再盖住内容），
+   只留少量底部余量让最后一条评论不贴输入框 */
+#page-post .pd-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:12px}
 #page-post .pd-scroll::-webkit-scrollbar{display:none}
 .page{display:none;animation:fade .22s ease}
 .page.on{display:block}
@@ -725,14 +727,13 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .pd-cm .fcm{padding:10px 0}
 .pd-cm .fcm-name{font-size:12.5px}
 .pd-cm .fcm-text{font-size:13px}
-/* v1.15：评论条改成独立固定条（在 .phone 里，贴着底栏上方），
-   不再跟着详情页内容一起滚，也就不会盖住评论 */
-.pd-bar{position:absolute;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));
-  background:var(--card);border-top:1px solid var(--line);padding:9px 20px;
+/* v1.28：评论输入条从 absolute 固定定位改为详情页 flex 列的正常流最后一项，
+   评论区 flex:1 自动填满到输入条上沿——不再靠写死 bottom/padding 对齐，
+   任意屏幕宽高、任意登录态（输入框/登录按钮高度不同）都精确自适应 */
+.pd-bar{position:static;flex:none;background:var(--card);border-top:1px solid var(--line);padding:9px 20px;
+  padding-bottom:calc(9px + env(safe-area-inset-bottom));
   display:flex;gap:6px;align-items:center;z-index:6;
   box-shadow:0 -8px 20px rgba(23,24,28,.06)}
-/* v1.17：详情页隐藏底栏时，评论条贴到底部 */
-.bar-less .pd-bar{bottom:calc(0px + env(safe-area-inset-bottom))}
 .pd-bar[hidden]{display:none}
 .pd-bar input{flex:1;min-width:0;border:1px solid var(--line);background:var(--soft);
   border-radius:999px;height:32px;padding:0 13px;font:inherit;font-size:13px;
@@ -768,8 +769,11 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .more-menu button:active{background:var(--soft)}
 .more-menu button.danger{color:#E5484D}
 .more-menu .mi{font-size:14px;line-height:1}
-/* v1.17：删除动态二次确认弹窗 */
-.confirm-sheet{max-width:330px;margin:0 auto}
+/* v1.17：删除动态二次确认弹窗
+   v1.28：确认框是「中下方向」的浮层卡片，不是贴底抽屉——四周圆角、底部悬空
+   抬离屏幕底边（margin-bottom），不再和底边粘在一起 */
+.confirm-sheet{max-width:330px;width:100%;margin:0 auto 34px;
+  border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28)}
 .confirm-sheet .sh-s{font-size:12.5px;line-height:1.6;color:var(--sub)}
 .confirm-sheet .sh-btns{gap:10px}
 .confirm-sheet .sh-btns button{flex:1}
@@ -1102,6 +1106,9 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
         </div>
         <div id="pdHead" class="pd-head"></div>
         <div id="pdComments" class="pd-scroll"></div>
+        <!-- v1.28：评论输入条改为详情页 flex 列的一部分（正常流），
+             评论区 flex:1 自动精确填满到输入框上沿，自适应任意屏幕尺寸 -->
+        <div class="pd-bar" id="pdBar" hidden></div>
       </div>
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
@@ -1327,9 +1334,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
       <button class="tab" id="tab-chats" onclick="switchTab('chats')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/><path d="M8 9h8M8 12h5"/></svg>消息<span class="tab-badge" id="chatTabBadge" style="display:none"></span></button>
       <button class="tab" id="tab-profile" onclick="switchTab('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
     </div>
-
-    <!-- v1.15：详情页评论输入条（固定贴在底栏上方，不跟着内容滚） -->
-    <div class="pd-bar" id="pdBar" hidden></div>
 
     <!-- v1.17：聊天输入条（固定，微信风格，不随记录滚动） -->
     <div class="chat-bar" id="chatBar" hidden>
@@ -1704,13 +1708,13 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.27";
+const APP_VERSION="v1.28";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "修：三个点菜单点开 1 秒就被刷新冲掉——现在刷新后会自动恢复打开的菜单",
-  "修：消息列表会话头像异常放大——换了头像后头像不再撑满卡片",
-  "修：动态详情页评论区被挤压——评论滚动区现在占满帖子到输入框之间的完整空间",
-  "修：删除评论确认框也居中了，不再嵌到屏幕边缘",
+  "修：删动态现在会联动删除它的点赞和评论，数据库一并清干净",
+  "修：每次进页面都会重新校验账号是否还在——账号被删除后自动退出，不会再「复活」",
+  "修：删除确认框上移到中下位置、四周圆角，不再贴死屏幕底边",
+  "修：动态详情评论区改为自适应布局，评论列表自动填满到输入框上沿，不再留白也不被挡住",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -4093,6 +4097,50 @@ function markAuthExpired(){
   if(t)t.textContent="登录已过期";
   toast("登录已过期，请重新登录后再同步");
 }
+/* v1.28：账号存在性检测。每次进页面 / 同步前先用 access_token 问 Supabase
+   Auth「这个账号还在不在」。账号被管理员/后台删除后，refresh_token 未必立刻失效，
+   如果只靠 401 判断，旧 token 还能继续拉数据甚至把 profile upsert 回去「复活」账号。
+   这里主动 GET /auth/v1/user：200 且 id 一致 → 账号健在；401/404 → 账号没了，
+   直接清掉本机会话回到登录页，绝不当作新账号重新注册。 */
+let _verifyRunning=null,_verifiedAt=0;
+function verifyAccount(){
+  if(!CLOUD()||!SB_TOKEN)return Promise.resolve(false);
+  const now=Date.now();
+  if(now-_verifiedAt<30000)return Promise.resolve(true);   /* 30 秒内已验过，跳过 */
+  if(_verifyRunning)return _verifyRunning;
+  _verifyRunning=fetch(SB_URL+"/auth/v1/user",{
+    method:"GET",headers:{"apikey":SB_ANON,"Authorization":"Bearer "+SB_TOKEN}
+  }).then(function(r){
+    noteNet(true);
+    if(r.ok){_verifiedAt=Date.now();return r.json().then(function(j){return !!j&&j.id===sLoad().session;}).catch(function(){return true;});}
+    if(r.status===401){
+      /* token 失效：先试着用 refresh_token 续期再验一次 */
+      return sbTryRefresh().then(function(ok){
+        if(!ok)return false;
+        return fetch(SB_URL+"/auth/v1/user",{method:"GET",
+          headers:{"apikey":SB_ANON,"Authorization":"Bearer "+SB_TOKEN}})
+          .then(function(r2){noteNet(true);
+            if(r2.ok){_verifiedAt=Date.now();return r2.json().then(function(j){return !!j&&j.id===sLoad().session;}).catch(function(){return true;});}
+            return false;}).catch(function(){return false;});
+      });
+    }
+    return false;   /* 404 / 账号已删 */
+  }).catch(function(){noteNet(false);return true;})   /* 网络不通：不误踢账号，保留登录态 */
+  .then(function(v){_verifyRunning=null;return v;});
+}
+/* 账号不存在：把本机登录态清掉，回到未登录状态（不重新注册、不重传） */
+function kickAccount(reason){
+  const s=sLoad();
+  s.session=null;SB_TOKEN="";SB_RTOKEN="";
+  s.token="";s.rtoken="";
+  AUTH_EXPIRED=false;_authExpiredNoticed=false;_verifiedAt=0;
+  try{localStorage.setItem(SOC_KEY,JSON.stringify(s));}catch(e){}
+  NICKNAME=DEFAULT_NICKNAME;AVATAR=DEFAULT_AVATAR;
+  try{localStorage.setItem(NKEY,DEFAULT_NICKNAME);localStorage.setItem(AKEY,DEFAULT_AVATAR);}catch(e){}
+  try{closeAuth();closeLogout();}catch(e){}
+  refreshSocialUI();
+  toast(reason||"该账号已不存在，已为你退出登录");
+}
 /* v1.9：真实的云端连接状态 —— 之前的实现只按「常量填了没有」显示「已连接」，
    网络全挂时也显示已连接，看起来一切正常，其实一条都没上传 */
 let NET_OK=null,NET_AT=0,_netToastDone=false;
@@ -4382,7 +4430,15 @@ let _polling=false;
 function pollSocial(){
   if(_polling)return;
   _polling=true;
-  syncCloud().then(function(){_polling=false;}).catch(function(){_polling=false;});
+  /* v1.28：每次轮询同步前先确认账号还在，被删就踢出，避免「显示已同步但账号已没了」 */
+  if(CLOUD()&&SB_TOKEN&&sMe()){
+    verifyAccount().then(function(ok){
+      if(!ok){kickAccount("该账号已不存在，已退出登录");_polling=false;return;}
+      syncCloud().then(function(){_polling=false;}).catch(function(){_polling=false;});
+    }).catch(function(){_polling=false;});
+  } else {
+    syncCloud().then(function(){_polling=false;}).catch(function(){_polling=false;});
+  }
 }
 
 /* ---- 注册 / 登录：本地与云端统一入口 ---- */
@@ -4757,7 +4813,12 @@ function doDelPost(id){
   s.posts.splice(i,1);
   s.likes=s.likes.filter(function(l){return l.a!==id;});
   s.comments=s.comments.filter(function(c){return c.p!==id;});
-  sSave();sbDel("posts","id=eq."+id);
+  sSave();
+  /* v1.28：删帖联动清理——点赞、评论一并删掉，不依赖数据库的 on delete cascade，
+     云端三张表都显式清，避免历史库里外键级联没生效时残留孤儿数据 */
+  sbDel("post_likes","post_id=eq."+id);
+  sbDel("post_comments","post_id=eq."+id);
+  sbDel("posts","id=eq."+id);
   const onDetail=document.getElementById("page-post");
   renderFeed();renderMyPosts();toast("已删除");
   if(onDetail&&onDetail.classList.contains("on")&&PD_ID===id)closePostDetail();
@@ -5671,10 +5732,20 @@ function initSocial(){
     }
     refreshSocialUI();
     startPolling();
-    if(CLOUD())syncCloud();
-    /* v1.11：开着 App 恢复登录态时也校准一次资料，不用重新登录 */
-    if(CLOUD()&&SB_TOKEN&&sMe())pullMyProfile();
-    if(syncEnabled())onLoginMerge();
+    /* v1.28：进页面先验证账号是否还存在，不存在就直接踢出，绝不当作新账号复活 */
+    if(CLOUD()&&SB_TOKEN&&sMe()){
+      verifyAccount().then(function(ok){
+        if(!ok){kickAccount("该账号已不存在，已退出登录");return;}
+        if(CLOUD())syncCloud();
+        pullMyProfile();
+        if(syncEnabled())onLoginMerge();
+      });
+    } else {
+      if(CLOUD())syncCloud();
+      /* v1.11：开着 App 恢复登录态时也校准一次资料，不用重新登录 */
+      if(CLOUD()&&SB_TOKEN&&sMe())pullMyProfile();
+      if(syncEnabled())onLoginMerge();
+    }
   }catch(e){}
 }
 
