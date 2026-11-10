@@ -128,10 +128,14 @@ alter table public.settings enable row level security;
 alter table public.post_likes    enable row level security;
 alter table public.post_comments enable row level security;
 
--- records / settings：只有本人能读写，别人的训练数据一条都读不到
+-- records：v1.24 训练记录公开——所有人都能看（登录后），但只有本人能增删改
 drop policy if exists "records 只有自己能读写" on public.records;
 create policy "records 只有自己能读写" on public.records for all
   using (uid = auth.uid()) with check (uid = auth.uid());
+
+-- v1.24：训练记录公开，任何人登录后都能读别人的记录（写/删仍只有本人）
+drop policy if exists "records 所有人可读" on public.records;
+create policy "records 所有人可读" on public.records for select to authenticated using (true);
 
 drop policy if exists "settings 只有自己能读写" on public.settings;
 create policy "settings 只有自己能读写" on public.settings for all

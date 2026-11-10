@@ -144,7 +144,7 @@ body.dark .hint{color:#6E747D}body.dark .hint b{color:#9BA1AA}
 .phone{width:390px;height:844px;flex:none;background:var(--surface);border-radius:44px;border:1px solid var(--phone-border);box-shadow:0 30px 80px rgba(23,24,28,.13),0 2px 8px rgba(23,24,28,.04);overflow:hidden;position:relative;display:flex;flex-direction:column}
 body.dark .phone{box-shadow:0 30px 80px rgba(0,0,0,.5)}
 /* 不再绘制模拟状态栏：手机上直接使用系统真实状态栏，全屏时用安全区留白 */
-.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(14px + env(safe-area-inset-top)) 20px 118px;scrollbar-width:none}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:calc(4px + env(safe-area-inset-top)) 16px 118px;scrollbar-width:none}
 .screen::-webkit-scrollbar{display:none}
 /* v1.23：动态页 / 详情页头部固定、内容区独立滚动（避免整页滚） */
 body.feed-lock .screen{overflow:hidden}
@@ -625,7 +625,7 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .splash .bot{bottom:calc(58px + env(safe-area-inset-bottom))}
 .splash .brand{top:calc(60px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:5px}
 .splash .brand img{width:54px;height:54px;border-radius:16px;object-fit:cover;box-shadow:0 10px 28px rgba(var(--accent-rgb),.42);animation:up .7s ease both}
-@media (display-mode:standalone){.screen{padding-top:calc(18px + env(safe-area-inset-top))}}
+@media (display-mode:standalone){.screen{padding-top:calc(8px + env(safe-area-inset-top))}}
 .app-ic{padding:0;overflow:hidden;background:transparent;box-shadow:0 8px 20px rgba(var(--accent-rgb),.24)}
 .app-ic img{width:100%;height:100%;object-fit:cover;display:block;border-radius:17px}
 @media (max-width:520px){body{background:var(--surface)}}
@@ -1703,19 +1703,16 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.23";
+const APP_VERSION="v1.24";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "修：聊天页返回错乱——从哪进聊天就回哪（消息页/好友页/用户主页各自正确返回）",
-  "修：用户主页「训练记录」会泄露他人「仅好友可见」动态的训练数据，已加权限过滤",
-  "修：赞旧动态不亮通知红点，改为用点赞真实时间判断未读",
-  "聊天页和动态详情页加了顶部返回按钮，纯网页/PWA 环境也能正常返回",
-  "好友页/动作库从不同入口进入时，返回目标按来源正确记录",
-  "对方清空头像后本机能正确同步，不再残留旧头像",
-  "消息页加了「发起」按钮，可直接选好友开聊",
-  "动态页/详情页改为头部固定、内容区独立滚动，不再整页乱滚",
-  "记录页「今日训练/体重/臂围/备注」标签加深加粗，更清晰",
-  "设置页隐藏服务器地址入口，更新日志右侧不再显示版本号",
+  "修：登录约 1 小时后云同步失效——头像不更新、删动态不消失、消息发不出",
+  "现在登录会保存刷新令牌，过期自动续期；真正过期时会提示重新登录",
+  "修：登录态失效时网络仍显示「已连接」却拉不到数据，现在能正确识别并提示",
+  "修：退出登录后「编辑个人资料」还显示上一个账号的昵称和头像",
+  "各页面左右边距收窄、顶部标题栏上移，内容更紧凑",
+  "训练记录公开：所有人都能看别人的训练记录，也会被别人看到",
+  "修：开屏 2.6 秒期间状态栏闪白，现在启动即适配开屏深色、不再闪白",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -2775,6 +2772,8 @@ function openRecords(uid){
   RECS_BACK=(from==="recs")?"profile":(from||"profile");
   SUB_PARENT.recs=RECS_BACK;                 /* 返回键回到来的那一页 */
   RECS_UID=String(uid||"");
+  /* v1.24：看别人训练记录时主动拉公开云端记录 */
+  if(RECS_UID&&(!sMe()||RECS_UID!==sMe().id))pullUserRecords(RECS_UID);
   renderRecordsPage();
   switchTab("recs");
 }
@@ -2791,16 +2790,17 @@ function openUserProfile(uid){
   SUB_PARENT.user=USER_BACK;
   USER_UID=uid;
   USER_VIEW="recs";   /* v1.22：进入新用户主页，默认回到「训练记录」段 */
+  pullUserRecords(uid);   /* v1.24：训练记录公开，进主页就拉真实云端记录 */
   renderUserProfile();
   switchTab("user");
 }
 function closeUserProfile(){switchTab(USER_BACK||"feed");}
 function userWorkoutDays(uid){
+  /* v1.24：优先用公开的真实云端 records；没拉到就回退动态快照 */
+  if(RECS_CACHE[uid])return RECS_CACHE[uid].length;
   const seen={};
   sLoad().posts.forEach(function(p){
     if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
-    /* v1.22：非好友看不到「仅好友可见」的动态，健身天数也不能计入 */
-    if(p.vis==="friends"&&!sFriend(uid))return;
     const d=tsDate(p.ts);if(d)seen[d]=1;
   });
   return Object.keys(seen).length;
@@ -2904,6 +2904,38 @@ function tsDate(ts){
   if(isNaN(d.getTime()))return "";
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
+/* v1.24：训练记录公开。缓存别人拉到的真实 records（uid → rows） */
+let RECS_CACHE={},_recsPulling={};
+function parseRecPayload(x){
+  /* 云端 records 一行：{d, payload:{d,p,items:[{id,v,u,n}],w,a,note}, updated_at} */
+  const pl=x.payload||{};
+  const items=(pl.items&&pl.items.length)?pl.items.map(function(i){
+    const e=exById(i.id)||{n:i.id,u:""};
+    return {n:i.n||e.n,v:(i.v==null?null:i.v),u:i.u||e.u||""};
+  }):[];
+  let total=Number(pl.p)||0;
+  if(!total&&items.length)total=items.reduce(function(a,it){return a+(Number(it.v)||0);},0);
+  return {d:pl.d||x.d,total:total,w:pl.w,a:pl.a,self:false,items:items};
+}
+function pullUserRecords(uid){
+  if(!CLOUD()||!uid)return Promise.resolve(false);
+  if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)return Promise.resolve(false);
+  if(_recsPulling[uid])return Promise.resolve(false);
+  _recsPulling[uid]=true;
+  return sbFetch("/rest/v1/records?select=d,payload,updated_at&uid=eq."+encodeURIComponent(uid)+"&limit=5000")
+    .then(function(rows){
+      _recsPulling[uid]=false;
+      if(!Array.isArray(rows))return false;
+      const out=rows.map(parseRecPayload).filter(function(r){return r.d;});
+      RECS_CACHE[uid]=out;
+      /* 拉到了就刷新当前正在看的训练记录 / 用户主页 */
+      const pg=document.getElementById("page-recs");
+      if(pg&&pg.classList.contains("on")&&RECS_UID===uid)renderRecordsPage();
+      const up=document.getElementById("page-user");
+      if(up&&up.classList.contains("on")&&USER_UID===uid){renderUserRecs(uid);renderUserProfile();}
+      return true;
+    }).catch(function(){_recsPulling[uid]=false;return false;});
+}
 function recsRows(uid){
   const meId=(sLoad().session)||"";
   if(!uid||uid===meId){
@@ -2916,11 +2948,12 @@ function recsRows(uid){
         })};
     });
   }
+  /* v1.24：看别人优先用真实云端 records（公开），拉到就显示；没拉到就异步去拉 */
+  if(RECS_CACHE[uid])return RECS_CACHE[uid];
+  pullUserRecords(uid);
   const seen={},rows=[];
   sLoad().posts.forEach(function(p){
     if(!p||p.uid!==uid||!p.workout||!p.workout.length)return;
-    /* v1.22：非好友看不到「仅好友可见」的动态，训练记录也不能泄露 */
-    if(p.vis==="friends"&&!sFriend(uid))return;
     const d=tsDate(p.ts);if(!d||seen[d])return;
     seen[d]=1;
     rows.push({d:d,self:false,
@@ -3933,7 +3966,7 @@ const SB_URL=(sbUrlSaved()||SB_URL_RELAY);
 const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 const SOC_KEY="pushup_social_v1";
 const CLOUD=()=>!!(SB_URL&&SB_ANON);
-let SOC=null,SB_TOKEN="",feedFilter="all",friendTab="following",postVis="all",
+let SOC=null,SB_TOKEN="",SB_RTOKEN="",feedFilter="all",friendTab="following",postVis="all",
     TMAP={},REMOTE={},_lastSet=null,_setTimer=null,_recTimer=null,_pullAt=0,
     SYNC_STATE="off",_lastSyncAt=0,
     TMAP_KEY="fitness_times_v1",
@@ -3955,12 +3988,13 @@ function sLoad(){
   if(SOC)return SOC;
   let d=null;try{d=JSON.parse(localStorage.getItem(SOC_KEY)||"null");}catch(e){}
   if(!d&&typeof window!=="undefined"&&window.__PREVIEW_SEED__)d=JSON.parse(JSON.stringify(window.__PREVIEW_SEED__));
-  SOC=d||{users:[],session:null,follows:[],posts:[],messages:[],likes:[],comments:[],token:""};
+  SOC=d||{users:[],session:null,follows:[],posts:[],messages:[],likes:[],comments:[],token:"",rtoken:""};
   ["users","follows","posts","messages","likes","comments"].forEach(k=>{if(!Array.isArray(SOC[k]))SOC[k]=[];});
   SB_TOKEN=SOC.token||"";
+  SB_RTOKEN=SOC.rtoken||"";
   return SOC;
 }
-function sSave(){const s=sLoad();s.token=SB_TOKEN;
+function sSave(){const s=sLoad();s.token=SB_TOKEN;s.rtoken=SB_RTOKEN;
   try{localStorage.setItem(SOC_KEY,JSON.stringify(s));return true;}
   catch(e){toast("本地空间不足，图片可能没存下");return false;}}
 function sMe(){const s=sLoad();return s.users.find(u=>u.id===s.session)||null;}
@@ -4005,9 +4039,62 @@ function sFollowingIds(id){return sLoad().follows.filter(f=>f.a===id).map(f=>f.b
 /* ---- 云端适配（纯 fetch，无 SDK；写操作先落本地再静默上行） ---- */
 function sbH(){return {"apikey":SB_ANON,"Content-Type":"application/json",
   "Authorization":"Bearer "+(SB_TOKEN||SB_ANON),"Prefer":"return=representation"};}
-function sbFetch(p,o){return fetch(SB_URL+p,Object.assign({headers:sbH()},o||{}))
-  .then(r=>{noteNet(true);return r.ok?r.json():null;})
-  .catch(()=>{noteNet(false);return null;});}
+function sbFetch(p,o){return sbFetchRaw(p,o,true);}
+/* v1.24：带 token 自动刷新。access_token 约 1 小时过期，之前 401 被静默吞成 null，
+   结果网络显示「已连接」却什么都拉不到（头像不更新/删动态不消失/消息发不出）。
+   现在 401 先用 refresh_token 换新 token 再重试一次；刷新也失败就标记登录失效。
+   返回值保持原语义：成功 → JSON；失败 → null（并可能置 AUTH_EXPIRED）。 */
+let AUTH_EXPIRED=false;
+function sbFetchRaw(p,o,canRefresh){
+  return fetch(SB_URL+p,Object.assign({headers:sbH()},o||{}))
+  .then(function(r){
+    noteNet(true);
+    if(r.status===401&&SB_TOKEN&&SB_RTOKEN&&canRefresh){
+      return sbTryRefresh().then(function(ok){
+        if(ok)return sbFetchRaw(p,o,false);   /* 换到新 token 后重试一次 */
+        AUTH_EXPIRED=true;markAuthExpired();
+        return null;
+      });
+    }
+    if(r.status===401){AUTH_EXPIRED=true;markAuthExpired();return null;}
+    return r.ok?r.json():null;
+  })
+  .catch(()=>{noteNet(false);return null;});
+}
+/* 用 refresh_token 换新 access_token（grant_type=refresh_token） */
+let _refreshing=null;
+function sbTryRefresh(){
+  if(!SB_RTOKEN)return Promise.resolve(false);
+  if(_refreshing)return _refreshing;
+  _refreshing=fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{
+    method:"POST",
+    headers:{"apikey":SB_ANON,"Content-Type":"application/json"},
+    body:JSON.stringify({refresh_token:SB_RTOKEN})
+  }).then(function(r){
+    return r.text().then(function(t){
+      var j={};try{j=t?JSON.parse(t):{};}catch(e){j={message:t};}
+      noteNet(true);
+      if(r.ok&&j.access_token){
+        SB_TOKEN=j.access_token;
+        if(j.refresh_token)SB_RTOKEN=j.refresh_token;
+        sSave();
+        return true;
+      }
+      return false;
+    });
+  }).catch(function(){noteNet(false);return false;})
+  .then(function(v){_refreshing=null;return v;});
+  return _refreshing;
+}
+/* 登录态失效：refresh_token 也过期（Supabase 默认 7 天），只能重新登录 */
+let _authExpiredNoticed=false;
+function markAuthExpired(){
+  if(_authExpiredNoticed)return;
+  _authExpiredNoticed=true;
+  const t=document.getElementById("socialModeTag");
+  if(t)t.textContent="登录已过期";
+  toast("登录已过期，请重新登录后再同步");
+}
 /* v1.9：真实的云端连接状态 —— 之前的实现只按「常量填了没有」显示「已连接」，
    网络全挂时也显示已连接，看起来一切正常，其实一条都没上传 */
 let NET_OK=null,NET_AT=0,_netToastDone=false;
@@ -4050,8 +4137,19 @@ function netProbe(force){
   });
 }
 function sbPush(t,row){if(!CLOUD())return Promise.resolve(null);
+  return sbPushRaw(t,row,true);}
+function sbPushRaw(t,row,canRefresh){
   return fetch(SB_URL+"/rest/v1/"+t,{method:"POST",headers:sbH(),body:JSON.stringify(row)})
-    .then(function(r){noteNet(true);return r.ok;})
+    .then(function(r){
+      noteNet(true);
+      if(r.status===401&&SB_TOKEN&&SB_RTOKEN&&canRefresh){
+        return sbTryRefresh().then(function(ok){
+          if(ok)return sbPushRaw(t,row,false);
+          AUTH_EXPIRED=true;markAuthExpired();return false;});
+      }
+      if(r.status===401){AUTH_EXPIRED=true;markAuthExpired();return false;}
+      return r.ok;
+    })
     .catch(function(){noteNet(false);return false;});}
 function sbDel(t,q){if(!CLOUD())return;sbFetch("/rest/v1/"+t+"?"+q,{method:"DELETE"});}
 /* v1.9：把 HTTP 状态也带回来，才能分清「网络没通」和「服务器说不对」 */
@@ -4121,15 +4219,31 @@ function pullMyProfile(){
    对已存在的 profiles 行完全不生效，于是云端名字永远改不动 */
 function sbUpdateProfile(u){
   if(!CLOUD()||!u||!u.id)return Promise.resolve(false);
+  return sbUpdateProfileRaw(u,true);
+}
+function sbUpdateProfileRaw(u,canRefresh){
   return fetch(SB_URL+"/rest/v1/profiles?id=eq."+encodeURIComponent(u.id),{
     method:"PATCH",
     headers:Object.assign(sbH(),{"Prefer":"return=minimal"}),
     body:JSON.stringify({name:u.name,avatar:u.avatar||""})
-  }).then(function(r){noteNet(r.ok);return r.ok;}).catch(function(){noteNet(false);return false;});
+  }).then(function(r){
+    noteNet(r.ok);
+    if(r.status===401&&SB_TOKEN&&SB_RTOKEN&&canRefresh){
+      return sbTryRefresh().then(function(ok){
+        if(ok)return sbUpdateProfileRaw(u,false);
+        AUTH_EXPIRED=true;markAuthExpired();return false;});
+    }
+    if(r.status===401){AUTH_EXPIRED=true;markAuthExpired();return false;}
+    return r.ok;
+  }).catch(function(){noteNet(false);return false;});
 }
 function cloudApplySession(d,email,fallbackName){
   if(!d||!d.access_token||!d.user)return false;
   SB_TOKEN=d.access_token;
+  /* v1.24：把 refresh_token 也存下来，access_token 过期后自动续期；
+     之前只存 access_token，约 1 小时后 401 被静默吞掉，云同步全失效 */
+  SB_RTOKEN=d.refresh_token||"";
+  AUTH_EXPIRED=false;_authExpiredNoticed=false;
   const meta=d.user.user_metadata||{};
   /* 账号只存在本机与 Supabase Auth 里，不写进任何公开可读的资料表 */
   const u={id:d.user.id,name:meta.name||fallbackName||email,email:email||d.user.email||"",pass:"",
@@ -4423,8 +4537,11 @@ function closeAuth(){
   document.getElementById("authModal").classList.remove("on");
   AUTH_BUSY=false;AUTH_UNTIL=0;authClearErr();
 }
-function doLogout(){const s=sLoad();s.session=null;SB_TOKEN="";sSave();
-  REMOTE={};_lastSet=null;SYNC_STATE="off";
+function doLogout(){const s=sLoad();s.session=null;SB_TOKEN="";SB_RTOKEN="";sSave();
+  REMOTE={};_lastSet=null;SYNC_STATE="off";AUTH_EXPIRED=false;_authExpiredNoticed=false;
+  /* v1.24：退出后清空本机昵称/头像，否则「编辑个人资料」还显示上一个账号的信息 */
+  NICKNAME=DEFAULT_NICKNAME;AVATAR=DEFAULT_AVATAR;
+  try{localStorage.setItem(NKEY,DEFAULT_NICKNAME);localStorage.setItem(AKEY,DEFAULT_AVATAR);}catch(e){}
   closeAuth();closeLogout();refreshSocialUI();
   toast("已退出 · 云端数据保留，重新登录可恢复");}
 
@@ -5218,10 +5335,21 @@ function syncEnabled(){
 function sbWrite(p,method,body,prefer){
   if(typeof window!=="undefined"&&window.__PREVIEW_FAKE_SYNC__)
     return new Promise(function(r){setTimeout(function(){r(true);},520);});
+  return sbWriteRaw(p,method,body,prefer,true);
+}
+function sbWriteRaw(p,method,body,prefer,canRefresh){
   const h=sbH();if(prefer)h.Prefer=prefer;
   const o={method:method,headers:h};
   if(body!==undefined)o.body=JSON.stringify(body);
-  return fetch(SB_URL+p,o).then(function(r){return r.ok;}).catch(function(){return false;});
+  return fetch(SB_URL+p,o).then(function(r){
+    if(r.status===401&&SB_TOKEN&&SB_RTOKEN&&canRefresh){
+      return sbTryRefresh().then(function(ok){
+        if(ok)return sbWriteRaw(p,method,body,prefer,false);
+        AUTH_EXPIRED=true;markAuthExpired();return false;});
+    }
+    if(r.status===401){AUTH_EXPIRED=true;markAuthExpired();return false;}
+    return r.ok;
+  }).catch(function(){return false;});
 }
 function syncRecordRow(r,ts){
   return {uid:sMe().id,d:r.d,payload:r,updated_at:new Date(ts||Date.now()).toISOString()};
@@ -5538,7 +5666,10 @@ try{
   const tick=()=>{
     const el=document.getElementById("splash");
     const onSplash=!!el&&el.style.display!=="none"&&!el.classList.contains("out");
-    if(!onSplash)syncStatusBar();
+    /* v1.24：开屏期间也要补设状态栏为开屏深色。之前 onSplash 时直接跳过，
+       但 Capacitor 插件可能晚于 initSplash 才就绪，导致开屏 2.6 秒状态栏一直是默认白色 */
+    if(onSplash)syncStatusBar("splash");
+    else syncStatusBar();
   };
   window.addEventListener("load",tick);
   setTimeout(tick,300);
