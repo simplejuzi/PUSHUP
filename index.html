@@ -153,8 +153,10 @@ body.feed-lock .screen{overflow:hidden}
 #page-feed .feed-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px;scrollbar-width:none}
 #page-feed .feed-scroll::-webkit-scrollbar{display:none}
 #page-post.on{display:flex;flex-direction:column;height:100%;overflow:hidden}
-#page-post .pd-head{flex:none}
-#page-post .pd-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none}
+/* v1.26：帖子头部可滚动（长文多图不挤爆评论），但最多占屏幕一半 */
+#page-post .pd-head{flex:none;overflow-y:auto;max-height:46%;scrollbar-width:none}
+#page-post .pd-head::-webkit-scrollbar{display:none}
+#page-post .pd-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:56px}
 #page-post .pd-scroll::-webkit-scrollbar{display:none}
 .page{display:none;animation:fade .22s ease}
 .page.on{display:block}
@@ -467,7 +469,7 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .toast.mid.show{transform:translate(-50%,0)}
 
 /* 导入弹层 */
-.modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
+.modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
 .modal.on{display:flex}
 /* ===== v1.2：突破奖励弹窗（全主题变量，浅色/深色自适应） ===== */
 .modal.celebrate{z-index:35;background:transparent;align-items:center;justify-content:center;pointer-events:none}
@@ -1098,9 +1100,8 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
           <button class="back-btn" onclick="closePostDetail()" aria-label="返回">‹</button>
           <div class="pd-top-name">动态详情</div>
         </div>
-        <div id="pdHead"></div>
+        <div id="pdHead" class="pd-head"></div>
         <div id="pdComments" class="pd-scroll"></div>
-        <div style="height:92px"></div>
       </div>
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
@@ -1703,13 +1704,13 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.26";
+const APP_VERSION="v1.27";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "修：发布/删除/取消点赞/取关跨账号不同步——云同步改为以云端为准全量替换，删掉的动态、取消的赞都会正确消失",
-  "修：删除动态的确认弹窗歪了（靠左），现在居中显示",
-  "好友页：文字更精简不再被省略截断；「找人」排除已有关注关系的人",
-  "顶部标题栏再上移、左右边距再收窄，内容更紧凑",
+  "修：三个点菜单点开 1 秒就被刷新冲掉——现在刷新后会自动恢复打开的菜单",
+  "修：消息列表会话头像异常放大——换了头像后头像不再撑满卡片",
+  "修：动态详情页评论区被挤压——评论滚动区现在占满帖子到输入框之间的完整空间",
+  "修：删除评论确认框也居中了，不再嵌到屏幕边缘",
 ];
 const RELEASE_PAGE="https://github.com/simplejuzi/PUSHUP/releases/latest";
 const UPDATE_ENDPOINTS=[
@@ -4698,10 +4699,11 @@ function postCardHtml(p,me){
    微信风格：点三个点展开，菜单里是「❤ 赞」和「删除」。删除要二次确认。 */
 let PENDING_DEL_ID="";
 let PENDING_DEL_COMMENT=null;
+let OPEN_MORE_ID="";   /* v1.26：当前打开的更多菜单对应的动态 id，用于刷新后恢复 */
 function moreMenuHtml(id){
   return '<div class="more" onclick="event.stopPropagation()">'+
     '<button class="more-btn" onclick="toggleMore(event,\''+id+'\')">···</button>'+
-    '<div class="more-menu">'+
+    '<div class="more-menu" data-post="'+id+'">'+
       '<button class="danger" onclick="openDelPost(\''+id+'\');closeMoreMenus()"><span class="mi">🗑️</span>删除</button>'+
     '</div></div>';
 }
@@ -4715,10 +4717,18 @@ function toggleMore(ev,id){
   if(!m)return;
   const on=m.classList.contains("on");
   closeMoreMenus();
-  if(!on)m.classList.add("on");
+  if(!on){m.classList.add("on");OPEN_MORE_ID=id;}
+  else OPEN_MORE_ID="";
 }
 function closeMoreMenus(){
   document.querySelectorAll(".more-menu.on").forEach(function(m){m.classList.remove("on");});
+  OPEN_MORE_ID="";
+}
+/* v1.26：动态/我的动态重新渲染后，若之前有打开的菜单，恢复它（否则每秒轮询刷新会把菜单冲掉） */
+function restoreMoreMenu(){
+  if(!OPEN_MORE_ID)return;
+  const menus=document.querySelectorAll('.more-menu[data-post="'+OPEN_MORE_ID+'"]');
+  if(menus.length)menus[0].classList.add("on");
 }
 /* 点其它地方收起菜单 */
 function bindMoreOutside(){
@@ -5034,6 +5044,7 @@ function renderFeed(){
     return true;});
   el.innerHTML=ps.length?ps.map(p=>postCardHtml(p,me)).join("")
     :'<div class="empty-hint">'+(me?"还没有动态，点右上角「＋ 发布」试试":"登录后就能看到大家的动态")+'</div>';
+  restoreMoreMenu();
 }
 function renderMyPosts(){
   const el=document.getElementById("mypostsList");if(!el)return;
@@ -5042,6 +5053,7 @@ function renderMyPosts(){
   const ps=sLoad().posts.filter(p=>p.uid===me.id).sort((a,b)=>b.ts-a.ts);
   el.innerHTML=ps.length?ps.map(p=>postCardHtml(p,me)).join("")
     :'<div class="empty-hint">还没有发过动态，点右上角「＋ 发动态」试试</div>';
+  restoreMoreMenu();
 }
 function openPost(){
   if(!sMe()){openAuth();return;}
@@ -5199,8 +5211,8 @@ function renderChats(){
     const prev=m.image?"[图片]":(m.sticker?m.sticker+" "+(m.text||""):(m.text||""));
     const n=unread[id]||0;
     const badge=n?'<span class="chat-unread">'+(n>99?"99+":n)+'</span>':"";
-    return '<div class="user-row" onclick="openChat(\''+id+'\')"><div class="user-av-wrap">'+sAv(u)+
-      badge+
+    return '<div class="user-row" onclick="openChat(\''+id+'\')"><div class="user-av-wrap"><div class="user-av">'+sAv(u)+
+      '</div>'+badge+
       '</div><div class="user-mid"><b>'+sEsc(u.name)+'</b><small>'+sEsc(prev)+
       '</small></div><span class="user-time">'+sTime(m.ts)+'</span></div>';
   }).join(""):'<div class="empty-hint">还没有会话 · 去好友页找人聊聊</div>';
