@@ -680,14 +680,6 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 .fcm-name{font-size:11.5px;font-weight:750;color:var(--ink)}
 .fcm-name span{font-weight:500;color:var(--sub2);font-size:10px;margin-left:6px}
 .fcm-name .fcm-del{color:var(--accent);cursor:pointer;font-weight:700}
-/* v1.43：评论回复 */
-.fcm-name .fcm-replybtn{color:var(--sub2);cursor:pointer;font-weight:700;font-size:10.5px;margin-left:10px}
-.fcm-name .fcm-replybtn:active,.pd-reply-chip .chip-x:active{opacity:.6}
-.fcm.replying{background:var(--accent-soft);border-radius:10px;padding-left:8px;margin-left:-8px;padding-right:8px;margin-right:-8px}
-.fcm-reply{font-size:11px;color:var(--sub2);margin-top:4px;line-height:1.4;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fcm-reply .reply-name{color:var(--accent);font-weight:700;cursor:pointer}
-.fcm-reply .reply-quote{color:var(--sub2)}
 .fcm-text{font-size:12.5px;line-height:1.55;color:var(--ink);margin-top:2px;
   word-break:break-word;white-space:pre-wrap}
 .cm-empty{font-size:11.5px;color:var(--sub2);padding:3px 0 6px}
@@ -740,13 +732,9 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
    任意屏幕宽高、任意登录态（输入框/登录按钮高度不同）都精确自适应 */
 .pd-bar{position:static;flex:none;background:var(--card);border-top:1px solid var(--line);padding:9px 20px;
   padding-bottom:calc(9px + env(safe-area-inset-bottom));
-  display:flex;flex-wrap:wrap;gap:6px;align-items:center;z-index:6;
+  display:flex;gap:6px;align-items:center;z-index:6;
   box-shadow:0 -8px 20px rgba(23,24,28,.06)}
 .pd-bar[hidden]{display:none}
-/* v1.43：回复对象提示条，占满一行，输入框自动换行到下面 */
-.pd-reply-chip{flex:0 0 100%;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub2)}
-.pd-reply-chip b{color:var(--accent);font-weight:750;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pd-reply-chip .chip-x{margin-left:auto;cursor:pointer;padding:0 4px;font-size:12px}
 .pd-bar input{flex:1;min-width:0;border:1px solid var(--line);background:var(--soft);
   border-radius:999px;height:32px;padding:0 13px;font:inherit;font-size:13px;
   color:var(--ink);outline:0}
@@ -1720,10 +1708,9 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.43";
+const APP_VERSION="v1.28";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致（仓库转私有后不再依赖外部发行页） */
 const APP_CHANGELOG=[
-  "新增：评论可以回复其他人，回复会显示「回复 @某人」和原评论摘要，被回复的人也会收到通知",
   "修：删动态现在会联动删除它的点赞和评论，数据库一并清干净",
   "修：每次进页面都会重新校验账号是否还在——账号被删除后自动退出，不会再「复活」",
   "修：删除确认框上移到中下位置、四周圆角，不再贴死屏幕底边",
@@ -3986,7 +3973,7 @@ let SOC=null,SB_TOKEN="",SB_RTOKEN="",feedFilter="all",friendTab="following",pos
     SYNC_STATE="off",_lastSyncAt=0,
     TMAP_KEY="fitness_times_v1",
     chatWith=null,chatTimer=null,postImgs=[],chatImg=null,emojiFor=null,postAttach=true,
-    openCm={},REPLY_TO=null;   /* v1.43：正在回复的评论 {cid,pid,name} */
+    openCm={};
 
 const EMOJIS=["💪","🔥","💯","👏","👍","🎉","😄","😂","🥳","😎","🙌","🤝",
  "🏋️","🤸","🧘","🏃","🚴","💦","⏱️","🥇","🏅","⚡","✨","❤️","😀","😅",
@@ -4412,7 +4399,7 @@ function syncCloud(){
     if(cm){
       /* 保留本机「离线发的评论」 */
       const mineOff=s.comments.filter(function(c){return c.uid===s.session&&!cm.some(function(x){return x.id===c.id;});});
-      s.comments=cm.map(function(x){return {id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts,replyTo:x.reply_to||""};}).concat(mineOff);
+      s.comments=cm.map(function(x){return {id:x.id,p:x.post_id,uid:x.uid,text:x.text,ts:x.ts};}).concat(mineOff);
     }
     sSave();refreshSocialUI();
   }).catch(()=>{});
@@ -4710,38 +4697,15 @@ function toggleLike(id){
   refreshPostViews();
 }
 function toggleComments(id){openCm[id]=!openCm[id];refreshPostViews();}
-/* v1.43：点评论上的「回复」——输入条切换成「回复 @某人」，已打的字保留 */
-function startReply(cid,pid){
-  const s=sLoad(),me=sMe();if(!me)return;
-  const c=s.comments.find(function(x){return x.id===cid;});
-  if(!c||c.p!==pid)return;
-  const old=document.getElementById("cmInput_"+pid),keep=old?old.value:"";
-  REPLY_TO={cid:cid,pid:pid,name:sUser(c.uid).name};
-  const p=s.posts.find(function(x){return x.id===pid;});
-  if(p)renderPdBar(p,me);
-  const el=document.getElementById("cmInput_"+pid);
-  if(el){el.value=keep;try{el.focus();}catch(e){}}
-}
-function cancelReply(pid){
-  const old=document.getElementById("cmInput_"+pid),keep=old?old.value:"";
-  REPLY_TO=null;
-  const s=sLoad(),me=sMe(),p=s.posts.find(function(x){return x.id===pid;});
-  if(p&&me)renderPdBar(p,me);
-  const el=document.getElementById("cmInput_"+pid);
-  if(el){el.value=keep;try{el.focus();}catch(e){}}
-}
 function sendComment(id){
   const me=sMe();if(!me){openAuth();return;}
   const el=document.getElementById("cmInput_"+id);
   const text=String((el&&el.value)||"").trim().slice(0,200);
   if(!text){toast("说点什么吧");return;}
-  /* v1.43：正在回复就把目标评论 id 一起存，普通评论留空 */
-  const rt=(REPLY_TO&&REPLY_TO.pid===id)?REPLY_TO.cid:"";
-  const c={id:sUid(),p:id,uid:me.id,text:text,ts:Date.now(),replyTo:rt};
+  const c={id:sUid(),p:id,uid:me.id,text:text,ts:Date.now()};
   const s=sLoad();s.comments.push(c);sSave();
-  sbPush("post_comments",{id:c.id,post_id:id,uid:me.id,text:text,ts:c.ts,reply_to:rt});
+  sbPush("post_comments",{id:c.id,post_id:id,uid:me.id,text:text,ts:c.ts});
   if(el)el.value="";
-  REPLY_TO=null;
   const pn=document.getElementById("emojiPanel");if(pn)pn.classList.remove("on");
   openCm[id]=true;refreshPostViews();
 }
@@ -4760,7 +4724,6 @@ function confirmDelComment(){
   const s=sLoad(),i=s.comments.findIndex(function(c){return c.id===p.cid;});
   if(i<0||s.comments[i].uid!==me.id)return;
   s.comments.splice(i,1);sSave();sbDel("post_comments","id=eq."+p.cid);
-  if(REPLY_TO&&REPLY_TO.cid===p.cid)REPLY_TO=null;   /* 回复目标被删，退出回复态 */
   openCm[p.pid]=true;refreshPostViews();
 }
 
@@ -4870,11 +4833,10 @@ function openPostDetail(pid,from){
   PD_BACK=(fromPage==="post")?"feed":(fromPage||"feed");
   SUB_PARENT.post=PD_BACK;
   PD_ID=pid;
-  REPLY_TO=null;   /* v1.43：进详情页不残留上一条动态的回复状态 */
   renderPostDetail();
   switchTab("post");
 }
-function closePostDetail(){REPLY_TO=null;hidePdBar();switchTab(PD_BACK||"feed");}
+function closePostDetail(){hidePdBar();switchTab(PD_BACK||"feed");}
 function renderPostDetail(){
   const head=document.getElementById("pdHead");
   const cmt=document.getElementById("pdComments");
@@ -4920,15 +4882,10 @@ function renderPostDetail(){
   let ch='<div class="sec-title" style="margin-top:14px">评论 <span>共 '+cs.length+' 条</span></div>';
   ch+=cs.length?cs.map(function(c){
     const cu=sUser(c.uid);
-    /* v1.43：回复关系。父评论已删则按普通评论显示，不留死链 */
-    const parent=c.replyTo?cs.find(function(x){return x.id===c.replyTo;}):null;
-    const ptext=parent?(parent.text||""):"";
-    const quote=parent?'<div class="fcm-reply">回复 <span class="reply-name fav-click" onclick="openUserProfile(\''+parent.uid+'\')">@'+sEsc(sUser(parent.uid).name)+'</span><span class="reply-quote">：'+sEsc(ptext.slice(0,40))+(ptext.length>40?"…":"")+'</span></div>':'';
-    return '<div class="fcm'+(REPLY_TO&&REPLY_TO.cid===c.id?' replying':'')+'"><div class="fcm-av fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sAv(cu)+'</div><div class="fcm-body">'+
+    return '<div class="fcm"><div class="fcm-av fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sAv(cu)+'</div><div class="fcm-body">'+
       '<div class="fcm-name"><span class="fav-click" onclick="openUserProfile(\''+c.uid+'\')">'+sEsc(cu.name)+'</span><span>'+sTime(c.ts)+'</span>'+
-      '<span class="fcm-replybtn" onclick="startReply(\''+c.id+'\',\''+p.id+'\')">回复</span>'+
       (me&&c.uid===me.id?'<span class="fcm-del" onclick="delComment(\''+c.id+'\',\''+p.id+'\')">删除</span>':'')+
-      '</div>'+quote+'<div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
+      '</div><div class="fcm-text">'+sEsc(c.text)+'</div></div></div>';
   }).join(""):'<div class="pd-empty">还没有评论，来说一句</div>';
   cmt.innerHTML=ch;
   renderPdBar(p,me);
@@ -4938,13 +4895,11 @@ function renderPostDetail(){
 function renderPdBar(p,me){
   const bar=document.getElementById("pdBar");
   if(!bar)return;
-  const replying=(REPLY_TO&&REPLY_TO.pid===p.id)?REPLY_TO:null;
-  const key=p.id+(me?"#me":"#anon")+(replying?"#to"+replying.cid:"");
+  const key=p.id+(me?"#me":"#anon");
   if(bar.getAttribute("data-pd")===key&&!bar.hidden && bar.innerHTML)return;
   bar.setAttribute("data-pd",key);
   if(me){
-    const chip=replying?'<div class="pd-reply-chip">回复 <b>@'+sEsc(replying.name)+'</b><span class="chip-x" onclick="cancelReply(\''+p.id+'\')">✕</span></div>':'';
-    bar.innerHTML=chip+'<input id="cmInput_'+p.id+'" maxlength="200" placeholder="'+(replying?'回复 @'+sEsc(replying.name)+'…':'写条评论…')+'"'+
+    bar.innerHTML='<input id="cmInput_'+p.id+'" maxlength="200" placeholder="写条评论…"'+
       ' onkeydown="if(event.key===\'Enter\')sendComment(\''+p.id+'\')">'+
       '<button class="cm-emoji" onclick="toggleEmoji(\'cmInput_'+p.id+'\')">☺</button>'+
       '<button class="cm-send" onclick="sendComment(\''+p.id+'\')">发送</button>';
@@ -5379,14 +5334,11 @@ function buildNotifications(){
       list.push({type:"like",uid:l.b,ts:(l.ts||p.ts),text:"赞了你的动态",post:l.a});
     }
   });
-  /* 评论 / 回复：别人评论了我的动态；别人回复了我的评论（动态是别人的也算） */
+  /* 评论：别人评论了我的动态 */
   s.comments.forEach(function(c){
     if(c.uid===me.id)return;
     const p=s.posts.find(function(x){return x.id===c.p;});
-    const parent=c.replyTo?s.comments.find(function(x){return x.id===c.replyTo;}):null;
-    if(parent&&parent.uid===me.id){
-      list.push({type:"reply",uid:c.uid,ts:c.ts,text:(c.text||"").slice(0,24),post:c.p});
-    }else if(!parent&&p&&p.uid===me.id){
+    if(p&&p.uid===me.id){
       list.push({type:"comment",uid:c.uid,ts:c.ts,text:(c.text||"").slice(0,24),post:c.p});
     }
   });
@@ -5399,7 +5351,6 @@ function notifItemHtml(n){
   let ic,label;
   if(n.type==="follow"){ic="➕";label=n.text;}
   else if(n.type==="like"){ic="❤️";label=n.text;}
-  else if(n.type==="reply"){ic="💬";label="回复了你："+n.text;}
   else{ic="💬";label="评论了你："+n.text;}
   return '<div class="notif-item" onclick="notifTap(\''+n.type+'\',\''+(n.post||"")+'\')">'+
     '<span class="notif-ic">'+ic+'</span>'+
@@ -5447,7 +5398,7 @@ function renderNotifEntry(){
 /* 点通知跳转 */
 function notifTap(type,postId){
   if(type==="follow"){openFriends("followers");return;}
-  if(type==="like"||type==="comment"||type==="reply"){
+  if(type==="like"||type==="comment"){
     if(postId){openPostDetail(postId,"chats");return;}
     switchTab("feed");
   }
