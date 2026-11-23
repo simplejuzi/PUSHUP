@@ -70,6 +70,9 @@ create table if not exists public.post_comments (
   ts bigint not null
 );
 create index if not exists post_comments_idx on public.post_comments (post_id, ts);
+/* v1.43：评论可以回复其他评论。reply_to 存被回复评论的 id，为空则是普通评论。
+   不建外键：父评论被删后子评论会变成普通评论显示，避免级联删除被 RLS 拦住。 */
+alter table public.post_comments add column if not exists reply_to text;
 
 -- ---------- v1.5 训练数据同步：records / settings ----------
 -- records：一天一条，改一次就 upsert 一次；payload 是整条训练记录
