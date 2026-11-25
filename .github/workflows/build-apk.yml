@@ -1,21 +1,23 @@
 name: 打包 PUSHUP APK
 
-# 自动构建：Web 源码或本配置变更时；也可在 Actions 页面手动点「Run workflow」
+# 触发方式：目前**只支持手动**（Actions 页面 → 本工作流 → Run workflow）。
+# v1.1：接手时按要求先关闭自动构建，避免一 push 就跑 Actions。
+# 想恢复「push 到 main 自动打包」，把下面 on.push 整段取消注释即可（indent 已对齐）。
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'index.html'
-      - 'manifest.webmanifest'
-      - 'sw.js'
-      - 'icons/**'
-      - 'capacitor.config.json'
-      - 'package.json'
-      - 'version.json'
-      - 'native/**'
-      - 'signing/**'
-      - '.github/workflows/build-apk.yml'
+#  push:
+#    branches: [main]
+#    paths:
+#      - 'index.html'
+#      - 'manifest.webmanifest'
+#      - 'sw.js'
+#      - 'icons/**'
+#      - 'capacitor.config.json'
+#      - 'package.json'
+#      - 'version.json'
+#      - 'native/**'
+#      - 'signing/**'
+#      - '.github/workflows/build-apk.yml'
 
 permissions:
   contents: write
@@ -123,9 +125,10 @@ jobs:
           pkg = str(main.parent).split('java' + os.sep)[-1].replace(os.sep, '.')
           if pkg.startswith('.'):
               pkg = pkg[1:]
-          header = 'package com.simplejuzi.pushup;'
-          bridge = Path('native/PUSHUPBridge.java').read_text(encoding='utf-8').replace(header, 'package ' + pkg + ';')
-          (main.parent / 'PUSHUPBridge.java').write_text(bridge, encoding='utf-8')
+          header = 'package com.pushup.lite;'
+          for jf in ['PUSHUPBridge.java', 'ReminderReceiver.java', 'ReminderBoot.java']:
+              src = Path('native/' + jf).read_text(encoding='utf-8').replace(header, 'package ' + pkg + ';')
+              (main.parent / jf).write_text(src, encoding='utf-8')
           act = Path('native/MainActivity.java').read_text(encoding='utf-8').replace(header, 'package ' + pkg + ';')
           main.write_text(act, encoding='utf-8')
           xml = Path('android/app/src/main/res/xml')
@@ -141,6 +144,36 @@ jobs:
               print('已加入 REQUEST_INSTALL_PACKAGES 权限')
           if 'androidx.core.content.FileProvider' not in t:
               raise SystemExit('模板缺少 FileProvider，无法分享/安装 APK')
+          # v1.34：接口跑在 http://…:27080（服务器只放开了高位端口，没有证书），
+          # WebView 默认拦明文请求，这里显式允许；页面本身仍是 https://localhost
+          if 'usesCleartextTraffic' not in t:
+              i = t.find('<application')
+              j = t.find('>', i)
+              t = t[:j] + ' android:usesCleartextTraffic="true"' + t[j:]
+              print('已允许明文 HTTP（usesCleartextTraffic=true）')
+          # v1.36：每日提醒需要通知权限，以及开机后重新挂闹钟
+          for perm in ['android.permission.POST_NOTIFICATIONS',
+                       'android.permission.RECEIVE_BOOT_COMPLETED']:
+              key = perm.rsplit('.', 1)[-1]
+              if key not in t:
+                  i = t.find('<manifest')
+                  j = t.find('>', i)
+                  t = t[:j+1] + '\n    <uses-permission android:name="' + perm + '" />' + t[j+1:]
+                  print('已加入 ' + key + ' 权限')
+          if 'ReminderReceiver' not in t:
+              receivers = (
+                  '\n        <receiver android:name="' + pkg + '.ReminderReceiver" android:exported="false" />'
+                  '\n        <receiver android:name="' + pkg + '.ReminderBoot" android:exported="false">'
+                  '\n            <intent-filter>'
+                  '\n                <action android:name="android.intent.action.BOOT_COMPLETED" />'
+                  '\n                <action android:name="android.intent.action.QUICKBOOT_POWERON" />'
+                  '\n            </intent-filter>'
+                  '\n        </receiver>')
+              k = t.rfind('</application>')
+              if k < 0:
+                  raise SystemExit('清单里找不到 </application>')
+              t = t[:k] + receivers + '\n    ' + t[k:]
+              print('已注册每日提醒接收器')
           m.write_text(t, encoding='utf-8')
           print('原生能力注入完成')
           PY
@@ -172,14 +205,15 @@ jobs:
           python3 - <<'PY'
           import re
           from pathlib import Path
-          # versionCode 用构建号，保证覆盖安装被识别为「升级」
+          # 过渡版：原 App 的 versionCode 已是 30 左右，必须固定成更大的值，
+          # 否则覆盖安装会被系统判定为降级（INSTALL_FAILED_VERSION_DOWNGRADE）。
           p = Path('android/app/build.gradle')
           s = p.read_text()
-          s2 = re.sub(r'versionCode\s+\d+', 'versionCode ${{ github.run_number }}', s, count=1)
+          s2 = re.sub(r'versionCode\s+\d+', 'versionCode 10015', s, count=1)
           if s2 == s:
               print('未找到 versionCode，跳过（不影响签名一致性）')
           else:
-              print('versionCode 已设为 ${{ github.run_number }}')
+              print('versionCode 已设为 10015')
           import os
           ver = os.environ.get('APP_VER', '1.1')
           s3 = re.sub(r'versionName\s+[\'"][^\'"]*[\'"]', 'versionName "' + ver + '"', s2, count=1)
@@ -267,8 +301,10 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      # Release 的版本号与更新日志来自 version.json，不再是「自动构建」的固定话术
+      # 过渡分支：只出 artifact，绝不在 pushup-lite 仓库建 v1.29 Release，
+      # 否则 Lite 主线用户的检查更新会拿到一个装不上的原包名 APK。
       - name: 发布到 Releases
+        if: false
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

@@ -1,12 +1,21 @@
 /**
  * PUSHUP · Supabase 反向代理（腾讯云云函数 SCF）
- * 作用：把 https://<你的函数域名>.scf.tencentcs.com 的请求原样转发到
- *       https://zqrlolyntlcewrwfhumd.supabase.co，解决国内直连 supabase 被阻断的问题。
+ * 作用：把 https://<你的函数域名>.scf.tencentcs.com 的请求原样转发到 Supabase，
+ *       解决国内直连 supabase 被阻断的问题。
  * 依赖：无（只用 Node 内置 https 模块，不用 npm install）
  * 兼容：SCF「函数 URL」与「API 网关触发器」两种事件格式
+ *
+ * 多项目路由（一个函数服务多个 App / 多个 Supabase 项目）：
+ *   根路径        → 完整版项目（PUSHUP）
+ *   /lite/...     → 精简版项目（PUSHUP Lite）
+ * 想换项目时不用改代码：在 SCF 控制台配环境变量 UPSTREAM / UPSTREAM_LITE 即可。
  */
 
-const UPSTREAM = "https://zqrlolyntlcewrwfhumd.supabase.co";
+// 键是路径前缀，值是上游 Supabase 项目地址
+const UPSTREAM_MAP = {
+  "":     process.env.UPSTREAM      || "https://zqrlolyntlcewrwfhumd.supabase.co",
+  "/lite": process.env.UPSTREAM_LITE || "https://ctcqmjssqineuubadqty.supabase.co"
+};
 // 只放行这几类路径，避免被别人拿去当任意网站的代理
 const ALLOW = ["/rest/v1", "/auth/v1", "/storage/v1", "/realtime/v1"];
 
@@ -74,12 +83,18 @@ exports.main = async function (event, context) {
   }
 
   const allowed = ALLOW.some(p => req.path === p || req.path.indexOf(p + "/") === 0 || req.path.indexOf(p + "?") === 0);
-  if (!allowed) {
+  // 多项目：先看第一个路径段是不是已知前缀
+  const seg = "/" + (req.path.split("/").filter(Boolean)[0] || "");
+  const prefix = Object.prototype.hasOwnProperty.call(UPSTREAM_MAP, seg) ? seg : "";
+  const upPath = prefix ? (req.path.slice(prefix.length) || "/") : req.path;
+
+  const allowed2 = ALLOW.some(p => upPath === p || upPath.indexOf(p + "/") === 0 || upPath.indexOf(p + "?") === 0);
+  if (!allowed && !allowed2) {
     return reply(403, JSON.stringify({ message: "此代理只转发 Supabase 接口", path: req.path }),
                  Object.assign({ "Content-Type": "application/json" }, cors(origin)));
   }
 
-  const target = UPSTREAM + req.path + (req.query ? "?" + req.query : "");
+  const target = UPSTREAM_MAP[prefix] + upPath + (req.query ? "?" + req.query : "");
 
   const outHeaders = {};
   for (const k of PASS_REQ) if (req.headers[k]) outHeaders[k] = req.headers[k];

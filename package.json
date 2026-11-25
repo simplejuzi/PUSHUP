@@ -1,6 +1,6 @@
 {
-  "name": "pushup",
-  "version": "1.0.0",
+  "name": "pushup-lite",
+  "version": "1.1.0",
   "private": true,
   "description": "PUSHUP · 俯卧撑训练记录 App（Capacitor Android 壳）",
   "scripts": {

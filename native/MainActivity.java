@@ -1,4 +1,4 @@
-package com.simplejuzi.pushup;
+package com.pushup.lite;
 
 import android.os.Bundle;
 import android.webkit.ValueCallback;
