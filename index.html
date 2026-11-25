@@ -453,7 +453,7 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .tgl.on{background:var(--accent)}
 .tgl.on::after{left:18px}
 .tgl-l{font-size:10.5px;color:var(--sub2);margin-right:7px}
-.lib-foot{position:absolute;left:0;right:0;bottom:82px;background:var(--tabbar);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;z-index:4}
+.lib-foot{position:absolute;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom));background:var(--tabbar);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;z-index:4}
 .lib-foot .cnt{font-size:12px;color:var(--sub)}
 .lib-foot .cnt b{color:var(--accent-text);font-size:15px}
 .lib-foot button{border:0;background:var(--ink);color:var(--surface);font-size:12px;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer;font-family:inherit}
@@ -519,10 +519,48 @@ body.dark .achip.more,body.dark .fchip.on,body.dark .lib-foot button,body.dark .
 .foot-note2{text-align:center;font-size:11px;color:var(--sub2);margin-top:18px;line-height:1.7}
 
 /* Tab bar (5) */
-.tabbar{position:absolute;left:0;right:0;bottom:0;height:82px;background:var(--tabbar);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;padding:9px 4px 22px;z-index:5}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub2);cursor:pointer;font-size:10px;font-weight:650;background:none;border:0;font-family:inherit}
-.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tab.on{color:var(--accent-text)}
+/* v1.46：悬浮胶囊底栏 · 液态玻璃（Liquid Glass）
+   叠层：半透明底 + 强背景模糊/高饱和 + 顶部镜面高光 + 外侧柔阴影 + 边框亮边 */
+.tabbar{position:absolute;left:12px;right:12px;bottom:calc(18px + env(safe-area-inset-bottom));height:auto;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.10) 42%,rgba(255,255,255,.16) 100%);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 55%,transparent) 0%,color-mix(in srgb,var(--card) 26%,transparent) 100%);
+  backdrop-filter:blur(26px) saturate(1.9);-webkit-backdrop-filter:blur(26px) saturate(1.9);
+  border:1px solid rgba(255,255,255,.42);border-radius:26px;display:flex;align-items:stretch;
+  padding:5px 7px;gap:0;z-index:5;overflow:hidden;
+  box-shadow:0 12px 34px rgba(0,0,0,.20),0 2px 8px rgba(0,0,0,.10),
+    inset 0 1px 1px rgba(255,255,255,.75),inset 0 -1px 1px rgba(255,255,255,.28)}
+/* 顶部一道斜向高光，模拟玻璃反光 */
+.tabbar::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 66%,rgba(255,255,255,.20) 100%);
+  opacity:.9}
+/* 底部一层内阴影增加厚度 */
+.tabbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:44%;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.06))}
+/* 深色模式：白色高光收敛，避免底栏发灰发脏 */
+body.dark .tabbar{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 62%,transparent) 0%,color-mix(in srgb,var(--card) 34%,transparent) 100%);
+  border-color:rgba(255,255,255,.18);
+  box-shadow:0 12px 34px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3),
+    inset 0 1px 1px rgba(255,255,255,.20),inset 0 -1px 1px rgba(255,255,255,.08)}
+body.dark .tabbar::before{background:linear-gradient(115deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 66%,rgba(255,255,255,.08) 100%);opacity:.8}
+body.dark .tab.on{box-shadow:inset 0 1px 1px rgba(255,255,255,.22),inset 0 -1px 1px rgba(255,255,255,.08)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  color:var(--sub2);cursor:pointer;font-size:10px;font-weight:700;background:none;border:0;
+  font-family:inherit;position:relative;border-radius:18px;padding:9px 0 8px;z-index:1;
+  transition:background .18s,color .18s}
+.tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* 实心图标：用填充而非描边，贴合参考图 */
+.tab svg.ic-solid{fill:currentColor;stroke:none}
+/* v1.46：选中态改用滑动玻璃滑块（.tab-slider），tab 本身只负责文字变色 */
+.tab.on{color:var(--accent-text);background:none;box-shadow:none}
+.tab-slider{position:absolute;top:5px;bottom:5px;left:0;width:0;border-radius:18px;z-index:0;
+  background:linear-gradient(180deg,rgba(var(--accent-rgb),.22),rgba(var(--accent-rgb),.10));
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -1px 1px rgba(255,255,255,.18);
+  transition:left .32s cubic-bezier(.34,1.3,.5,1),width .32s cubic-bezier(.34,1.3,.5,1);
+  pointer-events:none;opacity:0}
+.tab-slider.on{opacity:1}
+body.dark .tab-slider{box-shadow:inset 0 1px 1px rgba(255,255,255,.22),inset 0 -1px 1px rgba(255,255,255,.08)}
+.tab:active{transform:scale(.96)}
 /* v1.14：底栏中间的「动态」做成凸起的主按钮 */
   width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(160deg,var(--accent) 0%,var(--accent-mid) 100%);
@@ -688,7 +726,8 @@ body.dark .lc-tip span{color:#5C6068;opacity:1}
 @media (max-width:520px){.stage{padding:0;display:block}.hint{display:none}.phone{width:100%;height:100vh;height:100dvh;border-radius:0;border:0;box-shadow:none}}
 
 /* ===== PUSHUP 正式版：PWA 全屏 / 安全区 ===== */
-.tabbar{height:calc(82px + env(safe-area-inset-bottom));padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+/* v1.46：悬浮胶囊底栏，高度随内容，底部用安全区下移；内容区底部留白按胶囊高度重算 */
+.tabbar{height:auto;bottom:calc(18px + env(safe-area-inset-bottom));padding:5px 7px}
 .screen{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
 .splash .bot{bottom:calc(58px + env(safe-area-inset-bottom))}
 .splash .brand{top:calc(60px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:5px}
@@ -1287,8 +1326,8 @@ body.dark .back-btn{box-shadow:none}
   background:#E5484D;color:#fff;font-size:10px;font-weight:800;font-style:normal;line-height:17px;display:none;
   align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.25);pointer-events:none}
 .tab{position:relative}
-.tabdot{position:absolute;top:4px;left:calc(50% + 6px);width:7px;height:7px;border-radius:50%;
-  background:#E5484D;display:none;pointer-events:none}
+.tabdot{position:absolute;top:5px;left:calc(50% + 7px);width:7px;height:7px;border-radius:50%;
+  background:#E5484D;display:none;pointer-events:none;box-shadow:0 0 0 2px var(--surface)}
 .notif-readall{margin-left:auto;min-height:32px;padding:6px 11px}
 .ntf-note{font-size:11px;color:var(--sub2);margin:2px 2px 0;line-height:1.6}
 .ntf-row{position:relative;display:flex;align-items:flex-start;gap:11px;background:var(--card);
@@ -1459,11 +1498,16 @@ body.dark .back-btn{box-shadow:none}
 @keyframes pgBack{from{transform:translateX(-11%);opacity:.5}to{transform:none;opacity:1}}
 /* ============ v1.44：个人主页重构 ============ */
 #page-user .head-row{align-items:center;gap:10px;justify-content:flex-start}
-#page-user .pg-back{width:36px;height:36px;flex:none;border-radius:12px;border:1px solid var(--line);
+/* v1.46：通用左上角返回按钮（二级页统一用），从 page-user 专用提为全局 */
+.pg-back{width:36px;height:36px;flex:none;border-radius:12px;border:1px solid var(--line);
   background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--ink);
   cursor:pointer;padding:0;margin-top:3px}
-#page-user .pg-back svg{width:18px;height:18px;display:block}
-#page-user .pg-back:active{background:var(--soft);transform:scale(.94)}
+.pg-back svg{width:18px;height:18px;display:block}
+.pg-back:active{background:var(--soft);transform:scale(.94)}
+/* 带返回键的页头：返回键与标题左对齐成组，右侧内容仍靠右 */
+.head-row.has-back{align-items:center;justify-content:flex-start;gap:10px}
+.head-row.has-back .hr-title{flex:1;min-width:0}
+.head-row.has-back .hr-right{margin-left:auto}
 #page-user .head-row .title{font-size:21px;letter-spacing:-.4px}
 #page-user .user-hero{position:relative;overflow:hidden;border-radius:18px;padding:17px 16px 15px;margin-top:14px;
   background:linear-gradient(135deg,var(--accent-soft),var(--card) 72%)}
@@ -1492,7 +1536,7 @@ body.dark .back-btn{box-shadow:none}
 /* 动态页：顶部留白 + 底部贴合底栏，列表不再被上下挤 */
 body.feed-lock .screen{
   padding-top:calc(14px + env(safe-area-inset-top));
-  padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  padding-bottom:calc(110px + env(safe-area-inset-bottom));
 }
 #page-feed .head-row{margin-top:8px !important}
 /* v1.44：姓名/发动态精简进顶部栏，下面整块成为可滑动动态区 */
@@ -1527,6 +1571,19 @@ body.feed-lock .screen{
 @media (display-mode:standalone){.screen{padding-top:calc(4px + env(safe-area-inset-top))}}
 /* 底部手势区：内容透到手势条上方，底栏已含 safe-area-inset-bottom */
 .tabbar{box-sizing:border-box}
+/* v1.46：数据页「本周 vs 上周」环比卡片 */
+.weekcmp-card{margin-top:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:14px 15px;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+.weekcmp-card:empty{display:none}
+.wcmp-cells{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wcmp-cell{background:var(--soft);border-radius:14px;padding:11px 12px}
+.wcmp-cell .wc-k{font-size:11px;color:var(--sub2);font-weight:700}
+.wcmp-cell .wc-big{font-size:24px;font-weight:800;color:var(--ink);margin-top:3px;letter-spacing:-.5px}
+.wcmp-cell .wc-big i{font-size:11px;font-style:normal;color:var(--sub);font-weight:600;margin-left:3px}
+.wcmp-cell .wc-delta{font-size:11px;color:var(--sub);margin-top:4px;font-weight:650;display:flex;align-items:center;gap:3px;flex-wrap:wrap}
+.wc-up{color:var(--accent-text);font-size:9px}
+.wc-down{color:#3FA66B;font-size:9px}
+.wc-flat{color:var(--sub2);font-size:11px}
+.wcmp-tip{font-size:11.5px;color:var(--sub2);margin-top:11px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -1617,6 +1674,7 @@ body.feed-lock .screen{
         </div>
 <div id="statsPane">
           <div class="kpis" id="kpis"></div>
+          <div class="weekcmp-card" id="weekCmp"></div>
           <div class="chart-card">
             <div class="chart-head"><span class="t">每日俯卧撑</span><span class="x" id="peakLabel">峰值 <b>—</b> 个</span></div>
             <div id="barChart"></div><div class="axis"><span id="axA">—</span><span id="axB">—</span><span id="axC">—</span></div>
@@ -1671,9 +1729,10 @@ body.feed-lock .screen{
 
       <!-- ===== 动作库 ===== -->
       <div class="page" id="page-library">
-        <div class="head-row" style="margin-top:4px">
-          <div><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
-          <div class="badge">徒手 · 无器械为主</div>
+        <div class="head-row has-back" style="margin-top:4px">
+          <button class="pg-back" onclick="handleAppBack()" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="hr-title"><div class="eyebrow">LIBRARY</div><h1 class="title">动作库</h1></div>
+          <div class="badge hr-right">徒手 · 无器械为主</div>
         </div>
         <div class="lib-sub" id="libSub">—</div>
         <div class="searchbox">
@@ -1756,9 +1815,10 @@ body.feed-lock .screen{
 
       <!-- ===== v1.5 我的动态（独立二级页，从我的页进入） ===== -->
       <div class="page" id="page-myposts">
-        <div class="head-row" style="margin-top:4px">
-          <div><div class="eyebrow">MY POSTS</div><h1 class="title">我的动态</h1></div>
-          <button class="btn-primary sm" onclick="openPost()">＋ 发动态</button>
+        <div class="head-row has-back" style="margin-top:4px">
+          <button class="pg-back" onclick="handleAppBack()" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="hr-title"><div class="eyebrow">MY POSTS</div><h1 class="title">我的动态</h1></div>
+          <button class="btn-primary sm hr-right" onclick="openPost()">＋ 发动态</button>
         </div>
         <div class="muted" style="margin:10px 3px">只有自己发过的会出现在这里，点卡片右上角「···」可删除</div>
         <div id="mypostsList"></div>
@@ -1898,9 +1958,10 @@ body.feed-lock .screen{
 
       <!-- ===== 训练记录（简洁列表，自己和其他人的都能看，对所有人公开） ===== -->
       <div class="page" id="page-recs">
-        <div class="head-row" style="margin-top:4px">
-          <div><div class="eyebrow">RECORDS</div><h1 class="title" id="recsTitle">训练记录</h1></div>
-          <div class="badge" id="recsCount">0 天</div>
+        <div class="head-row has-back" style="margin-top:4px">
+          <button class="pg-back" onclick="handleAppBack()" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="hr-title"><div class="eyebrow">RECORDS</div><h1 class="title" id="recsTitle">训练记录</h1></div>
+          <div class="badge hr-right" id="recsCount">0 天</div>
         </div>
         <div class="recs-sum" id="recsSum"></div>
         <div class="recs-list" id="recsList"></div>
@@ -1909,9 +1970,10 @@ body.feed-lock .screen{
 
       <!-- ===== 设置：原我的页所有设置 / 关于项统一搬到这里 ===== -->
       <div class="page" id="page-settings">
-        <div class="head-row" style="margin-top:4px">
-          <div><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
-          <div class="badge" id="profileVersion">v1.43</div>
+        <div class="head-row has-back" style="margin-top:4px">
+          <button class="pg-back" onclick="handleAppBack()" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="hr-title"><div class="eyebrow">SETTINGS</div><h1 class="title">设置</h1></div>
+          <div class="badge hr-right" id="profileVersion">v1.43</div>
         </div>
 
         <div class="sec-title">外观</div>
@@ -1989,11 +2051,12 @@ body.feed-lock .screen{
     </div>
 
     <div class="tabbar" id="tabbar">
-      <button class="tab on" id="tab-record" onclick="switchTab('record',true)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>记录</button>
-      <button class="tab" id="tab-data" onclick="switchTab('data',true)"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>数据</button>
-      <button class="tab" id="tab-history" onclick="switchTab('history',true)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>历史</button>
-      <button class="tab" id="tab-feed" onclick="switchTab('feed',true)"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3V5z"/><path d="M8 9h8M8 13h5"/></svg>动态<i class="tabdot" id="tabFeedDot"></i></button>
-      <button class="tab" id="tab-profile" onclick="switchTab('profile',true)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>我的</button>
+      <i class="tab-slider" id="tabSlider" aria-hidden="true"></i>
+      <button class="tab on" id="tab-record" onclick="switchTab('record',true)"><svg viewBox="0 0 24 24" class="ic-solid"><path d="M3.2 10.4h1.9v3.2H3.2zM5.6 8.2h2.2v7.6H5.6zM16.2 8.2h2.2v7.6h-2.2zM18.9 10.4h1.9v3.2h-1.9zM7.8 10.9h8.4v2.2H7.8z"/></svg>记录</button>
+      <button class="tab" id="tab-data" onclick="switchTab('data',true)"><svg viewBox="0 0 24 24" class="ic-solid"><rect x="3.5" y="11" width="4" height="9" rx="1.2"/><rect x="10" y="5" width="4" height="15" rx="1.2"/><rect x="16.5" y="8.5" width="4" height="11.5" rx="1.2"/></svg>数据</button>
+      <button class="tab" id="tab-history" onclick="switchTab('history',true)"><svg viewBox="0 0 24 24" class="ic-solid"><path d="M7 2h1.6v2h6.8V2H17v2h1.5A2.5 2.5 0 0 1 21 6.5V8H3V6.5A2.5 2.5 0 0 1 5.5 4H7zM3 9.6h18V18a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18z"/></svg>历史</button>
+      <button class="tab" id="tab-feed" onclick="switchTab('feed',true)"><svg viewBox="0 0 24 24" class="ic-solid"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8.2L6 21.2V17H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>动态<i class="tabdot" id="tabFeedDot"></i></button>
+      <button class="tab" id="tab-profile" onclick="switchTab('profile',true)"><svg viewBox="0 0 24 24" class="ic-solid"><circle cx="12" cy="7.6" r="4.1"/><path d="M12 13.4c-4.5 0-8 2.9-8 6.5 0 .6.5 1.1 1.1 1.1h13.8c.6 0 1.1-.5 1.1-1.1 0-3.6-3.5-6.5-8-6.5z"/></svg>我的</button>
     </div>
 
     <!-- v1.7：悬浮保存球（拖动后自动吸附左右侧边，位置记住） -->
@@ -2434,11 +2497,14 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.45";
+const APP_VERSION="v1.46";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致 */
 const APP_CHANGELOG=[
-  "评论可以回复某个人，被回复的人会收到「回复了你」的提醒",
-  "改为真沉浸式状态栏：状态栏透明、内容延伸其下，切换主题不再有分割线，开屏也沉浸"
+  "底栏改成悬浮液态玻璃胶囊，选中项换成会滑动的玻璃高亮块",
+  "底栏只在首页五个标签出现，二级页面自动隐藏；我的动态、训练记录、设置、动作库补上左上角返回",
+  "数据页新增本周与上周的对比，涨了多少、少了多少一目了然",
+  "每周日第一次打开会弹出本周周报，一周一次",
+  "双击底栏标签回到该页顶部，长按记录直接补录今天"
 ];
 /* 过渡版 v1.29：这个包覆盖安装在原 PUSHUP App 上，包名是 com.simplejuzi.pushup。
    更新检查必须继续指向原仓库 simplejuzi/PUSHUP，否则收不到后续版本。
@@ -2673,13 +2739,16 @@ function switchTab(name,fromTabBar){
   if(_tb)_tb.classList.add("on");
   else{const _p=tabOwner(name);
        const _pe=document.getElementById("tab-"+_p);if(_pe)_pe.classList.add("on");}
+  /* v1.46：主 tab 才显示滑块并平滑移到选中的 tab；二级页隐藏 */
+  moveTabSlider(_tb?name:null);
   document.getElementById("libFoot").classList.toggle("hide",!(name==="library"&&libDirty));
   if(name==="record")refreshFab();else setFabVisible(false);   /* v1.7：只在记录页 + 有改动时出现 */
   document.getElementById("screen").scrollTop=0;
-  /* 详情页隐藏底栏；其它页恢复底栏 */
+  /* v1.46：底栏只在 5 个主 tab 出现；所有二级页（详情/排行榜/找朋友/个人主页/动作库/设置/成就/我的动态/消息等）都隐藏 */
   const tb=document.getElementById("tabbar");
   const phone=document.getElementById("phone");
-  const barless=(name==="post");
+  const MAIN_TABS={record:1,data:1,history:1,feed:1,profile:1};
+  const barless=!MAIN_TABS[name];
   if(tb)tb.classList.toggle("hide-bar",barless);
   if(phone)phone.classList.toggle("bar-less",barless);
   /* 动态页 / 详情页锁住外层滚动，内容区内部独立滚动 */
@@ -2735,6 +2804,73 @@ function tabOwner(name){
   let cur=name,n=0;
   while(!TABS[cur]&&n++<10){cur=SUB_PARENT[cur]||"feed";}
   return TABS[cur]?cur:"feed";
+}
+/* v1.46：底栏滑动滑块 —— 按目标 tab 的实际位置/宽度移动玻璃滑块 */
+function moveTabSlider(name){
+  const sl=document.getElementById("tabSlider"),bar=document.getElementById("tabbar");
+  if(!sl||!bar)return;
+  const btn=name?document.getElementById("tab-"+name):null;
+  if(!btn){sl.classList.remove("on");return;}
+  const br=bar.getBoundingClientRect(),tr=btn.getBoundingClientRect();
+  if(tr.width<1){sl.classList.remove("on");return;}
+  sl.style.left=(tr.left-br.left)+"px";
+  sl.style.width=tr.width+"px";
+  sl.classList.add("on");
+}
+/* 首次进入 / 窗口尺寸变化（含旋转、桌面预览缩放）时校正滑块位置 */
+function refreshTabSlider(){
+  const cur=(typeof CUR_TAB!=="undefined"&&CUR_TAB)||"record";
+  const main={record:1,data:1,history:1,feed:1,profile:1};
+  moveTabSlider(main[cur]?cur:null);
+}
+window.addEventListener("resize",function(){try{refreshTabSlider();}catch(e){}});
+window.addEventListener("orientationchange",function(){setTimeout(refreshTabSlider,120);});
+/* v1.46：底栏双击/长按手势
+   · 双击同一个 tab → 切到该页并回到顶部（单击照常立即切换，不延迟）
+   · 长按「记录」→ 切到记录页 + 展开「添加动作」面板，方便直接补录
+   · 长按其它 tab → 切到该页并回顶部 */
+var TAB_LAST_TAP={t:0,id:""},TAB_LP=null,TAB_LP_FIRED=false;
+function bindTabGestures(){
+  var tabs=document.querySelectorAll(".tabbar .tab");
+  if(!tabs.length)return false;
+  tabs.forEach(function(btn){
+    if(btn.__tgBound)return;          /* 幂等：已绑过就不重复绑，避免多次触发 */
+    btn.__tgBound=true;
+    var id=String(btn.id||"").replace("tab-","");
+    /* --- 双击回顶部：不拦截单击，靠两次点击间隔判断 --- */
+    btn.addEventListener("click",function(){
+      if(TAB_LP_FIRED){TAB_LP_FIRED=false;return;}   /* 长按刚触发，忽略这次 click */
+      var now=Date.now();
+      if(TAB_LAST_TAP.id===id&&now-TAB_LAST_TAP.t<320){
+        TAB_LAST_TAP.t=0;TAB_LAST_TAP.id="";
+        try{switchTab(id,true);var sc=document.getElementById("screen");if(sc)sc.scrollTo({top:0,behavior:"smooth"});}catch(e){}
+      }else{TAB_LAST_TAP={t:now,id:id};}
+    });
+    /* --- 长按 --- */
+    function startLP(e){
+      TAB_LP_FIRED=false;
+      clearTimeout(TAB_LP);
+      TAB_LP=setTimeout(function(){
+        TAB_LP_FIRED=true;
+        try{
+          if(id==="record"){
+            switchTab("record",true);
+            setTimeout(function(){try{setAddBox(true);var si=document.getElementById("recordSearch");if(si)si.focus();}catch(e){}},80);
+            if(typeof toast==="function")toast("补录今天 · 选个动作填上");
+          }else{
+            switchTab(id,true);
+            var sc=document.getElementById("screen");if(sc)sc.scrollTo({top:0,behavior:"smooth"});
+          }
+        }catch(e){}
+      },550);
+    }
+    function cancelLP(){clearTimeout(TAB_LP);}
+    btn.addEventListener("pointerdown",startLP);
+    btn.addEventListener("pointerup",cancelLP);
+    btn.addEventListener("pointerleave",cancelLP);
+    btn.addEventListener("pointercancel",cancelLP);
+  });
+  return true;
 }
 const BACK_MODALS=[
   ["emojiPanel",function(){const m=document.getElementById("emojiPanel");if(m)m.classList.remove("on");}],
@@ -3283,6 +3419,27 @@ function renderDayDetail(){
 function editFrom(ds){curDate=ds>todayStr()?todayStr():ds;keepDateOnce=true;switchTab("record");toast("已载入 "+fmtMD(curDate));}
 
 /* ============ 数据页（本轮未改动，仅网格线变量化） ============ */
+/* v1.46：数据页「本周 vs 上周」环比卡片 */
+function renderWeekCmp(){
+  const box=document.getElementById("weekCmp");if(!box)return;
+  /* weekStat 定义在主脚本靠后的位置；renderStats 可能先于它被调用，这里守卫一下避免打断整段脚本 */
+  if(typeof weekStat!=="function"){box.innerHTML="";return;}
+  const cur=weekStat(0,true),prev=weekStat(1,false);   /* offset=1 = 上一周（weekStartDay 是减 offset*7） */
+  const dTot=cur.total-prev.total, dDays=cur.days-prev.days;
+  const pct=prev.total>0?Math.round((cur.total-prev.total)/prev.total*100):null;
+  function arrow(v){ if(v>0)return '<span class="wc-up">▲</span>'; if(v<0)return '<span class="wc-down">▼</span>'; return '<span class="wc-flat">—</span>'; }
+  function sgn(v){ return (v>0?"+":"")+v; }
+  const nums='<div class="wcmp-cells">'+
+    '<div class="wcmp-cell"><div class="wc-k">本周个数</div><div class="wc-big">'+fmtNum(cur.total)+'<i>个</i></div>'+
+      '<div class="wc-delta">'+arrow(dTot)+' 比上周 '+sgn(dTot)+(pct!=null?'（'+sgn(pct)+'%）':'')+'</div></div>'+
+    '<div class="wcmp-cell"><div class="wc-k">本周天数</div><div class="wc-big">'+cur.days+'<i>天</i></div>'+
+      '<div class="wc-delta">'+arrow(dDays)+' 比上周 '+sgn(dDays)+' 天</div></div>'+
+    '</div>';
+  const tip = prev.total===0
+    ? '上周还没有记录，这周就是新起点。'
+    : (dTot>0?'比上周多练了 '+dTot+' 个，保持住。':(dTot===0?'和上周持平，稳住节奏。':'比上周少了 '+Math.abs(dTot)+' 个，这周再补回来。'));
+  box.innerHTML=nums+'<div class="wcmp-tip">'+tip+'</div>';
+}
 function renderStats(){
   const WORK=DATA.filter(hasWorkout);
   /* 没有任何训练量（可能只有休息备注）：直接渲染空状态，避免除零 */
@@ -3298,6 +3455,7 @@ function renderStats(){
     renderInspect();   /* 只有休息备注时，当天明细仍要显示备注 */
     weightRows=[];weightPts=[];weightTipIdx=-1;
     renderStatsMeta();
+    renderWeekCmp();
     return;
   }
   const total=WORK.reduce((s,r)=>s+r.p,0),avg=Math.round(total/WORK.length),best=Math.max(...WORK.map(r=>r.p));
@@ -3356,6 +3514,7 @@ function renderStats(){
   renderInspect();
   renderWeightTip();
   renderStatsMeta();
+  renderWeekCmp();
 }
 
 /* ---- 体重折线：手指左右滑动查看每次测量 ---- */
@@ -6795,6 +6954,15 @@ bindMoreOutside();                  /* v1.17：三个点菜单点空白收起 */
 netProbe();                        /* v1.9：启动就探一次云端到底通不通 */
 initSplash();
 initMotto();
+/* v1.46：初始化底栏滑块位置（等布局稳定），并绑定双击/长按 */
+setTimeout(function(){try{refreshTabSlider();}catch(e){}},60);
+setTimeout(function(){try{refreshTabSlider();}catch(e){}},400);
+/* 绑定底栏手势：立即试一次，若 tab 还没就绪则短延迟重试（幂等，不会重复绑） */
+(function bindTabRetry(n){
+  var ok=false;try{ok=bindTabGestures();}catch(e){}
+  if(!ok&&n>0)setTimeout(function(){bindTabRetry(n-1);},150);
+})(8);
+try{maybeShowSundayWeekReport();}catch(e){}
 bindClickSound();
 initSocial();
 /* 清空数据并刷新后给一次明确反馈（开屏层会盖住 toast，先跳过开屏） */
@@ -7089,6 +7257,22 @@ function openWeekReport(){
   document.getElementById("weekModal").classList.add("on");
 }
 function closeWeekReport(){document.getElementById("weekModal").classList.remove("on");}
+/* v1.46：周日首次打开 App，自动弹一次本周周报（每周日只弹一次，记在本机） */
+function maybeShowSundayWeekReport(){
+  try{
+    var d=new Date();
+    if(d.getDay()!==0)return;                     /* 只周日 */
+    var today=todayStr();
+    var seenKey="pushup_weekreport_seen";
+    if(localStorage.getItem(seenKey)===today)return;   /* 本周已弹过 */
+    /* 有点数据才弹，全空不打扰 */
+    var cur=weekStat(0,true);
+    if(!cur.days&&!cur.total)return;
+    localStorage.setItem(seenKey,today);
+    /* 等开屏结束（约 2.6s + 动画）再弹，避免被挡住 */
+    setTimeout(function(){try{openWeekReport();}catch(e){}},3400);
+  }catch(e){}
+}
 /* v1.38：把本周数据做成动态卡片（不传图，动态里按数据重绘，体积只有几百字节） */
 function weekSnapshot(){
   const cur=weekStat(0,true),prev=weekStat(1,false);

@@ -1,10 +1,13 @@
 {
-  "version": "1.45",
-  "tag": "v1.45",
-  "apk": "PUSHUP-v1.45.apk",
-  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.45/PUSHUP-v1.45.apk",
+  "version": "1.46",
+  "tag": "v1.46",
+  "apk": "PUSHUP-v1.46.apk",
+  "apkUrl": "https://github.com/simplejuzi/PUSHUP/releases/download/v1.46/PUSHUP-v1.46.apk",
   "changelog": [
-    "评论可以回复某个人，被回复的人会收到「回复了你」的提醒",
-    "改为真沉浸式状态栏：状态栏透明、内容延伸其下，切换主题不再有分割线，开屏也沉浸"
+    "底栏改成悬浮液态玻璃胶囊，选中项换成会滑动的玻璃高亮块",
+    "底栏只在首页五个标签出现，二级页面自动隐藏；我的动态、训练记录、设置、动作库补上左上角返回",
+    "数据页新增本周与上周的对比，涨了多少、少了多少一目了然",
+    "每周日第一次打开会弹出本周周报，一周一次",
+    "双击底栏标签回到该页顶部，长按记录直接补录今天"
   ]
 }

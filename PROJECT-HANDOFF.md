@@ -38,6 +38,11 @@
 ## 3. 当前进度（改之前先对齐）
 
 - **已发布 v1.45**（PUSHUP/main commit `5b94ae7`，Release id `458063803`，`releases/latest` 指向它）：= v1.44 全部 + ①「被回复的人收到红点」（消息页「XXX 回复了你」，被回复人 uid 用零宽字符编进 comment 的 text，`replyTarget()`/`stripReplyMark()` 解析，notif 生成 `k:"reply"` 事件）；②**真沉浸式状态栏**（`setOverlaysWebView(true)` + 透明底 `#00000000`，页面 `--surface` 透上来无分割线；图标随主题明暗自动切；开屏/底栏/二级页按 safe-area 留白）。versionCode `10016` / sw v17 / 更新说明 2 条。
+- **本地未发布的改动**（未提交/未构建，出包等用户说「上传」）：**悬浮胶囊底栏**（v1.46，参照图重做）——底栏改成两侧留边+大圆角+半透明玻璃的悬浮胶囊，选中项用 `--accent-soft` 高亮块包裹（`.tab.on`），5 个图标换实心（`ic-solid` 用 fill），内容是记录/数据/历史/动态/我的（**不做中间 + 按钮**）。相关：`.tabbar` 改 `position:absolute;left/right:12px;bottom:calc(18px+safe-area);border-radius:26px`，tab 间距 `gap:0`、左右 padding 0 收紧，`.screen` padding-bottom 118px、`feed-lock` 110px、`.lib-foot` 底距 92px、tabdot 位置微调。**液态玻璃**：`.tabbar` 用 `background:linear-gradient(半透明) + backdrop-filter:blur(26px) saturate(1.9)`，`::before` 顶部斜向反光、`::after` 底部内阴影，`.tab.on` 半透明主题色光片 + 内高光；`body.dark .tabbar` 单独降白色高光防发灰。
+- **底栏显隐 + 二级页返回**（v1.46，本地未发布）：`switchTab()` 里 `barless` 改成 `!MAIN_TABS[name]`（5 主 tab 才显示底栏，10 个二级页全部隐藏）；把 `.pg-back` 提为全局样式、新增 `.head-row.has-back`（返回键+标题成组、右侧靠右），给缺返回的 4 个页 **myposts / recs / settings / library** 补了左上返回按钮（`onclick="handleAppBack()"`，走 SUB_PARENT 回父页）。badges/rank/notif 原本已有 `.bg-back`、friends/post 有 `.back-btn`、user 有 `.pg-back`，未动。
+- 全 15 页遍历验证：5 主 tab 底栏显示、10 二级页底栏隐藏且都有返回；截图核对 settings/myposts/recs/library 返回键位置正常。
+- **v1.46 第二批功能**（本地未发布）：①**底栏滑块动画**：`#tabSlider` 玻璃滑块随 tab 平滑移动（`moveTabSlider()`/`refreshTabSlider()`，`.tab.on` 只变色不再自带背景），切主 tab 定位、二级页隐藏、resize/orientation 重算。②**数据页周环比**：`renderWeekCmp()` 在 `#kpis` 下渲染「本周 vs 上周」个数/天数对比 + 涨跌箭头 + 提示语（`weekStat(0,true)` vs `weekStat(1,false)`，注意 offset=1 是上周，因 `weekStartDay` 是减 offset*7）。③**周日首次打开弹本周周报**：`maybeShowSundayWeekReport()`，`getDay()===0` 且当天没弹过（`localStorage pushup_weekreport_seen`）且有数据才弹，开屏后 3.4s 弹 `openWeekReport()`。④**底栏手势**：`bindTabGestures()`（幂等，`__tgBound` 防重绑，初始化重试 8 次）——双击同一 tab 回顶部、长按「记录」展开添加面板补录、长按其它 tab 回顶部。
+  - **踩坑**：`renderWeekCmp` 里直接调 `weekStat` 若运行期顺序不巧会抛 `ReferenceError` 打断整段主脚本（连带 bindTabGestures 不执行）；已加 `typeof weekStat==="function"` 守卫。
 - **旧仓库历史**：v1.44 `4d8abe3`（评论可回复某人，发布在迁库前）、v1.43 `521a5bc`（动态页卡片化重构）、v1.42 `c0c063b`（目标只算俯卧撑/自定义动作/彩蛋）。
 - 注：v1.45 是通过 Git Data API 提交到 PUSHUP/main 的（git push 因 github.com:443 超时不通）。本地目录 git 历史仍是旧 lite 历史，内容以 PUSHUP/main 为准。
 
