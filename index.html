@@ -1512,6 +1512,22 @@ body.feed-lock .screen{
 #page-feed .fc:first-child{margin-top:2px}
 .fc-text{margin-top:12px}
 </style>
+<style id="v145-immersive">
+/* ===== v1.45：真沉浸式状态栏（overlay:true + 透明底，页面色透上来，无分割线） =====
+   WebView 铺满到状态栏下方；各页面顶部已用 env(safe-area-inset-top) 留白，这里只补齐
+   固定高度的二级页头部，避免 padding-top 被算进固定 height 把内容压扁。 */
+/* 开屏：背景铺满到状态栏下；logo 与底部按钮已用 safe-area 留白，这里是双保险 */
+.splash{padding-top:env(safe-area-inset-top)}
+/* 聊天页 / 详情页顶部栏：固定高度 + padding 改为 calc，状态栏区域不与标题挤压 */
+.pd-top, .ch-top{height:auto;min-height:calc(52px + env(safe-area-inset-top));
+  box-sizing:border-box}
+/* 通用二级页头部（个人主页等）已在 .screen 内由 safe-area 统一留白，无需额外处理 */
+/* 屏幕主体：overlay 模式下确保顶部始终留出状态栏高度，内容不被图标遮挡 */
+.screen{padding-top:calc(4px + env(safe-area-inset-top))}
+@media (display-mode:standalone){.screen{padding-top:calc(4px + env(safe-area-inset-top))}}
+/* 底部手势区：内容透到手势条上方，底栏已含 safe-area-inset-bottom */
+.tabbar{box-sizing:border-box}
+</style>
 </head>
 <body>
 <div class="stage">
@@ -2418,30 +2434,11 @@ const lvCls={"入门":"b","进阶":"i","高阶":"a"};
 const isTime=u=>u==="秒";
 
 /* ============ v1.1：版本、主题、更新 ============ */
-const APP_VERSION="v1.44";
+const APP_VERSION="v1.45";
 /* 应用内更新日志：与 version.json 的 changelog 完全一致 */
 const APP_CHANGELOG=[
-  "我的页训练概览改成训练天数 / 累计个数 / 连续天数",
-  "排行榜并列天数给同名次，还能看距上一名还差几天",
-  "没记录时榜单也会引导你上榜，点自己能看自己的记录",
-  "历史页月度统计按本月计算，几处重复的数字已合并",
-  "次要文字加深、按钮点击区域加大，看起来更清楚",
-  "每日目标完成后会显示连续达标天数",
-  "我的动态与体重臂围空态加了引导，动作库分类可横滑",
-  "清理了一批偏技术的提示文字",
-  "所有配色的按钮和统计卡文字统一改为白色，深色模式更清楚",
-  "动态页新增消息提醒：谁赞了、评论了你的动态都能看到",
-  "消息支持全部已读，未读会显示在铃铛和底栏动态上",
-  "每日目标只统计俯卧撑，深蹲、引体等不再算入",
-  "修好自定义动作重开 App 后消失的问题，本机与云端会合并保存",
-  "完成今日目标会掉一枚彩蛋，14 种普通 / 稀有 / 传说等你收",
-  "检测更新和下载改走自己的服务器，国内打开更快",
-  "检测更新会显示进度，网络不好时马上提示重试，不再没反应",
-  "动态页改成卡片列表，点赞评论直接展开，默认只显示 15 条，可展开更多",
-  "取消动态详情页：点赞的人和评论直接显示在动态里，点评论就能回复",
-  "个人主页重做，并给跳转加上滑入/返回过渡动画",
-  "动态页顶部精简为头像与发动态按钮，下面整块都是可滑动的动态区",
-  "评论可以回复某个人，回复内容会标出在回谁"
+  "评论可以回复某个人，被回复的人会收到「回复了你」的提醒",
+  "改为真沉浸式状态栏：状态栏透明、内容延伸其下，切换主题不再有分割线，开屏也沉浸"
 ];
 /* 过渡版 v1.29：这个包覆盖安装在原 PUSHUP App 上，包名是 com.simplejuzi.pushup。
    更新检查必须继续指向原仓库 simplejuzi/PUSHUP，否则收不到后续版本。
@@ -4096,17 +4093,20 @@ function sbStyleFor(color){
   const lum=(0.2126*r+0.7152*g+0.0722*b)/255;
   return lum>0.55?"LIGHT":"DARK";
 }
+/* v1.45：真沉浸式状态栏 —— WebView 铺到状态栏下方、状态栏透明，页面 --surface 透上来，
+   不再是一条被染成同色的独立栏（那样切换主题有分割线）。图标明暗按实际底色自动反推。 */
 function syncStatusBar(mode){
   const SB=statusBar();if(!SB)return;
-  /* 底色取当前配色主题的实际 --surface，图标色再由亮度自动反推 */
+  /* 开屏是深色渐变头图 → 白图标；普通页按当前主题 --surface 反推 */
   const color=mode==="splash"?"#1B1C22":currentSurfaceColor();
   const style=sbStyleFor(color);
-  /* 必须串行：setOverlaysWebView(false) 会把底色恢复成上一次记录的颜色 */
-  sbCall("setOverlaysWebView",{overlay:false})
-    .then(()=>sbCall("setBackgroundColor",{color:color}))
+  /* overlay:true 让内容延伸到状态栏下；透明底让页面颜色透上来，彻底去掉分割线 */
+  sbCall("setOverlaysWebView",{overlay:true})
+    .then(()=>sbCall("setBackgroundColor",{color:"#00000000"}))
     .then(()=>sbCall("setStyle",{style:style}));
-  /* 部分 ROM 在改底色后会重置图标色，短延迟再补设一次 */
-  setTimeout(()=>sbCall("setStyle",{style:style}),220);
+  /* 部分 ROM 在切 overlay / 底色后会重置图标色，延迟补设两次确保稳定 */
+  setTimeout(()=>sbCall("setStyle",{style:style}),180);
+  setTimeout(()=>{sbCall("setBackgroundColor",{color:"#00000000"});sbCall("setStyle",{style:style});},420);
 }
 function applyTheme(){
   document.body.classList.toggle("dark",!!isDark());
