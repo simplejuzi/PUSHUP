@@ -3,8 +3,9 @@
 > **这是本项目的唯一权威说明。** 换 AI 接手、改功能、修 bug 之前，先读完这份再动手。
 > 最后更新：**2026-11-25**，对应发布版本 **v1.44**（本地尚有未发布的「回复提醒」改动，见「当前进度」）。
 >
-> ⚠️ 仓库里的 `HANDOFF.md`、`README.md`、`HANDOFF-PROMPT.md`、`CHANGELOG.md` 都是 **v1.30 时代的历史文档**
-> （还写着 Supabase 反代、Lite 版、4 个 tab），**已过时、会误导**，一律以本文为准。旧文件保留仅为历史存档。
+> 旧的 v1.30 时代误导文档（`HANDOFF.md`、`HANDOFF-PROMPT.md`、`supabase.sql`、`supabase-proxy/`）
+> 已于 2026-11-25 **清理删除**（还写着 Supabase 反代、Lite 版、4 个 tab，容易误导）。
+> 本项目早已不用 Supabase / 云函数反代，后端是 MySQL（见第 7 节）。`README.md` 是门面介绍，本文是唯一权威活文档。
 
 ---
 
