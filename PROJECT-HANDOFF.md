@@ -1,7 +1,7 @@
 # PUSHUP · 项目交接活文档（给接手的 AI / 开发者）
 
 > **这是本项目的唯一权威说明。** 换 AI 接手、改功能、修 bug 之前，先读完这份再动手。
-> 最后更新：**2026-11-25**，对应发布版本 **v1.44**（本地尚有未发布的「回复提醒 + 真沉浸式状态栏」改动，见「当前进度」）。
+> 最后更新：**2026-11-25**，对应发布版本 **v1.45**（代码+发布均在 PUSHUP/main）。
 >
 > 旧的 v1.30 时代误导文档（`HANDOFF.md`、`HANDOFF-PROMPT.md`、`supabase.sql`、`supabase-proxy/`）
 > 已于 2026-11-25 **清理删除**（还写着 Supabase 反代、Lite 版、4 个 tab，容易误导）。
@@ -19,7 +19,7 @@
 | 发布仓库 | 同上 `simplejuzi/PUSHUP`，Release 发这里，App 检查更新也读这里的 `releases/latest` |
 | 旧仓库 | `simplejuzi/pushup-lite` 已设为**私有只读存档**，不再使用；原主线 `transition/legacy-upgrade` 的内容已迁到 PUSHUP/main |
 | 包名 / 签名 | `com.simplejuzi.pushup` / 调试密钥 `signing/debug.keystore`（指纹 `5E:9C:…:55:56`），可覆盖安装 |
-| 当前发布 | **v1.44**，versionCode `10015`，Service Worker 缓存 `pushup-transition-v16` |
+| 当前发布 | **v1.45**，versionCode `10016`，Service Worker 缓存 `pushup-transition-v17` |
 | 页面 | **5 个 tab**：记录 · 数据 · 历史 · 动态 · 我的（外加排行榜/消息/个人主页/动作库等二级页） |
 | 云端 | MySQL 8.0，接口 `http://154.12.36.171:27080/pushup/api.php`（宝塔服务器，见第 7 节） |
 
@@ -37,12 +37,9 @@
 
 ## 3. 当前进度（改之前先对齐）
 
-- **已发布 v1.44**（commit `4d8abe3`）：= v1.43 全部 + 评论可回复某人（回复按钮 + 「回复 @名字 ×」提示条 + 前缀染色，回复人 id 用零宽字符编进 text 兼容固定后端）。Release id `456840724`，`releases/latest` 已指向它。
-- **本地未发布的改动**（**未提交、未构建**，要出包等用户说「上传」）：
-  1. **「被回复的人收到红点」**：别人回复你的评论，消息页出现「XXX 回复了你」提醒。实现：`replyTarget()`/`stripReplyMark()` 解析 text 末尾零宽标记，notif 的 `all()` 生成 `k:"reply"` 事件，`refreshSocialUI()` 同步后刷红点。
-  2. **真沉浸式状态栏**（替换原假沉浸）：`syncStatusBar()` 改为 `setOverlaysWebView(true)` + 透明底 `#00000000`，页面 `--surface` 透上来无分割线；图标明暗按底色亮度 `sbStyleFor()` 自动切（深色/开屏白图标、浅色深图标），切主题时同步刷新；开屏/底栏/二级页头部按 `env(safe-area-inset-top/bottom)` 留白。`capacitor.config.json` 的 StatusBar 配置也改为 overlay:true + 透明。新增 `<style id="v145-immersive">`。
-  - 验证：无头浏览器注入模拟 StatusBar 插件核对调用链正确（overlay:true/透明/图标随主题）；44px 状态栏高度下顶部布局无遮挡截图正常。**真机沉浸效果需打包 APK 最终确认**（无头浏览器无原生状态栏）。
-- 历史版本：v1.43 `521a5bc`（动态页卡片化重构）、v1.42 `c0c063b`（目标只算俯卧撑/自定义动作/彩蛋）、v1.41 `93aee4c`（消息页提醒）。
+- **已发布 v1.45**（PUSHUP/main commit `5b94ae7`，Release id `458063803`，`releases/latest` 指向它）：= v1.44 全部 + ①「被回复的人收到红点」（消息页「XXX 回复了你」，被回复人 uid 用零宽字符编进 comment 的 text，`replyTarget()`/`stripReplyMark()` 解析，notif 生成 `k:"reply"` 事件）；②**真沉浸式状态栏**（`setOverlaysWebView(true)` + 透明底 `#00000000`，页面 `--surface` 透上来无分割线；图标随主题明暗自动切；开屏/底栏/二级页按 safe-area 留白）。versionCode `10016` / sw v17 / 更新说明 2 条。
+- **旧仓库历史**：v1.44 `4d8abe3`（评论可回复某人，发布在迁库前）、v1.43 `521a5bc`（动态页卡片化重构）、v1.42 `c0c063b`（目标只算俯卧撑/自定义动作/彩蛋）。
+- 注：v1.45 是通过 Git Data API 提交到 PUSHUP/main 的（git push 因 github.com:443 超时不通）。本地目录 git 历史仍是旧 lite 历史，内容以 PUSHUP/main 为准。
 
 ---
 
@@ -73,7 +70,7 @@
 | `index.html` | **主战场**，全部前端。搜索关键函数/标识定位：`APP_VERSION`（版本号）、`APP_CHANGELOG`（更新日志）、`UPDATE_ENDPOINTS`（更新源）、`API_BASE_DEFAULT`（接口地址）、`sLoad/sSave`（本地数据）、`syncCloud`（同步）、`sendComment`（发评论/回复）、`renderFeed`/`postCardHtml`（动态卡片）、`v141-notif-js`（提醒）、`BADGES`/`EGGS`（成就/彩蛋） |
 | `version.json` | 版本唯一来源：`version`/`tag`/`apk`/apkUrl/`changelog`。**必须与 `index.html` 的 `APP_VERSION` 一致** |
 | `sw.js` | Service Worker，缓存名 `pushup-transition-vNN`，每次发版递增（清旧缓存） |
-| `.github/workflows/build-apk.yml` | 构建 workflow（**仅 `workflow_dispatch` 手动触发**），里面写死 `versionCode 10015`。发布步骤 `if:false`，Release 要手动建 |
+| `.github/workflows/build-apk.yml` | 构建 workflow（**仅 `workflow_dispatch` 手动触发**），里面写死 `versionCode 10016`。发布步骤 `if:false`，Release 要手动建 |
 | `capacitor.config.json` / `package.json` | Capacitor 壳配置、包名、依赖、打包脚本 |
 | `mysql/api.php` / `schema.sql` / `config*.php` | 后端单文件接口与表结构。**表字段固定**（见第 7 节），加字段要动数据库，谨慎 |
 | `signing/debug.keystore` | 签名密钥，勿换，否则老用户无法覆盖安装 |
